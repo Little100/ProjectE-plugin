@@ -1,6 +1,8 @@
 package org.Little_100.projecte;
 
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
+import org.Little_100.projecte.compatibility.SchedulerAdapter;
+import org.Little_100.projecte.compatibility.SchedulerMatcher;
 import org.Little_100.projecte.compatibility.VersionAdapter;
 import org.Little_100.projecte.compatibility.VersionMatcher;
 import org.bukkit.Bukkit;
@@ -29,6 +31,7 @@ public final class ProjectE extends JavaPlugin {
     private AlchemicalBagManager alchemicalBagManager;
     private LanguageManager languageManager;
     private ResourcePackManager resourcePackManager;
+    private SchedulerAdapter schedulerAdapter;
 
     // 定义矿物升级顺序
     private final Map<Material, Material> upgradeMap = new HashMap<>();
@@ -73,7 +76,10 @@ public final class ProjectE extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
+        
+        // 初始化调度器
+        schedulerAdapter = SchedulerMatcher.getSchedulerAdapter(this);
+ 
         // 初始化语言管理器
         languageManager = new LanguageManager(this);
 
@@ -247,6 +253,10 @@ public final class ProjectE extends JavaPlugin {
 
     public VersionAdapter getVersionAdapter() {
         return versionAdapter;
+    }
+
+    public SchedulerAdapter getSchedulerAdapter() {
+        return schedulerAdapter;
     }
 
     public LanguageManager getLanguageManager() {

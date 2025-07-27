@@ -104,7 +104,7 @@ public class GUIListener implements Listener {
     }
 
     private void updateSellButton(TransmutationGUI gui) {
-        ProjectE.getInstance().getServer().getScheduler().runTaskLater(ProjectE.getInstance(), () -> {
+        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
             Inventory inventory = gui.getInventory();
             long totalEmcChange = 0;
             for (int i = 0; i < 54; i++) {
@@ -361,7 +361,7 @@ public class GUIListener implements Listener {
 
     private void refreshGui(Player player, TransmutationGUI.GuiState state, int page) {
         player.closeInventory();
-        ProjectE.getInstance().getServer().getScheduler().runTaskLater(ProjectE.getInstance(), () -> {
+        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
             TransmutationGUI newGui = new TransmutationGUI(player);
             newGui.setState(state);
             newGui.setPage(page);

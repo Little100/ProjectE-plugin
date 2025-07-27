@@ -127,7 +127,7 @@ public class PhilosopherStoneListener implements Listener {
         
         final int finalStoneSlot = stoneSlot + 1;
         final ItemStack finalPhilosopherStone = philosopherStone;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
             inventory.setItem(finalStoneSlot, finalPhilosopherStone);
             player.updateInventory();
         }, 1L);

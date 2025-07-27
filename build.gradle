@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.Little_100'
-version = '1.0-SNAPSHOT'
+version = '0.1.1'
 
 repositories {
     mavenCentral()
@@ -16,10 +16,12 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 }
 
