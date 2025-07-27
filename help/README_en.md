@@ -1,5 +1,5 @@
 # ProjectE
-
+[Recipes](./recipe.md)
 ## Description
 
 ProjectE is a Minecraft Spigot plugin inspired by the famous "Equivalent Exchange" Mod. It introduces a core system of matter transmutation to the server, allowing players to break down items into Energy-Matter Covalence (EMC) units and use that EMC to create new items.
