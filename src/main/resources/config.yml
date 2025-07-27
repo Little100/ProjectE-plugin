@@ -1,0 +1,599 @@
+# sorry about my poor English, I'm not a native speaker.
+language: # 设置插件语言, 第一个为主要语言, 后续为备用语言.
+# set the first language as the main language, and the rest as the backup language.
+  - "zh_cn"
+
+AlchemicalBag:
+  enabled: true # 是否启用炼金术袋功能? true/false
+  # allow using alchemical bag? true/false
+  recipe:
+    # 定义基础炼金术袋的合成配方
+    # define the recipe of the basic alchemical bag
+    # 你可以使用 "L" (皮革), "D" (钻石块), "C" (箱子)
+    # eg. You can use "L" (Leather), "D" (Diamond Block), "C" (Chest)
+    # 以及 " " (空) 来定义 3x3 的合成矩阵。
+    # and " " (empty) to define a 3x3 matrix for the recipe.
+    shape:
+      - "LDL"
+      - "DCD"
+      - "LDL"
+    ingredients:
+      L: "LEATHER" # 这里定义前面的大写字母为什么物品 这里是[LEATHER]皮革
+      # define the letter before the capitalized item here, and here is [LEATHER] leather
+      C: "CHEST" # 箱子
+      # Chest
+      D: "DIAMOND_BLOCK" # 钻石块
+      # Diamond Block
+
+TransmutationTable:
+  enabled: true # 允许使用转换桌? true/false
+  # allow using transmutation table? true/false
+  transfer-fee-percentage: 0 # 玩家之间转账EMC的手续费百分比 (例如: 5 表示 5% 的手续费)
+  # the percentage of transfer fee between players (e.g. 5 means 5% fee)
+  EMC:
+    recipeConflictStrategy: "lowest" # 当一个物品有多种合成方式时，使用 "lowest" (最低值) 还是 "highest" (最高值)
+    # if a item has multiple recipes, use "lowest" (lowest value) or "highest" (highest value)
+    divisionStrategy:
+      "floor"
+      # 当配方计算结果无法整除时，使用 "floor" (向下取整) 还是 "ceil" (向上取整)
+      # 比如 65/3=21.666... 向下取整为 21， 向上取整为 22
+      # when the result of the recipe cannot be divided, use "floor" (round down) or "ceil" (round up)
+      # e.g. 65/3=21.666... round down to 21, round up to 22
+    # 基础EMC值定义
+    # define the basic EMC value
+    # 在这里只定义无法通过合成配方计算的基础物品 (例如: 矿物, 原木, 泥土, 怪物掉落物等)
+    # the following items are defined as basic items that cannot be calculated by the recipe
+    # 插件在加载时会自动检查物品是否存在于当前游戏版本，如果不存在则会跳过。
+    # the plugin will automatically check if the item exists in the current game version, and skip it if it doesn't.
+    ImportantItems:
+      # 此片段由gemini2.5pro提供 后续补充由Little100新增
+      # this part is provided by gemini2.5pro, and will be continued to be added by Little100.
+      # 非常不建议您修改此处
+      # it is highly recommended not to modify this part.
+      default:
+        - bundle: 0
+        # Blocks
+        - cobblestone: 1
+        - stone: 2
+        - andesite: 2
+        - diorite: 2
+        - granite: 2
+        - dirt: 1
+        - grass_block: 1
+        - sand: 1
+        - gravel: 1
+        - red_sand: 1
+        - suspicious_sand: 10
+        - suspicious_gravel: 10
+        - netherrack: 1
+        - soul_sand: 1
+        - end_stone: 1
+        - ice: 1
+        - obsidian: 64
+        - crying_obsidian: 256
+        - deepslate: 1
+        - mud: 1
+        - cobbled_deepslate: 2
+        - calcite: 32
+        - tuff: 4
+        - dripstone_block: 64
+        - podzol: 2
+        - rooted_dirt: 5
+        - crimson_nylium: 2
+        - warped_nylium: 2
+        - bamboo_planks: 4
+        - bamboo_mosaic: 4
+        - budding_amethyst: 128
+        - sponge: 32
+        - wet_sponge: 32
+        - cobweb: 12
+        - sea_pickle: 16
+        - pitcher_plant: 32
+        # Leaves
+        - oak_leaves: 1
+        - spruce_leaves: 1
+        - birch_leaves: 1
+        - jungle_leaves: 1
+        - acacia_leaves: 1
+        - dark_oak_leaves: 1
+        - mangrove_leaves: 1
+        - cherry_leaves: 1
+        - azalea_leaves: 1
+        - flowering_azalea_leaves: 1
+        # Logs
+        - oak_log: 32
+        - spruce_log: 32
+        - birch_log: 32
+        - jungle_log: 32
+        - acacia_log: 32
+        - dark_oak_log: 32
+        - crimson_stem: 32
+        - warped_stem: 32
+        - mangrove_log: 32
+        - cherry_log: 32
+        - petrified_oak_log: 32
+        - mangrove_roots: 21
+        - muddy_mangrove_roots: 21
+        - bamboo_block: 288
+        - stripped_oak_log: 32
+        - stripped_spruce_log: 32
+        - stripped_birch_log: 32
+        - stripped_jungle_log: 32
+        - stripped_acacia_log: 32
+        - stripped_dark_oak_log: 32
+        - stripped_crimson_stem: 32
+        - stripped_warped_stem: 32
+        - stripped_mangrove_log: 32
+        - stripped_cherry_log: 32
+        - oak_wood: 32
+        - spruce_wood: 32
+        - birch_wood: 32
+        - jungle_wood: 32
+        - acacia_wood: 32
+        - dark_oak_wood: 32
+        - crimson_hyphae: 32
+        - warped_hyphae: 32
+        - mangrove_wood: 32
+        - cherry_wood: 32
+        - stripped_oak_wood: 32
+        - stripped_spruce_wood: 32
+        - stripped_birch_wood: 32
+        - stripped_jungle_wood: 32
+        - stripped_acacia_wood: 32
+        - stripped_dark_oak_wood: 32
+        - stripped_crimson_hyphae: 32
+        - stripped_warped_hyphae: 32
+        - stripped_mangrove_wood: 32
+        - stripped_cherry_wood: 32
+        - petrified_oak_wood: 32
+        # Minerals & Crafting Materials
+        - coal: 128
+        - iron_ingot: 256
+        - gold_ingot: 2048
+        - redstone: 64
+        - lapis_lazuli: 864
+        - diamond: 8192
+        - emerald: 1024
+        - quartz: 256
+        - netherite_scrap: 12288
+        - flint: 16
+        - string: 12
+        - feather: 48
+        - leather: 64
+        - bone: 144
+        - gunpowder: 192
+        - spider_eye: 128
+        - slime_ball: 32
+        - glowstone_dust: 384
+        - blaze_rod: 1536
+        - ghast_tear: 4096
+        - ender_pearl: 1024
+        - shulker_shell: 4096
+        - phantom_membrane: 1024
+        - rabbit_foot: 256
+        - nautilus_shell: 1024
+        - scute: 1024
+        - prismarine_shard: 256
+        - prismarine_crystals: 512
+        - copper_ingot: 128
+        - amethyst_shard: 512
+        - echo_shard: 4096
+        - disc_fragment_5: 2048
+        - breeze_rod: 512
+        # Plants & Food
+        - wheat: 24
+        - nether_wart: 24
+        - egg: 32
+        - sugar: 32
+        - sugar_cane: 32
+        - potato: 32
+        - apple: 128
+        - carrot: 64
+        - melon_slice: 16
+        - pumpkin: 144
+        - clay_ball: 16
+        - ink_sac: 16
+        - cocoa_beans: 16
+        - red_mushroom: 16
+        - brown_mushroom: 16
+        - dandelion: 16
+        - poppy: 16
+        - blue_orchid: 16
+        - allium: 16
+        - azure_bluet: 16
+        - red_tulip: 16
+        - orange_tulip: 16
+        - white_tulip: 16
+        - pink_tulip: 16
+        - oxeye_daisy: 16
+        - cornflower: 16
+        - lily_of_the_valley: 16
+        - wither_rose: 16
+        - sunflower: 32
+        - lilac: 32
+        - rose_bush: 32
+        - peony: 32
+        - mangrove_propagule: 32
+        - cactus: 16
+        - beetroot: 64
+        - oak_sapling: 32
+        - spruce_sapling: 32
+        - birch_sapling: 32
+        - jungle_sapling: 32
+        - acacia_sapling: 32
+        - dark_oak_sapling: 32
+        - cherry_sapling: 32
+        - azalea: 32
+        - flowering_azalea: 16
+        - petrified_oak_sapling: 1
+        - sniffer_egg: 2048
+        - sweet_berries: 16
+        - glow_berries: 16
+        - pitcher_crop: 32
+        - torchflower: 16
+        - pitcher_plant: 16
+        - spore_blossom: 16
+        - crimson_fungus: 32
+        - warped_fungus: 32
+        - crimson_roots: 16
+        - warped_roots: 16
+        - nether_sprouts: 16
+        - weeping_vines: 16
+        - twisting_vines: 16
+        - kelp: 1
+        - pink_petals: 8
+        - moss_carpet: 8
+        - moss_block: 12
+        - cave_vines: 8
+        - big_dripleaf: 8
+        - small_dripleaf: 8
+        - bamboo: 32
+        # Raw Meats
+        - porkchop: 64
+        - beef: 64
+        - chicken: 64
+        - mutton: 64
+        - rabbit: 64
+        - cod: 64
+        - salmon: 64
+        - pufferfish: 64
+        - tropical_fish: 64
+        # Wool
+        - white_wool: 48
+        - orange_wool: 48
+        - magenta_wool: 48
+        - light_blue_wool: 48
+        - yellow_wool: 48
+        - lime_wool: 48
+        - pink_wool: 48
+        - gray_wool: 48
+        - light_gray_wool: 48
+        - cyan_wool: 48
+        - purple_wool: 48
+        - blue_wool: 48
+        - brown_wool: 48
+        - green_wool: 48
+        - red_wool: 48
+        - black_wool: 48
+        # Uncraftable / Loot
+        - leather_horse_armor: 448
+        - iron_horse_armor: 2048
+        - golden_horse_armor: 8192
+        - diamond_horse_armor: 32768
+        - enchanted_golden_apple: 147584
+        - ochre_froglight: 1024
+        - pearlescent_froglight: 1024
+        - verdant_froglight: 1024
+        - angler_pottery_shard: 8
+        - archer_pottery_shard: 8
+        - arms_up_pottery_shard: 8
+        - blade_pottery_shard: 8
+        - brewer_pottery_shard: 8
+        - burn_pottery_shard: 8
+        - danger_pottery_shard: 8
+        - explorer_pottery_shard: 8
+        - friend_pottery_shard: 8
+        - heart_pottery_shard: 8
+        - heartbreak_pottery_shard: 8
+        - howl_pottery_shard: 8
+        - miner_pottery_shard: 8
+        - mourn_pottery_shard: 8
+        - plenty_pottery_shard: 8
+        - prize_pottery_shard: 8
+        - sheaf_pottery_shard: 8
+        - shelter_pottery_shard: 8
+        - skull_pottery_shard: 8
+        - snout_pottery_shard: 8
+        - netherite_upgrade_smithing_template: 1024
+        - sentry_armor_trim_smithing_template: 1024
+        - vex_armor_trim_smithing_template: 1024
+        - wild_armor_trim_smithing_template: 1024
+        - coast_armor_trim_smithing_template: 1024
+        - dune_armor_trim_smithing_template: 1024
+        - eye_armor_trim_smithing_template: 1024
+        - rib_armor_trim_smithing_template: 1024
+        - snout_armor_trim_smithing_template: 1024
+        - spire_armor_trim_smithing_template: 1024
+        - ward_armor_trim_smithing_template: 1024
+        - silence_armor_trim_smithing_template: 1024
+        - tide_armor_trim_smithing_template: 1024
+        - wayfinder_armor_trim_smithing_template: 1024
+        - shaper_armor_trim_smithing_template: 1024
+        - host_armor_trim_smithing_template: 1024
+        - raiser_armor_trim_smithing_template: 1024
+        - flow_armor_trim_smithing_template: 1024
+        - bolt_armor_trim_smithing_template: 1024
+
+        # Copper Variants
+        - cut_copper: 1152
+        - exposed_cut_copper: 1152
+        - weathered_cut_copper: 1152
+        - oxidized_cut_copper: 1152
+        - cut_copper_stairs: 1728
+        - exposed_cut_copper_stairs: 1728
+        - weathered_cut_copper_stairs: 1728
+        - oxidized_cut_copper_stairs: 1728
+        - cut_copper_slab: 576
+        - exposed_cut_copper_slab: 576
+        - weathered_cut_copper_slab: 576
+        - oxidized_cut_copper_slab: 576
+        - waxed_cut_copper: 1168
+        - waxed_exposed_cut_copper: 1168
+        - waxed_weathered_cut_copper: 1168
+        - waxed_oxidized_cut_copper: 1168
+        - waxed_cut_copper_stairs: 1752
+        - waxed_exposed_cut_copper_stairs: 1752
+        - waxed_weathered_cut_copper_stairs: 1752
+        - waxed_oxidized_cut_copper_stairs: 1752
+        - waxed_cut_copper_slab: 582
+        - waxed_exposed_cut_copper_slab: 582
+        - waxed_weathered_cut_copper_slab: 582
+        - waxed_oxidized_cut_copper_slab: 582
+
+        # Added based on user feedback (2025-07-26)
+        # Pale Oak Series
+        - pale_oak_planks: 8
+        - pale_oak_sapling: 32
+        - pale_oak_log: 32
+        - stripped_pale_oak_log: 32
+        - pale_oak_wood: 32
+        - stripped_pale_oak_wood: 32
+        - pale_oak_leaves: 1
+
+        # Other Custom/Modded Items
+        - open_eyeblossom: 32
+        - closed_eyeblossom: 32
+        - pale_moss_carpet: 12
+        - pale_hanging_moss: 16
+        - pale_moss_block: 12
+
+        # Vanilla Items
+        - stripped_bamboo_block: 32
+        - chorus_plant: 64
+        - chorus_flower: 96
+        - carved_pumpkin: 9
+        - jack_o_lantern: 18
+        - soul_soil: 49
+        - basalt: 1
+        - mycelium: 2
+
+        # More Copper Variants
+        - exposed_copper: 1152
+        - weathered_copper: 1152
+        - oxidized_copper: 1152
+        - waxed_copper: 1168
+        - waxed_exposed_copper: 1168
+        - waxed_weathered_copper: 1168
+        - waxed_oxidized_copper: 1168
+
+        # Added based on user feedback (2025-07-26)
+        - nether_star: 139264
+        - stone_slab: 1
+        - snowball: 1
+        - red_mushroom_block: 32
+        - mushroom_stem: 32
+        - warped_wart_block: 216
+        - white_concrete: 4
+        - orange_concrete: 4
+        - magenta_concrete: 4
+        - light_blue_concrete: 4
+        - yellow_concrete: 4
+        - lime_concrete: 4
+        - pink_concrete: 4
+        - gray_concrete: 4
+        - light_gray_concrete: 4
+        - cyan_concrete: 4
+        - purple_concrete: 4
+        - blue_concrete: 4
+        - brown_concrete: 4
+        - green_concrete: 4
+        - red_concrete: 4
+        - black_concrete: 4
+        - tube_coral_block: 4
+        - brain_coral_block: 4
+        - bubble_coral_block: 4
+        - fire_coral_block: 4
+        - horn_coral_block: 4
+        - dead_tube_coral_block: 4
+        - dead_brain_coral_block: 4
+        - dead_bubble_coral_block: 4
+        - dead_fire_coral_block: 4
+        - dead_horn_coral_block: 4
+        - tube_coral: 1
+        - brain_coral: 1
+        - bubble_coral: 1
+        - fire_coral: 1
+        - horn_coral: 1
+        - dead_tube_coral: 1
+        - dead_brain_coral: 1
+        - dead_bubble_coral: 1
+        - dead_fire_coral: 1
+        - dead_horn_coral: 1
+        - tube_coral_fan: 1
+        - brain_coral_fan: 1
+        - bubble_coral_fan: 1
+        - fire_coral_fan: 1
+        - horn_coral_fan: 1
+        - dead_tube_coral_fan: 1
+        - dead_brain_coral_fan: 1
+        - dead_bubble_coral_fan: 1
+        - dead_fire_coral_fan: 1
+        - dead_horn_coral_fan: 1
+        - shulker_box: 4176 # Default shulker box
+        - orange_shulker_box: 4176
+        - magenta_shulker_box: 4176
+        - light_blue_shulker_box: 4176
+        - yellow_shulker_box: 4176
+        - lime_shulker_box: 4176
+        - pink_shulker_box: 4176
+        - gray_shulker_box: 4176
+        - light_gray_shulker_box: 4176
+        - cyan_shulker_box: 4176
+        - purple_shulker_box: 4176
+        - blue_shulker_box: 4176
+        - brown_shulker_box: 4176
+        - green_shulker_box: 4176
+        - red_shulker_box: 4176
+        - black_shulker_box: 4176
+        - vine: 8
+        - lily_pad: 16
+        - turtle_egg: 192
+        - elytra: 16463
+
+# Added based on user feedback (2025-07-26)
+        - glow_lichen: 8 # 由 https://github.com/LELEXIAOLL 的帮助添加
+        - white_shulker_box: 4176
+        - conduit: 40690
+        - copper_door: 400
+        - exposed_copper_door: 400
+        - weathered_copper_door: 400
+        - oxidized_copper_door: 400
+        - waxed_copper_door: 400
+        - waxed_exposed_copper_door: 400
+        - waxed_weathered_copper_door: 400
+        - waxed_oxidized_copper_door: 400
+        - copper_trapdoor: 400
+        - exposed_copper_trapdoor: 400
+        - weathered_copper_trapdoor: 400
+        - oxidized_copper_trapdoor: 400
+        - waxed_copper_trapdoor: 400
+        - waxed_exposed_copper_trapdoor: 400
+        - waxed_weathered_copper_trapdoor: 400
+        - waxed_oxidized_copper_trapdoor: 400
+        - cod_bucket: 832
+        - salmon_bucket: 832
+        - pufferfish_bucket: 832
+        - tropical_fish_bucket: 832
+        - axolotl_bucket: 832
+        - tadpole_bucket: 832
+        - saddle: 192
+        - wheat_seeds: 16
+        - water_bucket: 768
+        - lava_bucket: 832
+        - powder_snow_bucket: 784
+        - milk_bucket: 784
+        - glow_ink_sac: 400
+        - cake: 2486
+        - rotten_flesh: 24
+        - name_tag: 192
+        - rabbit_hide: 16
+        - beetroot_seeds: 16
+        - trident: 16463
+        - music_disc_13: 2048
+        - music_disc_cat: 2048
+        - music_disc_blocks: 2048
+        - music_disc_chirp: 2048
+        - music_disc_far: 2048
+        - music_disc_mall: 2048
+        - music_disc_mellohi: 2048
+        - music_disc_stal: 2048
+        - music_disc_strad: 2048
+        - music_disc_ward: 2048
+        - music_disc_11: 2048
+        - music_disc_wait: 2048
+        - music_disc_otherside: 2048
+        - music_disc_5: 2048
+        - music_disc_pigstep: 2048
+        - music_disc_relic: 2048
+        - chorus_fruit: 192
+        - heart_of_the_sea: 32768
+        - bell: 48
+        - shroomlight: 16
+        - honeycomb: 16
+        - blackstone: 32
+        - candle: 44
+        - white_candle: 44
+        - orange_candle: 44
+        - magenta_candle: 44
+        - light_blue_candle: 44
+        - yellow_candle: 44
+        - lime_candle: 44
+        - pink_candle: 44
+        - gray_candle: 44
+        - light_gray_candle: 44
+        - cyan_candle: 44
+        - purple_candle: 44
+        - blue_candle: 44
+        - brown_candle: 44
+        - green_candle: 44
+        - red_candle: 44
+        - black_candle: 44
+        - angler_pottery_sherd: 32
+        - archer_pottery_sherd: 32
+        - arms_up_pottery_sherd: 32
+        - blade_pottery_sherd: 32
+        - brewer_pottery_sherd: 32
+        - burn_pottery_sherd: 32
+        - danger_pottery_sherd: 32
+        - explorer_pottery_sherd: 32
+        - friend_pottery_sherd: 32
+        - flow_pottery_sherd: 32
+        - guster_pottery_sherd: 32
+        - heart_pottery_sherd: 32
+        - heartbreak_pottery_sherd: 32
+        - howl_pottery_sherd: 32
+        - miner_pottery_sherd: 32
+        - mourner_pottery_sherd: 32
+        - plenty_pottery_sherd: 32
+        - prize_pottery_sherd: 32
+        - scrape_pottery_sherd: 32
+        - sheaf_pottery_sherd: 32
+        - shelter_pottery_sherd: 32
+        - skull_pottery_sherd: 32
+        - snort_pottery_sherd: 32
+        # Added based on user feedback (2025-07-26)
+        - cobblestone_slab: 1
+        - end_stone_brick_slab: 6
+        - andesite_slab: 6
+        - polished_andesite_slab: 6
+        - honey_block: 192
+        - flower_banner_pattern: 48
+        - creeper_banner_pattern: 48
+        - skull_banner_pattern: 48
+        - mojang_banner_pattern: 48
+        - globe_banner_pattern: 48
+        - piglin_banner_pattern: 48
+        - poisonous_potato: 64
+        - brown_mushroom_block: 32
+        - beehive: 96
+        - gilded_blackstone: 64
+        - small_amethyst_bud: 256
+        - medium_amethyst_bud: 256
+        - large_amethyst_bud: 256
+        - amethyst_cluster: 256
+        - pointed_dripstone: 16
+        - frog_spawn: 32
+        - torchflower_seeds: 16
+        - pitcher_pod: 16
+        - resin_clump: 16
+
+# 资源包配置
+resourcepack:
+  # 是否从JAR文件提取资源包到插件数据文件夹
+  extract: true
+  # 是否强制更新资源包（每次启动都提取）
+  force_update: false
+  # 资源包URL（留空则不发送）
+  url: ""
+  # 是否在玩家加入服务器时自动发送资源包
+  auto_send: true

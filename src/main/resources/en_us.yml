@@ -1,0 +1,105 @@
+# sorry about my poor English, I'm not a native speaker.
+# but i try my best to make it understandable.
+# Client-side visible output
+clientside:
+  transmutation_table:
+    title: "T.T. | Your EMC: {emc}"
+    sell_title: "T.T. | Sell | Your EMC: {emc}"
+    buy_title: "T.T. | Buy | Your EMC: {emc}"
+    buttons:
+      sell: "§aSell"
+      sell_lore: "Click to enter the sell interface"
+      buy: "§bBuy"
+      buy_lore: "Click to enter the buy interface"
+      learn: "§eLearn"
+      learn_lore: "Click to enter the learn interface"
+      confirm_sell: "§aConfirm"
+      confirm_sell_lore: "Click to confirm the transaction"
+      confirm_learn: "§aLearn"
+      confirm_learn_lore: "Click to learn the item"
+      back: "§cBack"
+      back_lore: "Click to return to the main menu"
+      next_page: "§eNext Page"
+      prev_page: "§ePrevious Page"
+      confirm_transaction_lore: "&7Click to confirm transaction"
+      you_will_get: "&aYou will get: {emc} EMC"
+    item_lore:
+      emc_single: "§6EMC (Single): {emc}"
+      emc_stack: "§6EMC (Stack): {stack_emc}"
+      buy_one: "§7Left-click to buy 1"
+      buy_stack: "§7Right-click to buy {amount}"
+  alchemical_bag:
+    default_name: "§fAlchemical Bag"
+    colored_name: "{color}{color_name} Alchemical Bag"
+
+# Server-side visible output
+serverside:
+  command:
+    no_permission: "§cYou do not have permission to use this command."
+    player_only: "§cOnly players can use this command."
+    reload_success: "§aProjectE plugin has been reloaded."
+    set_emc:
+      usage: "§cUsage: /projecte setemc <value>"
+      hold_item: "§cPlease hold an item in your hand."
+      must_be_positive: "§cEMC value must be a positive integer greater than 0."
+      success: "§aSet EMC for {item} to {emc}"
+      invalid_value: "§cInvalid EMC value: {value}"
+    give_emc:
+      usage: "§cUsage: /projecte give <player> <amount>"
+      player_not_found: "§cPlayer {player} not found."
+      cant_give_self: "§cYou cannot give EMC to yourself."
+      must_be_positive: "§cTransfer amount must be positive."
+      invalid_amount: "§cInvalid amount: {amount}"
+      not_enough_emc: "§cYou do not have enough EMC for this transaction (requires {total} EMC, including a fee of {fee} EMC)."
+      give_success: "§aSuccessfully sent {amount} EMC to {player}. (Fee: {fee} EMC)"
+      receive_success: "§aYou have received {amount} EMC from {player}."
+    debug:
+      header: "§6--- EMC Debug: {item} ---"
+      emc_value: "§bEMC in database: §f{emc}"
+      is_learned: "§bIs learned: §f{learned}"
+      no_recipe: "§eNo crafting recipe found for this item."
+      recipe_found: "§bFound {count} crafting recipes:"
+      recipe_header: "§6  Recipe #{index}"
+      footer: "§6------------------------------"
+    no_emc_item:
+      all_have_emc: "§aAll items have an EMC value!"
+    bag:
+      usage: "§cUsage: /projecte bag list"
+      no_bags: "§eYou don't have any alchemical bags yet."
+      list_header: "§6Your Alchemical Bags:"
+    lang:
+      usage: "§cUsage: /projecte lang <list|set> [languages...]"
+      list_header: "§6Available language files:"
+      set_success: "§aLanguage has been set to: {languages}. Use /projecte reload to apply."
+      file_not_found: "§cLanguage file not found: {file}"
+    report:
+      message: "§aif you have any issues or suggestions, please report them on our GitHub page: https://github.com/Little-100/ProjectE-plugin"
+    help:
+      header: "§6ProjectE Plugin Command Help:"
+      reload: "§b/projecte reload§f - Reloads the plugin configuration"
+      setemc: "§b/projecte setemc <value>§f - Sets the EMC value for the item in hand"
+      give: "§b/projecte give <player> <amount>§f - Gives EMC to another player"
+      debug: "§b/projecte debug§f - Debugs EMC information for the item in hand"
+      noemcitem: "§b/projecte noemcitem§f - Lists all items without an EMC value"
+      bag_list: "§b/projecte bag list§f - Lists all alchemical bags you own"
+      lang: "§b/projecte lang <list|set>§f - Manages language files"
+      report: "§b/projecte report§f - report a bug or suggest a feature"
+    generic:
+      already_have_philosopher_stone: "§cYou already have a Philosopher's Stone!"
+      buy_success: "§aSuccessfully purchased {amount}x {item}"
+      not_enough_emc: "§cYou don't have enough EMC."
+      no_emc_value_trade: "§cItem {item} has no EMC value and cannot be traded."
+      partial_trade_fail: "§cSome items could not be traded and were returned."
+      sell_success: "§aSuccessfully sold items for {emc} EMC."
+      no_emc_value_learn: "§cItem {item} has no EMC value and cannot be learned."
+      learn_success: "§aSuccessfully learned new items!"
+      
+  # Resource pack related messages
+  resourcepack:
+    prompt: "§6The server uses a custom resource pack for better visual experience."
+    download_start: "§aDownloading resource pack..."
+    download_success: "§aResource pack downloaded successfully!"
+    download_failed: "§cResource pack download failed. Please try again later or contact the server administrator."
+    command:
+      send_success: "§aResource pack sent to {player}."
+      no_url: "§cNo resource pack URL configured, cannot send."

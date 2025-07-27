@@ -1,0 +1,103 @@
+# 客户端可见的输出
+clientside:
+  transmutation_table:
+    title: "转换桌 | 您的EMC: {emc}"
+    sell_title: "转换桌 | 卖出 | 您的EMC: {emc}"
+    buy_title: "转换桌 | 购买 | 您的EMC: {emc}"
+    buttons:
+      sell: "§a售卖"
+      sell_lore: "点击进入售卖界面"
+      buy: "§b购买"
+      buy_lore: "点击进入购买界面"
+      learn: "§e学习"
+      learn_lore: "点击进入学习界面"
+      confirm_sell: "§a确认"
+      confirm_sell_lore: "点击以确认交易"
+      confirm_learn: "§a学习"
+      confirm_learn_lore: "点击以学习物品"
+      back: "§c返回"
+      back_lore: "点击返回主菜单"
+      next_page: "§e下一页"
+      prev_page: "§e上一页"
+      confirm_transaction_lore: "&7点击以确认交易"
+      you_will_get: "&a您将获得: {emc} EMC"
+    item_lore:
+      emc_single: "§6EMC (单个): {emc}"
+      emc_stack: "§6EMC (一组): {stack_emc}"
+      buy_one: "§7左键点击购买 1 个"
+      buy_stack: "§7右键点击购买 {amount} 个"
+  alchemical_bag:
+    default_name: "§f炼金术袋"
+    colored_name: "{color}{color_name} 炼金术袋"
+
+# 服务端可见的输出
+serverside:
+  command:
+    no_permission: "§c你没有权限使用此命令。"
+    player_only: "§c只有玩家才能使用此命令。"
+    reload_success: "§aProjectE插件已重载。"
+    set_emc:
+      usage: "§c用法: /projecte setemc <value>"
+      hold_item: "§c请手持一个物品。"
+      must_be_positive: "§cEMC值必须是大于0的正整数。"
+      success: "§a已将 {item} 的EMC值设置为 {emc}"
+      invalid_value: "§c无效的EMC值: {value}"
+    give_emc:
+      usage: "§c用法: /projecte give <player> <amount>"
+      player_not_found: "§c玩家 {player} 不在线。"
+      cant_give_self: "§c你不能给自己转账。"
+      must_be_positive: "§c转账金额必须是正数。"
+      invalid_amount: "§c无效的金额: {amount}"
+      not_enough_emc: "§c你的EMC不足以完成转账 (需要 {total} EMC, 包含 {fee} EMC 的手续费)。"
+      give_success: "§a你成功向 {player} 转账 {amount} EMC。 (手续费: {fee} EMC)"
+      receive_success: "§a你收到了来自 {player} 的 {amount} EMC。"
+    debug:
+      header: "§6--- EMC Debug: {item} ---"
+      emc_value: "§b数据库中的EMC值: §f{emc}"
+      is_learned: "§b是否已学习: §f{learned}"
+      no_recipe: "§e未找到该物品的合成配方。"
+      recipe_found: "§b找到 {count} 个合成配法:"
+      recipe_header: "§6  配方 #{index}"
+      footer: "§6------------------------------"
+    no_emc_item:
+      all_have_emc: "§a所有物品都有EMC值！"
+    bag:
+      usage: "§c用法: /projecte bag list"
+      no_bags: "§e你还没有任何炼金术袋。"
+      list_header: "§6你拥有的炼金术袋:"
+    lang:
+      usage: "§c用法: /projecte lang <list|set> [languages...]"
+      list_header: "§6可用语言文件:"
+      set_success: "§a语言已设置为: {languages}。请使用 /projecte reload 重载生效。"
+      file_not_found: "§c找不到语言文件: {file}"
+    report:
+      message: "§a如果遇到问题，请访问我们的GitHub仓库提交issue: https://github.com/Little100/ProjectE-plugin"
+    help:
+      header: "§6等价交换插件版命令帮助:"
+      reload: "§b/projecte reload§f - 重载插件配置"
+      setemc: "§b/projecte setemc <value>§f - 设置手中物品的EMC值"
+      give: "§b/projecte give <player> <amount>§f - 将EMC转账给其他玩家"
+      debug: "§b/projecte debug§f - 调试手中物品的EMC信息"
+      noemcitem: "§b/projecte noemcitem§f - 列出所有没有EMC值的物品"
+      bag_list: "§b/projecte bag list§f - 列出你拥有的所有炼金术袋"
+      lang: "§b/projecte lang <list|set>§f - 管理语言文件"
+      report: "§b/projecte report§f - 报告问题或提出建议"
+    generic:
+      already_have_philosopher_stone: "§c你已经拥有一个贤者之石了！"
+      buy_success: "§a成功购买 {amount}x {item}"
+      not_enough_emc: "§c你的EMC不足。"
+      no_emc_value_trade: "§c物品 {item} 没有EMC值，无法交易。"
+      partial_trade_fail: "§c部分物品无法交易，已退回。"
+      sell_success: "§a成功卖出物品，获得 {emc} EMC。"
+      no_emc_value_learn: "§c物品 {item} 没有EMC值，无法学习。"
+      learn_success: "§a成功学习新物品！"
+      
+  # 资源包相关信息
+  resourcepack:
+    prompt: "§6服务器使用了自定义资源包，这可以提供更好的视觉体验。"
+    download_start: "§a正在下载资源包..."
+    download_success: "§a资源包下载成功！"
+    download_failed: "§c资源包下载失败，请稍后重试或联系服务器管理员。"
+    command:
+      send_success: "§a已向 {player} 发送资源包。"
+      no_url: "§c未配置资源包URL，无法发送。"

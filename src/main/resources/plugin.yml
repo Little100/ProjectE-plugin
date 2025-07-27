@@ -1,0 +1,34 @@
+name: ProjectE
+version: '1.0-SNAPSHOT'
+main: org.Little_100.projecte.ProjectE
+api-version: '1.16'
+authors: [ Little_100 ]
+description: ProjectE插件(原名贤者之石插件但是突然感觉性质变了就改名ProjectE了)
+website: little100.top
+commands:
+  projecte:
+    description: "ProjectE插件主命令"
+    usage: "/projecte <sub-command>"
+    aliases: [ projecte ]
+permissions:
+  projecte.command.setemc:
+    description: "允许设置物品的EMC值"
+    default: op
+  projecte.command.reload:
+    description: "允许重载插件"
+    default: op
+  projecte.command.debug:
+    description: "允许调试物品的EMC信息"
+    default: op
+  projecte.command.give:
+    description: "允许转账EMC给其他玩家"
+    default: true
+  projecte.command.noemcitem:
+    description: "允许列出所有没有EMC值的物品"
+    default: op
+  projecte.interact.transmutationtable:
+    description: "允许玩家打开和使用转换桌"
+    default: true
+  projecte.command.bag:
+    description: "允许使用炼金术袋相关命令"
+    default: true
