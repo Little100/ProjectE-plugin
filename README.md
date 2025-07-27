@@ -1,5 +1,5 @@
 # ProjectE
-
+[合成表](./help/recipe.md)
 [English Version](./help/README_en.md)
 
 ## 描述
