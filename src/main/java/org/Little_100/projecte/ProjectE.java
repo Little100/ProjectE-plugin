@@ -32,7 +32,8 @@ public final class ProjectE extends JavaPlugin {
     private LanguageManager languageManager;
     private ResourcePackManager resourcePackManager;
     private SchedulerAdapter schedulerAdapter;
-
+    //private FuelManager fuelManager;
+    // 禁用fuelmanager因为没昨晚 仍然有问题
     // 定义矿物升级顺序
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
@@ -96,6 +97,17 @@ public final class ProjectE extends JavaPlugin {
 
         // 初始化贤者之石物品
         createPhilosopherStone();
+        
+        // 初始化特殊燃料管理器
+        //fuelManager = new FuelManager(this);
+        //getServer().getPluginManager().registerEvents(fuelManager, this);
+        //getLogger().info("FuelManager initialized with special fuels.");
+        
+        // 设置特殊燃料的EMC值
+        //fuelManager.setFuelEmcValues();
+        
+        // 输出特殊燃料的NBT标签信息，供用户添加材质
+        //getLogger().info(fuelManager.getNbtTagInfo());
 
         // 初始化配方管理器
         recipeManager = new RecipeManager(this);
@@ -130,7 +142,7 @@ public final class ProjectE extends JavaPlugin {
         
         // 初始化资源包管理器
         resourcePackManager = new ResourcePackManager(this);
-        getServer().getPluginManager().registerEvents(resourcePackManager, this);
+        //getServer().getPluginManager().registerEvents(resourcePackManager, this);
         getLogger().info("Resource Pack Manager initialized.");
 
         getLogger().info("ProjectE插件已启用!");
@@ -239,14 +251,25 @@ public final class ProjectE extends JavaPlugin {
 
     public void reloadPlugin() {
         reloadConfig();
+
+        // 重新加载语言文件
         languageManager.loadLanguageFiles();
+
+        // 注销并重新注册所有配方
+        if (recipeManager != null) {
+            recipeManager.unregisterAllRecipes();
+            recipeManager.registerAllRecipes();
+            getLogger().info("All recipes have been reloaded from recipe.yml.");
+        }
+
+        // 重新计算 EMC 值
         emcManager = new EmcManager(this);
         emcManager.calculateAndStoreEmcValues();
 
-        // Re-register commands to pass the new LanguageManager instance
-        CommandManager commandManager = new CommandManager(this);
-        getCommand("projecte").setExecutor(commandManager);
-        getCommand("projecte").setTabCompleter(commandManager);
+        // 重新注册命令执行器 (如果需要的话，但通常不是必须的)
+        // CommandManager commandManager = new CommandManager(this);
+        // getCommand("projecte").setExecutor(commandManager);
+        // getCommand("projecte").setTabCompleter(commandManager);
 
         getLogger().info("ProjectE plugin has been reloaded!");
     }
@@ -274,4 +297,10 @@ public final class ProjectE extends JavaPlugin {
     public Material getDowngradedMaterial(Material material) {
         return downgradeMap.getOrDefault(material, null);
     }
+    
+    /*
+    public FuelManager getFuelManager() {
+        return fuelManager;
+    }
+    */
 }

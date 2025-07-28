@@ -61,6 +61,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 return handleLang(sender, args);
             case "report":
                 return handleReport(sender);
+            case "nbtdebug":
+                return handleNbtDebug(sender);
             default:
                 sendHelp(sender);
                 return true;
@@ -387,10 +389,63 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return true;
     }
     
+    private boolean handleNbtDebug(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "该命令只能由玩家执行。");
+            return true;
+        }
+        Player player = (Player) sender;
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item == null || item.getType().isAir()) {
+            sender.sendMessage(ChatColor.YELLOW + "请手持一个物品再执行本命令。");
+            return true;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(ChatColor.AQUA).append("【NBT调试】").append("\n");
+        sb.append(ChatColor.GRAY).append("类型: ").append(item.getType().name()).append("\n");
+        if (item.hasItemMeta()) {
+            sb.append(ChatColor.GRAY).append("DisplayName: ").append(item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "无").append("\n");
+            sb.append(ChatColor.GRAY).append("Lore: ").append(item.getItemMeta().hasLore() ? item.getItemMeta().getLore() : "无").append("\n");
+            if (item.getItemMeta().hasCustomModelData()) {
+                sb.append(ChatColor.GRAY).append("CustomModelData: ").append(item.getItemMeta().getCustomModelData()).append("\n");
+            } else {
+                sb.append(ChatColor.GRAY).append("CustomModelData: 无\n");
+            }
+            sb.append(ChatColor.GRAY).append("PDC: ");
+            var pdc = item.getItemMeta().getPersistentDataContainer();
+            var keys = pdc.getKeys();
+            if (keys.isEmpty()) {
+                sb.append("无\n");
+            } else {
+                sb.append("\n");
+                for (var key : keys) {
+                    sb.append("  - ").append(key.toString()).append(": ");
+                    Object value = pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
+                    if (value != null) {
+                        sb.append(value).append(" (String)");
+                    } else {
+                        value = pdc.get(key, org.bukkit.persistence.PersistentDataType.BYTE);
+                        if (value != null) {
+                            sb.append(value).append(" (Byte)");
+                        } else {
+                            sb.append("存在（未知类型）");
+                        }
+                    }
+                    sb.append("\n");
+                }
+            }
+        } else {
+            sb.append(ChatColor.GRAY).append("无ItemMeta\n");
+        }
+        player.sendMessage(sb.toString());
+        return true;
+    }
+
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            final List<String> subCommands = Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report");
+            final List<String> subCommands = Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug");
             return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
         }
 

@@ -3,8 +3,8 @@ package org.Little_100.projecte;
 import org.Little_100.projecte.compatibility.VersionAdapter;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.*;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,9 +36,13 @@ public class EmcManager {
             boolean changed = false;
             Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
             while (recipeIterator.hasNext()) {
-                Recipe recipe = recipeIterator.next();
-                if (calculateEmcForRecipe(recipe)) {
-                    changed = true;
+                try {
+                    Recipe recipe = recipeIterator.next();
+                    if (calculateEmcForRecipe(recipe)) {
+                        changed = true;
+                    }
+                } catch (Exception e) {
+                    // 捕获并忽略损坏的配方
                 }
             }
             if (!changed) {
@@ -52,6 +56,19 @@ public class EmcManager {
     private boolean calculateEmcForRecipe(Recipe recipe) {
         ItemStack result = recipe.getResult();
         if (result == null || result.getType().isAir()) {
+            return false;
+        }
+
+        NamespacedKey key = null;
+        if (recipe instanceof ShapedRecipe) {
+            key = ((ShapedRecipe) recipe).getKey();
+        } else if (recipe instanceof ShapelessRecipe) {
+            key = ((ShapelessRecipe) recipe).getKey();
+        } else if (recipe instanceof CookingRecipe) {
+            key = ((CookingRecipe<?>) recipe).getKey();
+        }
+
+        if (key != null && key.getNamespace().equalsIgnoreCase("projecte")) {
             return false;
         }
 
@@ -95,16 +112,33 @@ public class EmcManager {
 
         Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
         while (recipeIterator.hasNext()) {
-            Recipe recipe = recipeIterator.next();
-            ItemStack result = recipe.getResult();
+            try {
+                Recipe recipe = recipeIterator.next();
+                ItemStack result = recipe.getResult();
 
-            if (result != null && versionAdapter.getItemKey(result).equals(itemKey)) {
-                long calculatedEmc = versionAdapter.calculateRecipeEmc(recipe, divisionStrategy);
-                if (calculatedEmc > 0) {
-                    if (lowestEmc == -1 || calculatedEmc < lowestEmc) {
-                        lowestEmc = calculatedEmc;
+                NamespacedKey key = null;
+                if (recipe instanceof ShapedRecipe) {
+                    key = ((ShapedRecipe) recipe).getKey();
+                } else if (recipe instanceof ShapelessRecipe) {
+                    key = ((ShapelessRecipe) recipe).getKey();
+                } else if (recipe instanceof CookingRecipe) {
+                    key = ((CookingRecipe<?>) recipe).getKey();
+                }
+
+                if (key != null && key.getNamespace().equalsIgnoreCase("projecte")) {
+                    continue;
+                }
+
+                if (result != null && versionAdapter.getItemKey(result).equals(itemKey)) {
+                    long calculatedEmc = versionAdapter.calculateRecipeEmc(recipe, divisionStrategy);
+                    if (calculatedEmc > 0) {
+                        if (lowestEmc == -1 || calculatedEmc < lowestEmc) {
+                            lowestEmc = calculatedEmc;
+                        }
                     }
                 }
+            } catch (Exception e) {
+                // 捕获并忽略损坏的配方
             }
         }
 

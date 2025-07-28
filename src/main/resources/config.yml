@@ -6,24 +6,6 @@ language: # 设置插件语言, 第一个为主要语言, 后续为备用语言.
 AlchemicalBag:
   enabled: true # 是否启用炼金术袋功能? true/false
   # allow using alchemical bag? true/false
-  recipe:
-    # 定义基础炼金术袋的合成配方
-    # define the recipe of the basic alchemical bag
-    # 你可以使用 "L" (皮革), "D" (钻石块), "C" (箱子)
-    # eg. You can use "L" (Leather), "D" (Diamond Block), "C" (Chest)
-    # 以及 " " (空) 来定义 3x3 的合成矩阵。
-    # and " " (empty) to define a 3x3 matrix for the recipe.
-    shape:
-      - "LDL"
-      - "DCD"
-      - "LDL"
-    ingredients:
-      L: "LEATHER" # 这里定义前面的大写字母为什么物品 这里是[LEATHER]皮革
-      # define the letter before the capitalized item here, and here is [LEATHER] leather
-      C: "CHEST" # 箱子
-      # Chest
-      D: "DIAMOND_BLOCK" # 钻石块
-      # Diamond Block
 
 TransmutationTable:
   enabled: true # 允许使用转换桌? true/false
@@ -593,7 +575,8 @@ resourcepack:
   extract: true
   # 是否强制更新资源包（每次启动都提取）
   force_update: false
-  # 资源包URL（留空则不发送）
-  url: ""
+  # 资源包URL（必须设置为可公开访问的URL，否则客户端将无法加载资源包）
+  # 可以使用文件分享服务、网盘公开链接或自己的网站来托管资源包
+  url: "https://example.com/resourcepacks/ProjectE_Resourcepack.zip"
   # 是否在玩家加入服务器时自动发送资源包
-  auto_send: true
+  auto_send: false

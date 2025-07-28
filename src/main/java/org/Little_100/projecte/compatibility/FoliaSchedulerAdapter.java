@@ -78,8 +78,8 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
         try {
             Method getScheduler = Entity.class.getMethod("getScheduler");
             Object scheduler = getScheduler.invoke(entity);
-            Method execute = findMethodByNameAndParamCount(scheduler.getClass(), "execute", 4);
-            execute.invoke(scheduler, plugin, task, null, 0L);
+            Method execute = findMethodByNameAndParamCount(scheduler.getClass(), "execute", 2);
+            execute.invoke(scheduler, plugin, task);
         } catch (Exception e) {
             throw new RuntimeException("Folia scheduler reflection failed for runTaskOnEntity", e);
         }

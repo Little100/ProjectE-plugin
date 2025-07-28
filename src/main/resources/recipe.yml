@@ -1,0 +1,98 @@
+recipes: # 此文件是合成表配置文件
+  philosopher_stone:
+    - enabled: true # 启用此合成表？ true/false
+      type: "shaped" # 有序合成还是无序合成？ "shaped"/"shapeless"
+      shape: # 合成表内的物品(使用单字缩写)
+        - "RGR"
+        - "GDG"
+        - "RGR"
+      ingredients: # 缩写对应的完整物品名
+        R: "REDSTONE" # 比如这里的R代表红石 
+        # 如果你想替换为其他的比如 钻石 可以写成 D: "DIAMOND"
+        G: "GLOWSTONE_DUST"
+        D: "DIAMOND"
+      result: # 合成结果
+        material: "POPPED_CHORUS_FRUIT" # 物品ID
+        display_name: "§6贤者之石" # 物品名称
+        lore: # 物品描述
+          - "§7强大的炼金术道具"
+          - "§e可转换矿物"
+          - "§e潜行+右键打开工作台"
+        unbreakable: true # 仅装饰
+    # 也支持多合成表的配置
+    - enabled: true # 启用此合成表？ true/false
+      type: "shaped" # 有序合成还是无序合成？ "shaped"/"shapeless"
+      shape: # 合成表内的物品(使用单字缩写)
+        - "GRG"
+        - "RDR"
+        - "GRG"
+      ingredients: # 缩写对应的完整物品名
+        R: "REDSTONE" # 比如这里的R代表红石 
+        # 如果你想替换为其他的比如 钻石 可以写成 D: "DIAMOND"
+        G: "GLOWSTONE_DUST"
+        D: "DIAMOND"
+      result: # 合成结果
+        material: "POPPED_CHORUS_FRUIT" # 物品ID
+        display_name: "§6贤者之石" # 物品名称
+        lore: # 物品描述
+          - "§7强大的炼金术道具"
+          - "§e可转换矿物"
+          - "§e潜行+右键打开工作台"
+        unbreakable: true # 仅装饰
+    # 下方配置文件和上方描述一致
+  transmutation_table:
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "OSO"
+        - "SPS"
+        - "OSO"
+      ingredients:
+        O: "OBSIDIAN"
+        S: "STONE"
+        P: "projecte:philosopher_stone"
+      result:
+        material: "PETRIFIED_OAK_SLAB"
+        display_name: "§5转换桌"
+        lore:
+          - "§7存储和转换物质"
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "SOS"
+        - "OPO"
+        - "SOS"
+      ingredients:
+        S: "STONE"
+        P: "projecte:philosopher_stone"
+      result:
+        material: "PETRIFIED_OAK_SLAB"
+        display_name: "§5转换桌"
+        lore:
+          - "§7存储和转换物质"
+
+  alchemical_bag:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "LDL"
+      - "DCD"
+      - "LDL"
+    ingredients:
+      L: "LEATHER"
+      C: "CHEST"
+      D: "DIAMOND_BLOCK"
+    result:
+      material: "LEATHER_HORSE_ARMOR"
+      display_name: "§d炼金术士袋子"
+      lore:
+        - "§7一个便携式的储物设备"
+# 非常不建议更改下面的配置，除非你知道你在做什么！
+  alchemical_bag_dyeing:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:alchemical_bag"
+      - "any_dye"
+    result:
+      material: "LEATHER_HORSE_ARMOR"
