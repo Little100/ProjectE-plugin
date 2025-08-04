@@ -144,16 +144,16 @@ public class LegacyAdapter implements VersionAdapter {
     public List<String> getRecipeDebugInfo(Recipe recipe, String divisionStrategy) {
         List<String> debugInfo = new ArrayList<>();
         if (recipe == null) {
-            debugInfo.add(" - 配方为空");
+            debugInfo.add(" - Recipe is null");
             return debugInfo;
         }
 
-        debugInfo.add(" - 配方类型: " + recipe.getClass().getSimpleName());
+        debugInfo.add(" - Recipe type: " + recipe.getClass().getSimpleName());
         long calculatedEmc = calculateRecipeEmc(recipe, divisionStrategy);
-        debugInfo.add(" - 计算出的EMC: " + calculatedEmc);
+        debugInfo.add(" - Calculated EMC: " + calculatedEmc);
 
         if (recipe instanceof ShapedRecipe) {
-            debugInfo.add(" - 成分:");
+            debugInfo.add(" - Ingredients:");
             for (Map.Entry<Character, ItemStack> entry : ((ShapedRecipe) recipe).getIngredientMap().entrySet()) {
                 if (entry.getValue() != null) {
                     String key = getItemKey(entry.getValue());
@@ -162,7 +162,7 @@ public class LegacyAdapter implements VersionAdapter {
                 }
             }
         } else if (recipe instanceof ShapelessRecipe) {
-            debugInfo.add(" - 成分:");
+            debugInfo.add(" - Ingredients:");
             for (ItemStack ingredient : ((ShapelessRecipe) recipe).getIngredientList()) {
                 if (ingredient != null) {
                     String key = getItemKey(ingredient);
@@ -171,15 +171,21 @@ public class LegacyAdapter implements VersionAdapter {
                 }
             }
         } else if (recipe instanceof FurnaceRecipe) {
-            debugInfo.add(" - 成分:");
+            debugInfo.add(" - Ingredient:");
             ItemStack input = ((FurnaceRecipe) recipe).getInput();
             if (input != null) {
                 String key = getItemKey(input);
                 long emc = getIngredientEmc(input);
                 debugInfo.add("   - " + key + ": " + emc + " EMC");
             }
+        
         }
         return debugInfo;
+    }
+
+    @Override
+    public boolean isModern() {
+        return false;
     }
     @Override
     public Map<String, NamespacedKey> registerTransmutationTableRecipes() {

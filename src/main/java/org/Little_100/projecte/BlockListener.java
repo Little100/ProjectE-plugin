@@ -21,7 +21,7 @@ public class BlockListener implements Listener {
             Slab slab = (Slab) block.getBlockData();
             if (slab.getType() != Slab.Type.BOTTOM) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "转换桌只能作为下半砖放置。");
+                event.getPlayer().sendMessage(ChatColor.RED + "The Transmutation Table can only be placed as a bottom slab.");
                 return;
             }
         }
@@ -32,7 +32,7 @@ public class BlockListener implements Listener {
                 Slab againstSlab = (Slab) blockAgainst.getBlockData();
                 if (againstSlab.getType() == Slab.Type.BOTTOM) {
                     event.setCancelled(true);
-                    event.getPlayer().sendMessage(ChatColor.RED + "不能在另一个转换桌上放置转换桌。");
+                    event.getPlayer().sendMessage(ChatColor.RED + "You cannot place a Transmutation Table on top of another.");
                 }
             }
         }

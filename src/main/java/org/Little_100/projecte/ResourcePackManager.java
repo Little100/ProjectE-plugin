@@ -1,9 +1,7 @@
 package org.Little_100.projecte;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,26 +38,26 @@ public class ResourcePackManager implements Listener {
             resourcePackSourceDir.mkdirs();
         }
         
-        // 提取资源包文件到插件数据文件夹
+        // 将资源包文件提取到插件数据文件夹
         resourcePackFile = new File(resourcePackDir, "ProjectE_Resourcepack.zip");
         try {
             extractResourcePack();
         } catch (IOException e) {
-            plugin.getLogger().severe("初始化资源包时出错: " + e.getMessage());
+            plugin.getLogger().severe("Error initializing resource pack: " + e.getMessage());
             e.printStackTrace();
         }
         
-        // 从配置获取资源包URL和是否自动发送
+        // 从配置中获取资源包URL和是否自动发送
         resourcePackUrl = plugin.getConfig().getString("resourcepack.url", "");
         autoSendResourcePack = plugin.getConfig().getBoolean("resourcepack.auto_send", true);
     }
     
     public void extractResourcePack() throws IOException {
-        // 检查资源包文件是否已存在，如果不存在或配置为强制更新则提取
+        // 检查资源包文件是否已存在，如果不存在或配置强制更新，则进行提取
         if (!resourcePackFile.exists() || plugin.getConfig().getBoolean("resourcepack.force_update", false)) {
-            plugin.getLogger().info("提取资源包到: " + resourcePackFile.getAbsolutePath());
+            plugin.getLogger().info("Extracting resource pack to: " + resourcePackFile.getAbsolutePath());
             
-            // 从JAR中提取资源包
+            // 从JAR文件中提取资源包
             try (var inputStream = plugin.getResource("pack/ProjectE Resourcepack.zip")) {
                 if (inputStream != null) {
                     Files.copy(
@@ -67,43 +65,35 @@ public class ResourcePackManager implements Listener {
                         Path.of(resourcePackFile.getAbsolutePath()),
                         StandardCopyOption.REPLACE_EXISTING
                     );
-                    plugin.getLogger().info("资源包提取成功");
+                    plugin.getLogger().info("Resource pack extracted successfully.");
                 } else {
-                    plugin.getLogger().warning("无法在JAR中找到资源包");
-                    throw new IOException("资源包文件在JAR中不存在");
+                    plugin.getLogger().warning("Could not find resource pack in JAR.");
+                    throw new IOException("Resource pack file does not exist in JAR.");
                 }
             }
         }
     }
     
-    /**
-     * 向玩家发送资源包
-     * @param player 目标玩家
-     */
     public void sendResourcePack(Player player) {
         if (resourcePackUrl.isEmpty()) {
-            plugin.getLogger().warning("无法向玩家 " + player.getName() + " 发送资源包: 未配置URL");
-            player.sendMessage("§c无法加载自定义材质: 服务器未配置资源包URL");
+            plugin.getLogger().warning("Cannot send resource pack to player " + player.getName() + ": URL not configured.");
+            player.sendMessage("§cCould not load custom textures: Server resource pack URL is not configured.");
             return;
         }
         
-        plugin.getLogger().info("向玩家 " + player.getName() + " 发送资源包");
-        player.sendMessage("§a正在发送自定义材质包...");
+        plugin.getLogger().info("Sending resource pack to player " + player.getName());
+        player.sendMessage("§aSending custom texture pack...");
         player.setResourcePack(resourcePackUrl);
     }
     
-    /**
-     * 从本地资源包目录构建新的ZIP资源包
-     * 这可以用于在服务器修改资源包后重新生成
-     */
     public void rebuildResourcePack() {
         if (!resourcePackSourceDir.exists() || !resourcePackSourceDir.isDirectory()) {
-            plugin.getLogger().warning("资源包源目录不存在，无法重建资源包");
+            plugin.getLogger().warning("Resource pack source directory does not exist, cannot rebuild resource pack.");
             return;
         }
         
         try {
-            plugin.getLogger().info("正在从源目录重建资源包...");
+            plugin.getLogger().info("Rebuilding resource pack from source directory...");
             
             try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(resourcePackFile))) {
                 Files.walkFileTree(resourcePackSourceDir.toPath(), new SimpleFileVisitor<Path>() {
@@ -119,41 +109,18 @@ public class ResourcePackManager implements Listener {
                 });
             }
             
-            plugin.getLogger().info("资源包重建完成: " + resourcePackFile.getAbsolutePath());
+            plugin.getLogger().info("Resource pack rebuilt successfully: " + resourcePackFile.getAbsolutePath());
         } catch (IOException e) {
-            plugin.getLogger().severe("重建资源包时出错: " + e.getMessage());
+            plugin.getLogger().severe("Error rebuilding resource pack: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
-    /**
-     * 获取资源包文件
-     * @return 资源包文件对象
-     */
     public File getResourcePackFile() {
         return resourcePackFile;
     }
     
-    /**
-     * 获取资源包URL
-     * @return 资源包URL字符串
-     */
     public String getResourcePackUrl() {
         return resourcePackUrl;
     }
-    
-    /**
-     * 玩家加入服务器时，如果配置了自动发送资源包，则发送资源包
-     * 注意 默认是关闭的，需要在配置文件中开启
-     */
-    /*
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        if (autoSendResourcePack) {
-            Player player = event.getPlayer();
-            // 延迟发送资源包，确保玩家完全进入服务器
-            plugin.getSchedulerAdapter().runTaskLater(() -> sendResourcePack(player), 40L); // 2秒后发送
-        }
-    }
-    */
 }

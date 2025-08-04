@@ -31,6 +31,46 @@ clientside:
   alchemical_bag:
     default_name: "§fAlchemical Bag"
     colored_name: "{color}{color_name} Alchemical Bag"
+  philosopher_stone_gui:
+    title: "Philosopher's Stone"
+    charge_levels:
+      level_0: "Charge: 0"
+      level_1: "Charge: 1"
+      level_2: "Charge: 2"
+      level_3: "Charge: 3"
+      level_4: "Charge: 4"
+    modes:
+      panel: "Panel Mode"
+      line: "Line Mode"
+      cube: "Cube Mode"
+      current_mode: "Current Mode: {mode}"
+    charge_progress: "Charge Progress {level}/{max_level}"
+  philosopher_stone:
+    mode_change: "Mode changed to: {mode}"
+    ranges:
+      panel_0: "1×1×1"
+      panel_1: "3×3×1"
+      panel_2: "5×5×1"
+      panel_3: "7×7×1"
+      panel_4: "9×9×1"
+      line_0: "1×1×1"
+      line_1: "1×3×1"
+      line_2: "1×5×1"
+      line_3: "1×7×1"
+      line_4: "1×9×1"
+      cube_0: "1×1×1"
+      cube_1: "3×3×3"
+      cube_2: "5×5×5"
+      cube_3: "7×7×7"
+      cube_4: "9×9×9"
+    lore:
+      charge_click: "Click to increase charge level"
+      mode_click: "Click to switch to this mode"
+      current_range: "Current range: {range}"
+      range: "Range: {range}"
+    crafting:
+      title: "Crafting"
+      lore: "Click to open the vanilla crafting table"
 
 # Server-side visible output
 serverside:
@@ -103,3 +143,45 @@ serverside:
     command:
       send_success: "§aResource pack sent to {player}."
       no_url: "§cNo resource pack URL configured, cannot send."
+
+# item lore
+item:
+  philosopher_stone:
+    name: "§6Philosopher's Stone"
+    lore1: "§7A powerful alchemical tool"
+    lore2: "§eCan transmute minerals"
+    lore3: "§eSneak + Right-click to open workbench"
+  transmutation_table:
+    name: "§5Transmutation Table"
+    lore1: "§7Stores and transmutes matter"
+  alchemical_bag:
+    name: "§dAlchemical Bag"
+    lore1: "§7A portable storage device"
+  alchemical_coal:
+    name: "§cAlchemical Coal"
+    lore1: "§7Efficient fuel"
+    lore2: "§eBurn time: 320s"
+  mobius_fuel:
+    name: "§cMobius Fuel"
+    lore1: "§7Highly concentrated fuel"
+    lore2: "§eBurn time: 1280s"
+  aeternalis_fuel:
+    name: "§cAeternalis Fuel"
+    lore1: "§7Nearly eternal fuel"
+    lore2: "§eBurn time: 5120s"
+  alchemical_coal_block:
+    name: "§cAlchemical Coal Block"
+    lore1: "§7Efficient fuel block"
+    lore2: "§eBurn time: 2880s"
+  mobius_fuel_block:
+    name: "§cMobius Fuel Block"
+    lore1: "§7Highly concentrated fuel block"
+    lore2: "§eBurn time: 11520s"
+  aeternalis_fuel_block:
+    name: "§cAeternalis Fuel Block"
+    lore1: "§7Nearly eternal fuel block"
+    lore2: "§eBurn time: 46080s"
+
+# Plugin related
+plugin:
+  autofix_language_file: "Auto-releasing language file: {file}"

@@ -20,7 +20,7 @@ public class NoEmcItemGUI implements InventoryHolder {
         this.items = items;
         this.page = page;
         int totalPages = (int) Math.ceil((double) items.size() / 45);
-        this.inventory = Bukkit.createInventory(this, 54, "No EMC Items (Page " + (page + 1) + "/" + totalPages + ")");
+        this.inventory = Bukkit.createInventory(this, 54, "无EMC物品（第 " + (page + 1) + " / " + totalPages + " 页）");
         loadItems();
     }
 
@@ -34,10 +34,10 @@ public class NoEmcItemGUI implements InventoryHolder {
         }
 
         if (page > 0) {
-            inventory.setItem(45, createNavItem("Previous Page", Material.ARROW));
+            inventory.setItem(45, createNavItem("上一页", Material.ARROW));
         }
         if (endIndex < items.size()) {
-            inventory.setItem(53, createNavItem("Next Page", Material.ARROW));
+            inventory.setItem(53, createNavItem("下一页", Material.ARROW));
         }
     }
 

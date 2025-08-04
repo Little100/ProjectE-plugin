@@ -11,4 +11,5 @@ public interface VersionAdapter {
     void loadInitialEmcValues();
     java.util.List<String> getRecipeDebugInfo(Recipe recipe, String divisionStrategy);
     java.util.Map<String, org.bukkit.NamespacedKey> registerTransmutationTableRecipes();
+    boolean isModern();
 }

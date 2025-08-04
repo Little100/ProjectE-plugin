@@ -2,6 +2,16 @@
 language: # 设置插件语言, 第一个为主要语言, 后续为备用语言.
 # set the first language as the main language, and the rest as the backup language.
   - "zh_cn"
+  - "en_us"
+
+philosopher_stone:
+  particle:
+    enabled: true # 启用粒子效果? true/false
+    # enable particle effect? true/false
+    particle-name: "end_rod" # 粒子效果名称
+    # the name of the particle effect
+    keep-alive: 5 # 粒子效果刷新时间 (秒) -1表示一直刷新
+    # particle effect refresh time (seconds) -1 means always refresh
 
 AlchemicalBag:
   enabled: true # 是否启用炼金术袋功能? true/false

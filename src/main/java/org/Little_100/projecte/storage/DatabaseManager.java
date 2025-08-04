@@ -48,23 +48,19 @@ public class DatabaseManager {
 
     private void createTables() {
         try (Statement statement = connection.createStatement()) {
-            // 物品的EMC值
             statement.execute("CREATE TABLE IF NOT EXISTS emc_values (" +
                     "item_key TEXT PRIMARY KEY," +
                     "emc BIGINT NOT NULL);");
 
-            // 玩家EMC数据
             statement.execute("CREATE TABLE IF NOT EXISTS player_emc (" +
                     "player_uuid TEXT PRIMARY KEY," +
                     "emc BIGINT NOT NULL);");
 
-            // 玩家已学习的物品
             statement.execute("CREATE TABLE IF NOT EXISTS learned_items (" +
                     "player_uuid TEXT NOT NULL," +
                     "item_key TEXT NOT NULL," +
                     "PRIMARY KEY (player_uuid, item_key));");
 
-           // 炼金术袋库存
            statement.execute("CREATE TABLE IF NOT EXISTS alchemical_bags (" +
                    "player_uuid TEXT NOT NULL," +
                    "bag_color TEXT NOT NULL," +
@@ -209,7 +205,7 @@ public class DatabaseManager {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
-        return new ItemStack[54]; // 失败时返回空物品栏
+        return new ItemStack[54];
     }
 
     private String itemStackArrayToBase64(ItemStack[] items) throws IllegalStateException {

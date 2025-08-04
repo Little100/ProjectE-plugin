@@ -13,11 +13,11 @@ recipes: # 此文件是合成表配置文件
         D: "DIAMOND"
       result: # 合成结果
         material: "POPPED_CHORUS_FRUIT" # 物品ID
-        display_name: "§6贤者之石" # 物品名称
-        lore: # 物品描述
-          - "§7强大的炼金术道具"
-          - "§e可转换矿物"
-          - "§e潜行+右键打开工作台"
+        display_name: "item.philosopher_stone.name"
+        lore:
+          - "item.philosopher_stone.lore1"
+          - "item.philosopher_stone.lore2"
+          - "item.philosopher_stone.lore3"
         unbreakable: true # 仅装饰
     # 也支持多合成表的配置
     - enabled: true # 启用此合成表？ true/false
@@ -33,11 +33,11 @@ recipes: # 此文件是合成表配置文件
         D: "DIAMOND"
       result: # 合成结果
         material: "POPPED_CHORUS_FRUIT" # 物品ID
-        display_name: "§6贤者之石" # 物品名称
-        lore: # 物品描述
-          - "§7强大的炼金术道具"
-          - "§e可转换矿物"
-          - "§e潜行+右键打开工作台"
+        display_name: "item.philosopher_stone.name"
+        lore:
+          - "item.philosopher_stone.lore1"
+          - "item.philosopher_stone.lore2"
+          - "item.philosopher_stone.lore3"
         unbreakable: true # 仅装饰
     # 下方配置文件和上方描述一致
   transmutation_table:
@@ -53,9 +53,9 @@ recipes: # 此文件是合成表配置文件
         P: "projecte:philosopher_stone"
       result:
         material: "PETRIFIED_OAK_SLAB"
-        display_name: "§5转换桌"
+        display_name: "item.transmutation_table.name"
         lore:
-          - "§7存储和转换物质"
+          - "item.transmutation_table.lore1"
     - enabled: true
       type: "shaped"
       shape:
@@ -67,9 +67,9 @@ recipes: # 此文件是合成表配置文件
         P: "projecte:philosopher_stone"
       result:
         material: "PETRIFIED_OAK_SLAB"
-        display_name: "§5转换桌"
+        display_name: "item.transmutation_table.name"
         lore:
-          - "§7存储和转换物质"
+          - "item.transmutation_table.lore1"
 
   alchemical_bag:
     enabled: true
@@ -84,9 +84,9 @@ recipes: # 此文件是合成表配置文件
       D: "DIAMOND_BLOCK"
     result:
       material: "LEATHER_HORSE_ARMOR"
-      display_name: "§d炼金术士袋子"
+      display_name: "item.alchemical_bag.name"
       lore:
-        - "§7一个便携式的储物设备"
+        - "item.alchemical_bag.lore1"
 # 非常不建议更改下面的配置，除非你知道你在做什么！
   alchemical_bag_dyeing:
     enabled: true

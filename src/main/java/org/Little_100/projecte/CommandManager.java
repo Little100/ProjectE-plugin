@@ -5,12 +5,17 @@ import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
 
 import java.io.File;
@@ -63,6 +68,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 return handleReport(sender);
             case "nbtdebug":
                 return handleNbtDebug(sender);
+            case "guitest":
+                return handleGuiTest(sender, args);
             default:
                 sendHelp(sender);
                 return true;
@@ -164,7 +171,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         placeholders.put("emc", String.valueOf(emc));
         sender.sendMessage(languageManager.get("serverside.command.debug.emc_value", placeholders));
 
-        placeholders.put("learned", learned ? "是" : "否");
+        placeholders.put("learned", learned ? "Yes" : "No");
         sender.sendMessage(languageManager.get("serverside.command.debug.is_learned", placeholders));
 
 
@@ -391,61 +398,82 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     
     private boolean handleNbtDebug(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "该命令只能由玩家执行。");
+            sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
             return true;
         }
         Player player = (Player) sender;
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item == null || item.getType().isAir()) {
-            sender.sendMessage(ChatColor.YELLOW + "请手持一个物品再执行本命令。");
+            sender.sendMessage(ChatColor.YELLOW + "Please hold an item in your hand to execute this command.");
             return true;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(ChatColor.AQUA).append("【NBT调试】").append("\n");
-        sb.append(ChatColor.GRAY).append("类型: ").append(item.getType().name()).append("\n");
-        if (item.hasItemMeta()) {
-            sb.append(ChatColor.GRAY).append("DisplayName: ").append(item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "无").append("\n");
-            sb.append(ChatColor.GRAY).append("Lore: ").append(item.getItemMeta().hasLore() ? item.getItemMeta().getLore() : "无").append("\n");
-            if (item.getItemMeta().hasCustomModelData()) {
-                sb.append(ChatColor.GRAY).append("CustomModelData: ").append(item.getItemMeta().getCustomModelData()).append("\n");
+        sb.append(ChatColor.AQUA).append("[NBT Debug]").append("\n");
+        sb.append(ChatColor.GRAY).append("Type: ").append(item.getType().name()).append("\n");
+        
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            sb.append(ChatColor.GRAY).append("DisplayName: ").append(meta.hasDisplayName() ? meta.getDisplayName() : "None").append("\n");
+            sb.append(ChatColor.GRAY).append("Lore: ").append(meta.hasLore() ? meta.getLore() : "None").append("\n");
+            
+            if (meta.hasCustomModelData()) {
+                try {
+                    sb.append(ChatColor.GRAY).append("CustomModelData: ").append(meta.getCustomModelData()).append("\n");
+                } catch (IllegalStateException e) {
+                    sb.append(ChatColor.GRAY).append("CustomModelData: Exists but cannot be read (").append(e.getMessage()).append(")\n");
+                }
             } else {
-                sb.append(ChatColor.GRAY).append("CustomModelData: 无\n");
+                sb.append(ChatColor.GRAY).append("CustomModelData: None\n");
             }
+            
             sb.append(ChatColor.GRAY).append("PDC: ");
-            var pdc = item.getItemMeta().getPersistentDataContainer();
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
             var keys = pdc.getKeys();
             if (keys.isEmpty()) {
-                sb.append("无\n");
+                sb.append("None\n");
             } else {
                 sb.append("\n");
                 for (var key : keys) {
                     sb.append("  - ").append(key.toString()).append(": ");
-                    Object value = pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
-                    if (value != null) {
-                        sb.append(value).append(" (String)");
+                    if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.STRING, "String")) {
+                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.INTEGER, "Integer")) {
+                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.LONG, "Long")) {
+                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.DOUBLE, "Double")) {
+                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.FLOAT, "Float")) {
+                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.BYTE, "Byte")) {
+                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.SHORT, "Short")) {
                     } else {
-                        value = pdc.get(key, org.bukkit.persistence.PersistentDataType.BYTE);
-                        if (value != null) {
-                            sb.append(value).append(" (Byte)");
-                        } else {
-                            sb.append("存在（未知类型）");
-                        }
+                        sb.append("Exists (unknown or complex type)");
                     }
                     sb.append("\n");
                 }
             }
         } else {
-            sb.append(ChatColor.GRAY).append("无ItemMeta\n");
+            sb.append(ChatColor.GRAY).append("No ItemMeta\n");
         }
         player.sendMessage(sb.toString());
         return true;
     }
 
 
+    private <T, Z> boolean tryAppendPdcValue(StringBuilder sb, PersistentDataContainer pdc, NamespacedKey key, PersistentDataType<T, Z> type, String typeName) {
+        if (pdc.has(key, type)) {
+            try {
+                Z value = pdc.get(key, type);
+                sb.append(value).append(" (").append(typeName).append(")");
+                return true;
+            } catch (Exception e) {
+                sb.append("Error reading (").append(typeName).append("): ").append(e.getMessage());
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            final List<String> subCommands = Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug");
+            final List<String> subCommands = Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "guitest");
             return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
         }
 
@@ -463,6 +491,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("lang")) {
                 return StringUtil.copyPartialMatches(args[1], Arrays.asList("list", "set"), new ArrayList<>());
             }
+            if (args[0].equalsIgnoreCase("guitest")) {
+                return StringUtil.copyPartialMatches(args[1], Collections.singletonList("<rows>"), new ArrayList<>());
+            }
         }
 
         if (args.length >= 3 && args[0].equalsIgnoreCase("lang") && args[1].equalsIgnoreCase("set")) {
@@ -477,5 +508,33 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return StringUtil.copyPartialMatches(args[args.length - 1], langFiles, new ArrayList<>());
         }
         return new ArrayList<>();
+    }
+
+    private boolean handleGuiTest(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
+            return true;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(ChatColor.RED + "Usage: /projecte guitest <rows>");
+            return true;
+        }
+
+        Player player = (Player) sender;
+        try {
+            int rows = Integer.parseInt(args[1]);
+            int size = rows * 9;
+
+            Inventory testGui = Bukkit.createInventory(null, size, "Test GUI (" + rows + " rows)");
+            player.openInventory(testGui);
+
+        } catch (NumberFormatException e) {
+            player.sendMessage(ChatColor.RED + "Invalid number: " + args[1]);
+        } catch (IllegalArgumentException e) {
+            player.sendMessage(ChatColor.RED + "Error creating GUI: " + e.getMessage());
+            player.sendMessage(ChatColor.YELLOW + "Hint: The size of a chest GUI must be a multiple of 9.");
+        }
+        return true;
     }
 }

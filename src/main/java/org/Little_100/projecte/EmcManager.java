@@ -5,6 +5,9 @@ import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,11 +31,11 @@ public class EmcManager {
     }
 
     public void calculateAndStoreEmcValues() {
-        plugin.getLogger().info("开始计算EMC值...");
+        plugin.getLogger().info("Start calculating EMC values...");
         versionAdapter.loadInitialEmcValues();
 
         for (int i = 0; i < 10; i++) {
-            plugin.getLogger().info("EMC计算迭代第 " + (i + 1) + " 轮...");
+            plugin.getLogger().info("EMC calculation iteration " + (i + 1) + "...");
             boolean changed = false;
             Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
             while (recipeIterator.hasNext()) {
@@ -46,11 +49,11 @@ public class EmcManager {
                 }
             }
             if (!changed) {
-                plugin.getLogger().info("EMC值已稳定，提前结束计算。");
+                plugin.getLogger().info("EMC values stabilized, calculation ended early.");
                 break;
             }
         }
-        plugin.getLogger().info("EMC值计算完成。");
+        plugin.getLogger().info("EMC value calculation completed.");
     }
 
     private boolean calculateEmcForRecipe(Recipe recipe) {
@@ -72,7 +75,7 @@ public class EmcManager {
             return false;
         }
 
-        String resultKey = versionAdapter.getItemKey(result);
+        String resultKey = getItemKey(result);
         long existingEmc = databaseManager.getEmc(resultKey);
         long newEmc = versionAdapter.calculateRecipeEmc(recipe, divisionStrategy);
 
@@ -129,7 +132,7 @@ public class EmcManager {
                     continue;
                 }
 
-                if (result != null && versionAdapter.getItemKey(result).equals(itemKey)) {
+                if (result != null && getItemKey(result).equals(itemKey)) {
                     long calculatedEmc = versionAdapter.calculateRecipeEmc(recipe, divisionStrategy);
                     if (calculatedEmc > 0) {
                         if (lowestEmc == -1 || calculatedEmc < lowestEmc) {
@@ -150,5 +153,22 @@ public class EmcManager {
         }
 
         return 0;
+    }
+    public String getItemKey(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return "minecraft:air";
+        }
+        if (item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                PersistentDataContainer container = meta.getPersistentDataContainer();
+                NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
+                if (container.has(idKey, PersistentDataType.STRING)) {
+                    String projecteId = container.get(idKey, PersistentDataType.STRING);
+                    return versionAdapter.getItemKey(item) + "{projecte_id:\"" + projecteId + "\"}";
+                }
+            }
+        }
+        return versionAdapter.getItemKey(item);
     }
 }

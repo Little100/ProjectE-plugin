@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.Little_100'
-version = '0.1.2'
+version = '0.1.3'
 
 repositories {
     mavenCentral()
@@ -81,9 +81,9 @@ task verifyResourcesExist {
         requiredFiles.each { fileName ->
             def resourceFile = new File(buildDir, fileName)
             if (!resourceFile.exists()) {
-                throw new GradleException("必要文件 '${fileName}' 在输出资源中不存在!")
+                throw new GradleException("Required file '${fileName}' does not exist in the output resources!")
             } else {
-                println "${fileName} 存在于输出资源中"
+                println "${fileName} exists in the output resources"
             }
         }
     }

@@ -30,13 +30,16 @@ public class SpigotSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public void runTaskAtLocation(Location location, Runnable task) {
-        // Spigot doesn't have a direct equivalent, run on main thread
         runTask(task);
     }
 
     @Override
     public void runTaskOnEntity(Entity entity, Runnable task) {
-        // Spigot doesn't have a direct equivalent, run on main thread
         runTask(task);
+    }
+
+    @Override
+    public void runTimer(Runnable task, long delay, long period) {
+        Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
     }
 }

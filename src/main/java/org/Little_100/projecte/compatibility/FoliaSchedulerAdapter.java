@@ -84,4 +84,16 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
             throw new RuntimeException("Folia scheduler reflection failed for runTaskOnEntity", e);
         }
     }
+
+    @Override
+    public void runTimer(Runnable task, long delay, long period) {
+        try {
+            Method getGlobalRegionScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler");
+            Object scheduler = getGlobalRegionScheduler.invoke(null);
+            Method runAtFixedRate = findMethodByNameAndParamCount(scheduler.getClass(), "runAtFixedRate", 4);
+            runAtFixedRate.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), delay, period);
+        } catch (Exception e) {
+            throw new RuntimeException("Folia scheduler reflection failed for runTimer", e);
+        }
+    }
 }

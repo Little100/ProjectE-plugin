@@ -239,8 +239,14 @@ public class ModernAdapter implements VersionAdapter {
             } catch (Exception e) {
                 debugInfo.add("   - (无法获取成分)");
             }
+        
         }
         return debugInfo;
+    }
+
+    @Override
+    public boolean isModern() {
+        return true;
     }
     @Override
     public Map<String, NamespacedKey> registerTransmutationTableRecipes() {

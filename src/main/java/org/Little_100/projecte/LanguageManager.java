@@ -31,10 +31,8 @@ public class LanguageManager {
         langConfigs.clear();
         List<String> langNames = plugin.getConfig().getStringList("language");
         if (langNames.isEmpty()) {
-            langNames.add("zh_cn"); // 默认中文
+            langNames.add("zh_cn"); // 默认使用中文
         }
-
-        Collections.reverse(langNames);
 
         for (String lang : langNames) {
             File langFile = new File(plugin.getDataFolder(), lang + ".yml");
@@ -53,7 +51,6 @@ public class LanguageManager {
             }
             langConfigs.add(config);
         }
-        Collections.reverse(langConfigs);
     }
 
     public String get(String key) {
@@ -70,7 +67,7 @@ public class LanguageManager {
         }
 
         if (message == null) {
-            plugin.getLogger().warning("Missing translation for key: " + key);
+            plugin.getLogger().warning("缺少翻译键: " + key);
             return key;
         }
 

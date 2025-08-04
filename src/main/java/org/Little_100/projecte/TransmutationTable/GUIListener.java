@@ -23,7 +23,7 @@ import java.util.Map;
 public class GUIListener implements Listener {
 
     public GUIListener() {
-        // No longer cache managers, get them dynamically
+        // huh?
     }
 
     @EventHandler
@@ -84,23 +84,23 @@ public class GUIListener implements Listener {
 
     private void handleMainScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
         int slot = event.getSlot();
-        if (slot == 21) { // 卖
+        if (slot == 21) {
             gui.setState(TransmutationGUI.GuiState.SELL);
-        } else if (slot == 23) { // 买
+        } else if (slot == 23) {
             gui.setState(TransmutationGUI.GuiState.BUY);
-        } else if (slot == 22) { // 学习
+        } else if (slot == 22) {
             gui.setState(TransmutationGUI.GuiState.LEARN);
-        }
+        } // 卖学买
     }
 
     private void handleSellScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
         int slot = event.getSlot();
 
-        if (slot == 0) { // 返回
+        if (slot == 0) {
             gui.setState(TransmutationGUI.GuiState.MAIN);
-        } else if (slot == 49) { // 确认
+        } else if (slot == 49) {
             handleTransaction(event.getWhoClicked(), gui);
-        }
+        } // 返回 确认
     }
 
     private void updateSellButton(TransmutationGUI gui) {
@@ -111,7 +111,7 @@ public class GUIListener implements Listener {
                 if (isTransactionArea(i)) {
                     ItemStack item = inventory.getItem(i);
                     if (item != null && !item.getType().isAir()) {
-                        long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(ProjectE.getInstance().getVersionAdapter().getItemKey(item));
+                        long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(ProjectE.getInstance().getEmcManager().getItemKey(item));
                         if (itemEmc > 0) {
                             totalEmcChange += itemEmc * item.getAmount();
                         }
@@ -147,24 +147,23 @@ public class GUIListener implements Listener {
         if (slot == 0) { // 返回按钮
             gui.setState(TransmutationGUI.GuiState.MAIN);
             return;
-        } else if (slot == 48) { // 上一页
+        } else if (slot == 48) {
             if (gui.getPage() > 0) {
                 gui.setPage(gui.getPage() - 1);
             }
             return;
-        } else if (slot == 50) { // 下一页
+        } else if (slot == 50) {
             gui.setPage(gui.getPage() + 1);
             return;
         }
 
-        // 忽略边框点击
         if (slot < 9 || slot > 44 || slot % 9 == 0 || slot % 9 == 8) {
             return;
         }
 
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem != null && !clickedItem.getType().isAir()) {
-            String itemKey = ProjectE.getInstance().getVersionAdapter().getItemKey(clickedItem);
+            String itemKey = ProjectE.getInstance().getEmcManager().getItemKey(clickedItem);
             long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(itemKey);
             if (itemEmc <= 0) return;
 
@@ -191,7 +190,7 @@ public class GUIListener implements Listener {
                     amountToBuy = clickedItem.getMaxStackSize();
                     totalCost = itemEmc * amountToBuy;
                 } else {
-                    return; // 其他点击类型不做处理
+                    return;
                 }
             }
 
@@ -201,13 +200,11 @@ public class GUIListener implements Listener {
 
                     ItemStack purchasedItem;
                     if (ProjectE.getInstance().isPhilosopherStone(clickedItem)) {
-                        // 直接获取一个功能完好的贤者之石
                         purchasedItem = ProjectE.getInstance().getPhilosopherStone();
-                        purchasedItem.setAmount(1); // 确保数量是1
+                        purchasedItem.setAmount(1);
                     } else {
                         purchasedItem = clickedItem.clone();
                         purchasedItem.setAmount(amountToBuy);
-                        // 对于普通物品，清除其在GUI中用于显示的元数据
                         ItemMeta meta = purchasedItem.getItemMeta();
                         if (meta != null) {
                             meta.setLore(null);
@@ -217,13 +214,11 @@ public class GUIListener implements Listener {
                     }
                     player.getInventory().addItem(purchasedItem);
 
-                    // 使用 getDisplayName() 来获取正确的物品名称
                     String displayName;
                     ItemMeta meta = purchasedItem.getItemMeta();
                     if (meta != null && meta.hasDisplayName()) {
                         displayName = meta.getDisplayName();
                     } else {
-                        // 创建一个临时物品以获取其默认的本地化名称
                         ItemStack tempItem = new ItemStack(purchasedItem.getType());
                         ItemMeta tempMeta = tempItem.getItemMeta();
                         if (tempMeta != null && tempMeta.hasDisplayName()) {
@@ -238,7 +233,6 @@ public class GUIListener implements Listener {
                     placeholders.put("item", displayName);
                     player.sendMessage(lang.get("serverside.command.generic.buy_success", placeholders));
 
-                    // 刷新GUI
                     refreshGui(player, TransmutationGUI.GuiState.BUY, gui.getPage());
 
                 } else {
@@ -258,7 +252,7 @@ public class GUIListener implements Listener {
             if (isTransactionArea(i)) {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && !item.getType().isAir()) {
-                    String itemKey = ProjectE.getInstance().getVersionAdapter().getItemKey(item);
+                    String itemKey = ProjectE.getInstance().getEmcManager().getItemKey(item);
                     long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(itemKey);
                     if (itemEmc > 0) {
                         totalEmcChange += itemEmc * item.getAmount();
@@ -268,7 +262,6 @@ public class GUIListener implements Listener {
                         Map<String, String> placeholders = new HashMap<>();
                         placeholders.put("item", item.getType().name());
                         player.sendMessage(lang.get("serverside.command.generic.no_emc_value_trade", placeholders));
-                        // 将物品返还给玩家
                         player.getInventory().addItem(item);
                         inventory.setItem(i, null);
                         transactionValid = false;
@@ -293,14 +286,12 @@ public class GUIListener implements Listener {
         }
 
 
-        // 清空交易区域
         for (int i = 0; i < 54; i++) {
             if (isTransactionArea(i)) {
                 inventory.setItem(i, null);
             }
         }
         
-        // 刷新GUI
         refreshGui(player, TransmutationGUI.GuiState.SELL, 0);
     }
 
@@ -308,9 +299,9 @@ public class GUIListener implements Listener {
         int slot = event.getSlot();
         if (event.getClickedInventory() != gui.getInventory()) return;
 
-        if (slot == 0) { // 返回
+        if (slot == 0) {
             gui.setState(TransmutationGUI.GuiState.MAIN);
-        } else if (slot == 49) { // 确认
+        } else if (slot == 49) {
             handleLearn(event.getWhoClicked(), gui);
         } else if (isTransactionArea(slot)) {
             event.setCancelled(false);
@@ -326,7 +317,7 @@ public class GUIListener implements Listener {
             if (isTransactionArea(i)) {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && !item.getType().isAir()) {
-                    String itemKey = ProjectE.getInstance().getVersionAdapter().getItemKey(item);
+                    String itemKey = ProjectE.getInstance().getEmcManager().getItemKey(item);
                     long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(itemKey);
                     if (itemEmc > 0) {
                         ProjectE.getInstance().getDatabaseManager().addLearnedItem(player.getUniqueId(), itemKey);
@@ -345,13 +336,11 @@ public class GUIListener implements Listener {
             player.sendMessage(ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.learn_success"));
         }
 
-        // 将物品返还给玩家
         for (int i = 0; i < 54; i++) {
             if (isTransactionArea(i)) {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && !item.getType().isAir()) {
                     player.getInventory().addItem(item);
-                    // 从GUI中清除物品以防止关闭时重复
                     inventory.setItem(i, null);
                 }
             }
@@ -415,9 +404,9 @@ public class GUIListener implements Listener {
         }
 
         int slot = event.getSlot();
-        if (slot == 45 && gui.getPage() > 0) { // 上一页
+        if (slot == 45 && gui.getPage() > 0) {
             new NoEmcItemGUI(gui.getItems(), gui.getPage() - 1).openInventory(player);
-        } else if (slot == 53) { // 下一页
+        } else if (slot == 53) {
             int startIndex = (gui.getPage() + 1) * 45;
             if (startIndex < gui.getItems().size()) {
                 new NoEmcItemGUI(gui.getItems(), gui.getPage() + 1).openInventory(player);

@@ -125,25 +125,23 @@ public class TransmutationGUI implements InventoryHolder {
         }
 
         java.util.List<String> learnedItems = databaseManager.getLearnedItems(player.getUniqueId());
-        int itemsPerPage = 28; // 4行 * 7列
+        int itemsPerPage = 28; // 4*7
         int startIndex = page * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, learnedItems.size());
 
         int slotIndex = 0;
         for (int i = startIndex; i < endIndex; i++) {
             String itemKey = learnedItems.get(i);
-            String materialName = itemKey.replace("minecraft:", "").toUpperCase();
-            Material material = versionAdapter.getMaterial(materialName);
-            if (material != null) {
+            ItemStack item = ProjectE.getInstance().getItemStackFromKey(itemKey);
+            if (item != null) {
                 long emc = emcManager.getEmc(itemKey);
                 if (emc > 0) {
-                    ItemStack item = new ItemStack(material);
                     ItemMeta meta = item.getItemMeta();
-                    long stackEmc = emc * material.getMaxStackSize();
+                    long stackEmc = emc * item.getMaxStackSize();
                     Map<String, String> lorePlaceholders = new HashMap<>();
                     lorePlaceholders.put("emc", String.format("%,d", emc));
                     lorePlaceholders.put("stack_emc", String.format("%,d", stackEmc));
-                    lorePlaceholders.put("amount", String.valueOf(material.getMaxStackSize()));
+                    lorePlaceholders.put("amount", String.valueOf(item.getMaxStackSize()));
 
                     meta.setLore(Arrays.asList(
                             languageManager.get("clientside.transmutation_table.item_lore.emc_single", lorePlaceholders),
@@ -198,7 +196,7 @@ public class TransmutationGUI implements InventoryHolder {
 
     public void setState(GuiState state) {
         this.currentState = state;
-        this.page = 0; // 切换状态时重置页数
+        this.page = 0;
         initializeItems();
     }
 

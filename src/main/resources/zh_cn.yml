@@ -29,6 +29,70 @@ clientside:
   alchemical_bag:
     default_name: "§f炼金术袋"
     colored_name: "{color}{color_name} 炼金术袋"
+  philosopher_stone_gui:
+    title: "贤者之石"
+    charge_levels:
+      level_0: "充能: 0"
+      level_1: "充能: 1"
+      level_2: "充能: 2"
+      level_3: "充能: 3"
+      level_4: "充能: 4"
+    modes:
+      panel: "平面模式"
+      line: "线条模式"
+      cube: "立方体模式"
+      current_mode: "当前模式: {mode}"
+    ranges:
+      panel_0: "1×1×1"
+      panel_1: "3×3×1"
+      panel_2: "5×5×1"
+      panel_3: "7×7×1"
+      panel_4: "9×9×1"
+      line_0: "1×1×1"
+      line_1: "1×3×1"
+      line_2: "1×5×1"
+      line_3: "1×7×1"
+      line_4: "1×9×1"
+      cube_0: "1×1×1"
+      cube_1: "3×3×3"
+      cube_2: "5×5×5"
+      cube_3: "7×7×7"
+      cube_4: "9×9×9"
+    lore:
+      charge_click: "点击增加充能等级"
+      mode_click: "点击切换到此模式"
+      current_range: "当前范围: {range}"
+      range: "范围: {range}"
+    crafting:
+      title: "合成"
+      lore: "点击打开原版工作台"
+    charge_progress: "充能进度 {level}/{max_level}"
+  philosopher_stone:
+    mode_change: "模式已切换为: {mode}"
+    ranges:
+      panel_0: "1×1×1"
+      panel_1: "3×3×1"
+      panel_2: "5×5×1"
+      panel_3: "7×7×1"
+      panel_4: "9×9×1"
+      line_0: "1×1×1"
+      line_1: "1×3×1"
+      line_2: "1×5×1"
+      line_3: "1×7×1"
+      line_4: "1×9×1"
+      cube_0: "1×1×1"
+      cube_1: "3×3×3"
+      cube_2: "5×5×5"
+      cube_3: "7×7×7"
+      cube_4: "9×9×9"
+    lore:
+      charge_click: "点击增加充能等级"
+      mode_click: "点击切换到此模式"
+      current_range: "当前范围: {range}"
+      range: "范围: {range}"
+    crafting:
+      title: "合成"
+      lore: "点击打开原版工作台"
 
 # 服务端可见的输出
 serverside:
@@ -101,3 +165,45 @@ serverside:
     command:
       send_success: "§a已向 {player} 发送资源包。"
       no_url: "§c未配置资源包URL，无法发送。"
+
+# 物品显示的信息
+item:
+  philosopher_stone:
+    name: "§6贤者之石"
+    lore1: "§7强大的炼金术道具"
+    lore2: "§e可转换矿物"
+    lore3: "§e潜行+右键打开工作台"
+  transmutation_table:
+    name: "§5转换桌"
+    lore1: "§7存储和转换物质"
+  alchemical_bag:
+    name: "§d炼金术士袋子"
+    lore1: "§7一个便携式的储物设备"
+  alchemical_coal:
+    name: "§c炼金煤炭"
+    lore1: "§7高效燃料"
+    lore2: "§e燃烧时间: 320s"
+  mobius_fuel:
+    name: "§c莫比乌斯燃料"
+    lore1: "§7高度浓缩的燃料"
+    lore2: "§e燃烧时间: 1280s"
+  aeternalis_fuel:
+    name: "§c永恒燃料"
+    lore1: "§7近乎永恒的燃料"
+    lore2: "§e燃烧时间: 5120s"
+  alchemical_coal_block:
+    name: "§c炼金煤炭块"
+    lore1: "§7高效燃料块"
+    lore2: "§e燃烧时间: 2880s"
+  mobius_fuel_block:
+    name: "§c莫比乌斯燃料块"
+    lore1: "§7高度浓缩的燃料块"
+    lore2: "§e燃烧时间: 11520s"
+  aeternalis_fuel_block:
+    name: "§c永恒燃料块"
+    lore1: "§7近乎永恒的燃料块"
+    lore2: "§e燃烧时间: 46080s"
+
+# 插件相关
+plugin:
+  autofix_language_file: "自动释放语言文件: {file}"
