@@ -111,7 +111,8 @@ public class GUIListener implements Listener {
                 if (isTransactionArea(i)) {
                     ItemStack item = inventory.getItem(i);
                     if (item != null && !item.getType().isAir()) {
-                        long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(ProjectE.getInstance().getEmcManager().getItemKey(item));
+                        long itemEmc = ProjectE.getInstance().getEmcManager()
+                                .getEmc(ProjectE.getInstance().getEmcManager().getItemKey(item));
                         if (itemEmc > 0) {
                             totalEmcChange += itemEmc * item.getAmount();
                         }
@@ -129,8 +130,7 @@ public class GUIListener implements Listener {
                     placeholders.put("emc", formattedEmc);
                     meta.setLore(Arrays.asList(
                             lang.get("clientside.transmutation_table.buttons.confirm_transaction_lore"),
-                            lang.get("clientside.transmutation_table.buttons.you_will_get", placeholders)
-                    ));
+                            lang.get("clientside.transmutation_table.buttons.you_will_get", placeholders)));
                     confirmButton.setItemMeta(meta);
                 }
             }
@@ -141,7 +141,8 @@ public class GUIListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
 
-        if (event.getClickedInventory() != gui.getInventory()) return;
+        if (event.getClickedInventory() != gui.getInventory())
+            return;
 
         // 处理导航和边框点击
         if (slot == 0) { // 返回按钮
@@ -165,7 +166,8 @@ public class GUIListener implements Listener {
         if (clickedItem != null && !clickedItem.getType().isAir()) {
             String itemKey = ProjectE.getInstance().getEmcManager().getItemKey(clickedItem);
             long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(itemKey);
-            if (itemEmc <= 0) return;
+            if (itemEmc <= 0)
+                return;
 
             long playerEmc = ProjectE.getInstance().getDatabaseManager().getPlayerEmc(player.getUniqueId());
             int amountToBuy;
@@ -175,7 +177,8 @@ public class GUIListener implements Listener {
             if (ProjectE.getInstance().isPhilosopherStone(clickedItem)) {
                 // 检查玩家是否已经拥有贤者之石
                 if (player.getInventory().containsAtLeast(ProjectE.getInstance().getPhilosopherStone(), 1)) {
-                    player.sendMessage(ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.already_have_philosopher_stone"));
+                    player.sendMessage(ProjectE.getInstance().getLanguageManager()
+                            .get("serverside.command.generic.already_have_philosopher_stone"));
                     return;
                 }
                 // 对于贤者之石，强制购买数量为1，无论左右键
@@ -196,7 +199,8 @@ public class GUIListener implements Listener {
 
             if (amountToBuy > 0) {
                 if (playerEmc >= totalCost) {
-                    ProjectE.getInstance().getDatabaseManager().setPlayerEmc(player.getUniqueId(), playerEmc - totalCost);
+                    ProjectE.getInstance().getDatabaseManager().setPlayerEmc(player.getUniqueId(),
+                            playerEmc - totalCost);
 
                     ItemStack purchasedItem;
                     if (ProjectE.getInstance().isPhilosopherStone(clickedItem)) {
@@ -236,7 +240,8 @@ public class GUIListener implements Listener {
                     refreshGui(player, TransmutationGUI.GuiState.BUY, gui.getPage());
 
                 } else {
-                    player.sendMessage(ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.not_enough_emc"));
+                    player.sendMessage(ProjectE.getInstance().getLanguageManager()
+                            .get("serverside.command.generic.not_enough_emc"));
                 }
             }
         }
@@ -271,10 +276,11 @@ public class GUIListener implements Listener {
         }
 
         if (!transactionValid) {
-             player.sendMessage(ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.partial_trade_fail"));
-             return;
+            player.sendMessage(
+                    ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.partial_trade_fail"));
+            return;
         }
-        
+
         if (totalEmcChange > 0) {
             long currentEmc = ProjectE.getInstance().getDatabaseManager().getPlayerEmc(player.getUniqueId());
             long newEmc = currentEmc + totalEmcChange;
@@ -285,19 +291,19 @@ public class GUIListener implements Listener {
             player.sendMessage(lang.get("serverside.command.generic.sell_success", placeholders));
         }
 
-
         for (int i = 0; i < 54; i++) {
             if (isTransactionArea(i)) {
                 inventory.setItem(i, null);
             }
         }
-        
+
         refreshGui(player, TransmutationGUI.GuiState.SELL, 0);
     }
 
     private void handleLearnScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
         int slot = event.getSlot();
-        if (event.getClickedInventory() != gui.getInventory()) return;
+        if (event.getClickedInventory() != gui.getInventory())
+            return;
 
         if (slot == 0) {
             gui.setState(TransmutationGUI.GuiState.MAIN);
@@ -333,7 +339,8 @@ public class GUIListener implements Listener {
         }
 
         if (learnedSomething) {
-            player.sendMessage(ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.learn_success"));
+            player.sendMessage(
+                    ProjectE.getInstance().getLanguageManager().get("serverside.command.generic.learn_success"));
         }
 
         for (int i = 0; i < 54; i++) {
@@ -373,7 +380,8 @@ public class GUIListener implements Listener {
         }
 
         TransmutationGUI gui = (TransmutationGUI) holder;
-        if (gui.getCurrentState() == TransmutationGUI.GuiState.SELL || gui.getCurrentState() == TransmutationGUI.GuiState.LEARN) {
+        if (gui.getCurrentState() == TransmutationGUI.GuiState.SELL
+                || gui.getCurrentState() == TransmutationGUI.GuiState.LEARN) {
             Inventory inventory = event.getInventory();
             Player player = (Player) event.getPlayer();
 

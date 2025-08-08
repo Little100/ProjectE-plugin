@@ -43,7 +43,8 @@ public class LanguageManager {
 
             try (InputStream defLangStream = plugin.getResource(lang + ".yml")) {
                 if (defLangStream != null) {
-                    config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defLangStream, StandardCharsets.UTF_8)));
+                    config.setDefaults(YamlConfiguration
+                            .loadConfiguration(new InputStreamReader(defLangStream, StandardCharsets.UTF_8)));
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Could not load language file: " + lang + ".yml");

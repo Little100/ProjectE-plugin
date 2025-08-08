@@ -16,13 +16,15 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
         this.plugin = plugin;
     }
 
-    private Method findMethodByNameAndParamCount(Class<?> clazz, String name, int paramCount) throws NoSuchMethodException {
+    private Method findMethodByNameAndParamCount(Class<?> clazz, String name, int paramCount)
+            throws NoSuchMethodException {
         for (Method method : clazz.getMethods()) {
             if (method.getName().equals(name) && method.getParameterCount() == paramCount) {
                 return method;
             }
         }
-        throw new NoSuchMethodException("Could not find method " + name + " with " + paramCount + " parameters on class " + clazz.getName());
+        throw new NoSuchMethodException(
+                "Could not find method " + name + " with " + paramCount + " parameters on class " + clazz.getName());
     }
 
     @Override

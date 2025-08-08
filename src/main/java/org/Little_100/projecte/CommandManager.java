@@ -25,10 +25,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.Little_100.projecte.TransmutationTable.TransmutationGUI;
+ 
 public class CommandManager implements CommandExecutor, TabCompleter {
-
+ 
     private final ProjectE plugin;
+    private final Map<String, Map<String, String>> openTableCommands = new HashMap<>();
     private final DatabaseManager databaseManager;
     private final EmcManager emcManager;
     private final LanguageManager languageManager;
@@ -38,42 +42,95 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.databaseManager = plugin.getDatabaseManager();
         this.emcManager = plugin.getEmcManager();
         this.languageManager = plugin.getLanguageManager();
+        loadCommands();
     }
 
+    private void loadCommands() {
+        File commandsFile = new File(plugin.getDataFolder(), "command.yml");
+        if (!commandsFile.exists()) {
+            plugin.saveResource("command.yml", false);
+        }
+        FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFile);
+        if (commandsConfig.isConfigurationSection("OpenTransmutationTable")) {
+            for (String key : commandsConfig.getConfigurationSection("OpenTransmutationTable").getKeys(false)) {
+                String command = commandsConfig.getString("OpenTransmutationTable." + key + ".command").replace("/", "");
+                String permission = commandsConfig.getString("OpenTransmutationTable." + key + ".permission");
+                String permissionMessage = commandsConfig.getString("OpenTransmutationTable." + key + ".permission-message");
+                Map<String, String> commandData = new HashMap<>();
+                commandData.put("permission", permission);
+                commandData.put("permission-message", permissionMessage);
+                openTableCommands.put(command, commandData);
+            }
+        }
+    }
+ 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) {
-            sendHelp(sender);
+        String commandName = command.getName().toLowerCase();
+        String[] newArgs = args;
+
+        if (openTableCommands.containsKey(commandName)) {
+            return handleOpenTable(sender, commandName);
+        }
+
+        if (command.getName().equalsIgnoreCase("projecte")) {
+            if (args.length == 0) {
+                sendHelp(sender);
+                return true;
+            }
+
+            String subCommand = args[0].toLowerCase();
+
+            String fullCommand = "projecte " + subCommand;
+            if (openTableCommands.containsKey(fullCommand)) {
+                return handleOpenTable(sender, fullCommand);
+            }
+
+            switch (subCommand) {
+                case "reload":
+                    return handleReload(sender);
+                case "setemc":
+                    return handleSetEmc(sender, args);
+                case "debug":
+                    return handleDebug(sender);
+                case "give":
+                    return handleGiveEmc(sender, args);
+                case "noemcitem":
+                    return handleNoEmcItem(sender);
+                case "bag":
+                    return handleBag(sender, args);
+                case "lang":
+                    return handleLang(sender, args);
+                case "report":
+                    return handleReport(sender);
+                case "nbtdebug":
+                    return handleNbtDebug(sender);
+                case "guitest":
+                    return handleGuiTest(sender, args);
+                default:
+                    sendHelp(sender);
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean handleOpenTable(CommandSender sender, String commandName) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return true;
+        }
+        Player player = (Player) sender;
+        Map<String, String> commandData = openTableCommands.get(commandName);
+        String permission = commandData.get("permission");
+
+        if (!permission.equalsIgnoreCase("default") && !player.hasPermission("projecte.command." + permission) && !(permission.equalsIgnoreCase("op") && player.isOp())) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', commandData.get("permission-message")));
             return true;
         }
 
-        String subCommand = args[0].toLowerCase();
-
-        switch (subCommand) {
-            case "reload":
-                return handleReload(sender);
-            case "setemc":
-                return handleSetEmc(sender, args);
-            case "debug":
-                return handleDebug(sender);
-            case "give":
-                return handleGiveEmc(sender, args);
-            case "noemcitem":
-                return handleNoEmcItem(sender);
-            case "bag":
-                return handleBag(sender, args);
-            case "lang":
-                return handleLang(sender, args);
-            case "report":
-                return handleReport(sender);
-            case "nbtdebug":
-                return handleNbtDebug(sender);
-            case "guitest":
-                return handleGuiTest(sender, args);
-            default:
-                sendHelp(sender);
-                return true;
-        }
+        new TransmutationGUI(player).open();
+        return true;
     }
 
     private void sendHelp(CommandSender sender) {
@@ -174,7 +231,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         placeholders.put("learned", learned ? "Yes" : "No");
         sender.sendMessage(languageManager.get("serverside.command.debug.is_learned", placeholders));
 
-
         java.util.List<org.bukkit.inventory.Recipe> recipes = org.bukkit.Bukkit.getRecipesFor(itemInHand);
         if (recipes.isEmpty()) {
             sender.sendMessage(languageManager.get("serverside.command.debug.no_recipe"));
@@ -186,8 +242,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 Map<String, String> recipePlaceholders = new HashMap<>();
                 recipePlaceholders.put("index", String.valueOf(i + 1));
                 sender.sendMessage(languageManager.get("serverside.command.debug.recipe_header", recipePlaceholders));
-                String divisionStrategy = plugin.getConfig().getString("TransmutationTable.EMC.divisionStrategy", "floor").toLowerCase();
-                java.util.List<String> debugInfo = plugin.getVersionAdapter().getRecipeDebugInfo(recipe, divisionStrategy);
+                String divisionStrategy = plugin.getConfig()
+                        .getString("TransmutationTable.EMC.divisionStrategy", "floor").toLowerCase();
+                java.util.List<String> debugInfo = plugin.getVersionAdapter().getRecipeDebugInfo(recipe,
+                        divisionStrategy);
                 for (String line : debugInfo) {
                     sender.sendMessage(ChatColor.GRAY + "  " + line);
                 }
@@ -198,6 +256,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         return true;
     }
+
     private boolean handleGiveEmc(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
@@ -269,7 +328,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         Map<String, String> targetPlaceholders = new HashMap<>();
         targetPlaceholders.put("player", senderPlayer.getName());
         targetPlaceholders.put("amount", String.valueOf(amount));
-        targetPlayer.sendMessage(languageManager.get("serverside.command.give_emc.receive_success", targetPlaceholders));
+        targetPlayer
+                .sendMessage(languageManager.get("serverside.command.give_emc.receive_success", targetPlaceholders));
 
         return true;
     }
@@ -395,7 +455,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         sender.sendMessage(languageManager.get("serverside.command.report.message"));
         return true;
     }
-    
+
     private boolean handleNbtDebug(CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
@@ -410,22 +470,25 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         StringBuilder sb = new StringBuilder();
         sb.append(ChatColor.AQUA).append("[NBT Debug]").append("\n");
         sb.append(ChatColor.GRAY).append("Type: ").append(item.getType().name()).append("\n");
-        
+
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            sb.append(ChatColor.GRAY).append("DisplayName: ").append(meta.hasDisplayName() ? meta.getDisplayName() : "None").append("\n");
+            sb.append(ChatColor.GRAY).append("DisplayName: ")
+                    .append(meta.hasDisplayName() ? meta.getDisplayName() : "None").append("\n");
             sb.append(ChatColor.GRAY).append("Lore: ").append(meta.hasLore() ? meta.getLore() : "None").append("\n");
-            
+
             if (meta.hasCustomModelData()) {
                 try {
-                    sb.append(ChatColor.GRAY).append("CustomModelData: ").append(meta.getCustomModelData()).append("\n");
+                    sb.append(ChatColor.GRAY).append("CustomModelData: ").append(meta.getCustomModelData())
+                            .append("\n");
                 } catch (IllegalStateException e) {
-                    sb.append(ChatColor.GRAY).append("CustomModelData: Exists but cannot be read (").append(e.getMessage()).append(")\n");
+                    sb.append(ChatColor.GRAY).append("CustomModelData: Exists but cannot be read (")
+                            .append(e.getMessage()).append(")\n");
                 }
             } else {
                 sb.append(ChatColor.GRAY).append("CustomModelData: None\n");
             }
-            
+
             sb.append(ChatColor.GRAY).append("PDC: ");
             PersistentDataContainer pdc = meta.getPersistentDataContainer();
             var keys = pdc.getKeys();
@@ -455,8 +518,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return true;
     }
 
-
-    private <T, Z> boolean tryAppendPdcValue(StringBuilder sb, PersistentDataContainer pdc, NamespacedKey key, PersistentDataType<T, Z> type, String typeName) {
+    private <T, Z> boolean tryAppendPdcValue(StringBuilder sb, PersistentDataContainer pdc, NamespacedKey key,
+            PersistentDataType<T, Z> type, String typeName) {
         if (pdc.has(key, type)) {
             try {
                 Z value = pdc.get(key, type);
@@ -472,9 +535,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
-            final List<String> subCommands = Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "guitest");
-            return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
+        if (command.getName().equalsIgnoreCase("projecte")) {
+            if (args.length == 1) {
+                List<String> subCommands = new ArrayList<>(Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "guitest"));
+                for (String cmd : openTableCommands.keySet()) {
+                    if (cmd.startsWith("projecte ")) {
+                        subCommands.add(cmd.split(" ")[1]);
+                    }
+                }
+                return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
+            }
         }
 
         if (args.length == 2) {

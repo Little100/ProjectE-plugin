@@ -61,15 +61,15 @@ public class DatabaseManager {
                     "item_key TEXT NOT NULL," +
                     "PRIMARY KEY (player_uuid, item_key));");
 
-           statement.execute("CREATE TABLE IF NOT EXISTS alchemical_bags (" +
-                   "player_uuid TEXT NOT NULL," +
-                   "bag_color TEXT NOT NULL," +
-                   "inventory_contents TEXT," +
-                   "PRIMARY KEY (player_uuid, bag_color));");
-       } catch (SQLException e) {
-           e.printStackTrace();
-       }
-   }
+            statement.execute("CREATE TABLE IF NOT EXISTS alchemical_bags (" +
+                    "player_uuid TEXT NOT NULL," +
+                    "bag_color TEXT NOT NULL," +
+                    "inventory_contents TEXT," +
+                    "PRIMARY KEY (player_uuid, bag_color));");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void setEmc(String itemKey, long emc) {
         String sql = "INSERT OR REPLACE INTO emc_values (item_key, emc) VALUES (?, ?);";
@@ -171,7 +171,8 @@ public class DatabaseManager {
     }
 
     public void saveBagInventory(UUID playerUUID, String bagColor, ItemStack[] items) {
-        if (items == null) return;
+        if (items == null)
+            return;
 
         String base64Data;
         try {
@@ -210,7 +211,7 @@ public class DatabaseManager {
 
     private String itemStackArrayToBase64(ItemStack[] items) throws IllegalStateException {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+                BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
             dataOutput.writeInt(items.length);
             for (ItemStack item : items) {
                 dataOutput.writeObject(item);
@@ -226,7 +227,7 @@ public class DatabaseManager {
             return new ItemStack[54];
         }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
-             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+                BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
             int size = dataInput.readInt();
             ItemStack[] items = new ItemStack[size];
             for (int i = 0; i < size; i++) {

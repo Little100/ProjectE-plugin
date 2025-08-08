@@ -50,23 +50,28 @@ public class LegacyAdapter implements VersionAdapter {
 
     @Override
     public long calculateRecipeEmc(Recipe recipe, String divisionStrategy) {
-        if (recipe == null) return 0;
+        if (recipe == null)
+            return 0;
 
         long totalEmc = 0;
         boolean isCooking = false;
 
         if (recipe instanceof ShapedRecipe) {
             for (ItemStack ingredient : ((ShapedRecipe) recipe).getIngredientMap().values()) {
-                if (ingredient == null) continue;
+                if (ingredient == null)
+                    continue;
                 long ingredientEmc = getIngredientEmc(ingredient);
-                if (ingredientEmc == 0) return 0;
+                if (ingredientEmc == 0)
+                    return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof ShapelessRecipe) {
             for (ItemStack ingredient : ((ShapelessRecipe) recipe).getIngredientList()) {
-                if (ingredient == null) continue;
+                if (ingredient == null)
+                    continue;
                 long ingredientEmc = getIngredientEmc(ingredient);
-                if (ingredientEmc == 0) return 0;
+                if (ingredientEmc == 0)
+                    return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof FurnaceRecipe) {
@@ -102,17 +107,20 @@ public class LegacyAdapter implements VersionAdapter {
     }
 
     private long getIngredientEmc(ItemStack ingredient) {
-        if (ingredient == null) return 0;
+        if (ingredient == null)
+            return 0;
         return getEmcManager().getEmc(getItemKey(ingredient));
     }
 
     @Override
     public void loadInitialEmcValues() {
         org.bukkit.configuration.file.FileConfiguration config = ProjectE.getInstance().getConfig();
-        org.bukkit.configuration.ConfigurationSection emcSection = config.getConfigurationSection("TransmutationTable.EMC.ImportantItems");
+        org.bukkit.configuration.ConfigurationSection emcSection = config
+                .getConfigurationSection("TransmutationTable.EMC.ImportantItems");
 
         if (emcSection == null) {
-            ProjectE.getInstance().getLogger().warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
+            ProjectE.getInstance().getLogger()
+                    .warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
@@ -132,7 +140,8 @@ public class LegacyAdapter implements VersionAdapter {
                         if (getMaterial(itemKey) != null) {
                             databaseManager.setEmc("minecraft:" + itemKey.toLowerCase(), emc);
                         } else {
-                            ProjectE.getInstance().getLogger().warning("Item '" + itemKey + "' from 'default' EMC list not found in this Minecraft version. Skipping.");
+                            ProjectE.getInstance().getLogger().warning("Item '" + itemKey
+                                    + "' from 'default' EMC list not found in this Minecraft version. Skipping.");
                         }
                     }
                 }
@@ -178,7 +187,7 @@ public class LegacyAdapter implements VersionAdapter {
                 long emc = getIngredientEmc(input);
                 debugInfo.add("   - " + key + ": " + emc + " EMC");
             }
-        
+
         }
         return debugInfo;
     }
@@ -187,13 +196,15 @@ public class LegacyAdapter implements VersionAdapter {
     public boolean isModern() {
         return false;
     }
+
     @Override
     public Map<String, NamespacedKey> registerTransmutationTableRecipes() {
         Map<String, NamespacedKey> newKeys = new HashMap<>();
         ProjectE plugin = ProjectE.getInstance();
         ItemStack transmutationTable = new ItemStack(Material.PETRIFIED_OAK_SLAB);
 
-        List<Material> stones = Arrays.asList(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE);
+        List<Material> stones = Arrays.asList(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.DIORITE,
+                Material.GRANITE);
 
         for (Material stone : stones) {
             String key1_id = "transmutation_table_1_" + stone.name().toLowerCase();

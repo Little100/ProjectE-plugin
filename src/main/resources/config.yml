@@ -1,6 +1,7 @@
 # sorry about my poor English, I'm not a native speaker.
-language: # 设置插件语言, 第一个为主要语言, 后续为备用语言.
-# set the first language as the main language, and the rest as the backup language.
+language:
+  # 设置插件语言, 第一个为主要语言, 后续为备用语言.
+  # set the first language as the main language, and the rest as the backup language.
   - "zh_cn"
   - "en_us"
 
@@ -452,8 +453,8 @@ TransmutationTable:
         - turtle_egg: 192
         - elytra: 16463
 
-# Added based on user feedback (2025-07-26)
-        - glow_lichen: 8 # 由 https://github.com/LELEXIAOLL 的帮助添加
+        # Added based on user feedback (2025-07-26)
+        - glow_lichen: 8
         - white_shulker_box: 4176
         - conduit: 40690
         - copper_door: 400

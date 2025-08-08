@@ -33,25 +33,6 @@ public class InventoryManager implements Listener {
         openBagColors.put(playerUUID, bagColor);
     }
 
-    public void saveAllOpenInventories() {
-        plugin.getLogger().info("Saving all open Alchemical Bags...");
-        Map<UUID, Inventory> inventoriesToSave = new HashMap<>(openInventories);
-        for (Map.Entry<UUID, Inventory> entry : inventoriesToSave.entrySet()) {
-            UUID uuid = entry.getKey();
-            Inventory inv = entry.getValue();
-            String color = openBagColors.get(uuid);
-            if (color != null) {
-                plugin.getDatabaseManager().saveBagInventory(uuid, color, inv.getContents());
-                plugin.getLogger().info("Saved Alchemical Bag for player " + uuid + " with color " + color);
-            } else {
-                plugin.getLogger().warning("Could not find bag color for player " + uuid + ", cannot save!");
-            }
-        }
-        openInventories.clear();
-        openBagColors.clear();
-        plugin.getLogger().info("Finished saving all open Alchemical Bags.");
-    }
-
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
@@ -64,9 +45,11 @@ public class InventoryManager implements Listener {
 
             if (closedBagColor != null) {
                 plugin.getDatabaseManager().saveBagInventory(playerUUID, closedBagColor, closedInventory.getContents());
-                plugin.getLogger().info("Player " + player.getName() + " closed Alchemical Bag with color " + closedBagColor + ", contents saved.");
+                plugin.getLogger().info("Player " + player.getName() + " closed Alchemical Bag with color "
+                        + closedBagColor + ", contents saved.");
             } else {
-                plugin.getLogger().warning("Player " + player.getName() + " closed an Alchemical Bag, but its color could not be found!");
+                plugin.getLogger().warning(
+                        "Player " + player.getName() + " closed an Alchemical Bag, but its color could not be found!");
             }
         }
     }
@@ -81,14 +64,16 @@ public class InventoryManager implements Listener {
             String currentBagColor = openBagColors.get(playerUUID);
             if (currentBagColor == null) {
                 event.setCancelled(true);
-                plugin.getLogger().warning("Player " + player.getName() + " clicked in an Alchemical Bag, but its color could not be found!");
+                plugin.getLogger().warning("Player " + player.getName()
+                        + " clicked in an Alchemical Bag, but its color could not be found!");
                 return;
             }
 
             ItemStack cursorItem = event.getCursor();
             ItemStack currentItem = event.getCurrentItem();
 
-            if (isForbiddenBag(cursorItem, currentBagColor) || (event.isShiftClick() && isForbiddenBag(currentItem, currentBagColor))) {
+            if (isForbiddenBag(cursorItem, currentBagColor)
+                    || (event.isShiftClick() && isForbiddenBag(currentItem, currentBagColor))) {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + "You cannot put an Alchemical Bag inside another!");
             }
@@ -100,7 +85,8 @@ public class InventoryManager implements Listener {
             return false;
         }
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-        if (meta == null) return false;
+        if (meta == null)
+            return false;
         return true;
     }
 }

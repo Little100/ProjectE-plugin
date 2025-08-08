@@ -1,6 +1,8 @@
 package org.Little_100.projecte;
 
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
+import org.Little_100.projecte.Tools.Divining_Rod;
+import org.Little_100.projecte.Tools.Repair_Talisman;
 import org.Little_100.projecte.compatibility.SchedulerAdapter;
 import org.Little_100.projecte.compatibility.SchedulerMatcher;
 import org.Little_100.projecte.compatibility.VersionAdapter;
@@ -15,8 +17,14 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.Little_100.projecte.storage.DatabaseManager;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import java.lang.reflect.Field;
+import java.io.File;
+ 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +47,9 @@ public final class ProjectE extends JavaPlugin {
     private SchedulerAdapter schedulerAdapter;
     private PhilosopherStoneListener philosopherStoneListener;
     private FuelManager fuelManager;
+    private CovalenceDust covalenceDust;
+    private Divining_Rod diviningRod;
+    private Repair_Talisman repairTalisman;
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
 
@@ -55,8 +66,7 @@ public final class ProjectE extends JavaPlugin {
         // 自动将jar中的所有yml文件释放到数据文件夹中
         try {
             java.util.zip.ZipInputStream zip = new java.util.zip.ZipInputStream(
-                getClass().getProtectionDomain().getCodeSource().getLocation().openStream()
-            );
+                    getClass().getProtectionDomain().getCodeSource().getLocation().openStream());
             java.util.zip.ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 String name = entry.getName();
@@ -87,7 +97,7 @@ public final class ProjectE extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
+
         // 初始化调度程序
         schedulerAdapter = SchedulerMatcher.getSchedulerAdapter(this);
 
@@ -98,24 +108,37 @@ public final class ProjectE extends JavaPlugin {
             emcManager.calculateAndStoreEmcValues();
             getLogger().info("EMC calculation complete.");
         } catch (Exception e) {
-            getLogger().severe("An error occurred during EMC calculation. Some items may not have EMC values. Please check your config.yml for formatting errors.");
+            getLogger().severe(
+                    "An error occurred during EMC calculation. Some items may not have EMC values. Please check your config.yml for formatting errors.");
             e.printStackTrace();
         }
 
         // 初始化贤者之石物品
         createPhilosopherStone();
-        
+
         // 初始化燃料管理器
         fuelManager = new FuelManager(this);
         getServer().getPluginManager().registerEvents(fuelManager, this);
         getLogger().info("FuelManager initialized with special fuels.");
-        
+
         // 设置特殊燃料的EMC值
         fuelManager.setFuelEmcValues();
-        
+
         // 输出特殊燃料的NBT标签信息，供用户添加材质
         getLogger().info(fuelManager.getNbtTagInfo());
 
+        // 初始化共价粉
+        covalenceDust = new CovalenceDust(this);
+
+        // 初始化探知之杖
+        diviningRod = new Divining_Rod(this);
+        diviningRod.setDiviningRodEmcValues();
+
+        // 初始化修复护符
+        repairTalisman = new Repair_Talisman(this);
+        repairTalisman.setEmcValue();
+        new org.Little_100.projecte.Tools.RepairTalismanListener(this);
+ 
         // 初始化配方管理器
         recipeManager = new RecipeManager(this);
         recipeManager.registerAllRecipes();
@@ -133,12 +156,21 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ItemStackLimitListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new CovalenceDustListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new CovalenceDustCraftListener(), this);
+        Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.DiviningRodListener(this), this);
+ 
+        // 初始化共价粉
+        covalenceDust = new CovalenceDust(this);
+
 
         // 注册命令
         CommandManager commandManager = new CommandManager(this);
         getCommand("projecte").setExecutor(commandManager);
         getCommand("projecte").setTabCompleter(commandManager);
 
+        registerCustomCommands(commandManager);
+ 
         // 初始化炼金袋管理器
         if (getConfig().getBoolean("AlchemicalBag.enabled", true)) {
             alchemicalBagManager = new AlchemicalBagManager(this);
@@ -147,7 +179,7 @@ public final class ProjectE extends JavaPlugin {
         } else {
             getLogger().info("Alchemical Bag feature is disabled in the config.");
         }
-        
+
         // 初始化资源包管理器
         resourcePackManager = new ResourcePackManager(this);
         getLogger().info("Resource Pack Manager initialized.");
@@ -157,7 +189,7 @@ public final class ProjectE extends JavaPlugin {
         // 启动连续粒子效果任务
         startContinuousParticleTask();
     }
-    
+
     @Override
     public void onDisable() {
         // 注销所有自定义配方
@@ -176,15 +208,15 @@ public final class ProjectE extends JavaPlugin {
 
         getLogger().info("ProjectE plugin has been disabled!");
     }
-    
+
     public static ProjectE getInstance() {
         return instance;
     }
-    
+
     public ItemStack getPhilosopherStone() {
         return philosopherStone.clone();
     }
-    
+
     public boolean isPhilosopherStone(ItemStack item) {
         if (item == null) {
             return false;
@@ -195,11 +227,11 @@ public final class ProjectE extends JavaPlugin {
         }
         return item.getType() == stoneMaterial;
     }
-    
+
     public NamespacedKey getPhilosopherStoneKey() {
         return philosopherStoneKey;
     }
-    
+
     private void createPhilosopherStone() {
         Material stoneMaterial = versionAdapter.getMaterial("POPPED_CHORUS_FRUIT");
         if (stoneMaterial == null) { // 与旧版本兼容
@@ -211,14 +243,13 @@ public final class ProjectE extends JavaPlugin {
         meta.setLore(Arrays.asList(
                 ChatColor.GRAY + "A powerful alchemical tool",
                 ChatColor.YELLOW + "Can transmute minerals",
-                ChatColor.YELLOW + "Sneak + Right-click to open workbench"
-        ));
+                ChatColor.YELLOW + "Sneak + Right-click to open workbench"));
         meta.setUnbreakable(true);
         philosopherStoneKey = new NamespacedKey(this, "philosopher_stone");
         philosopherStone.setItemMeta(meta);
         philosopherStone.setAmount(1); // 确保堆叠大小为1
     }
-    
+
     private void removeVanillaRecipe() {
         try {
             // 删除原版爆裂紫颂果配方（替换为贤者之石的配方）
@@ -227,7 +258,7 @@ public final class ProjectE extends JavaPlugin {
             getLogger().warning("Could not remove vanilla popped chorus fruit recipe: " + e.getMessage());
         }
     }
-    
+
     private void initMaterialMaps() {
         // 基础材料升级路径：煤炭 -> 铜锭 -> 铁锭 -> 金锭 -> 钻石 -> 下界合金锭
         upgradeMap.put(Material.COAL, Material.COPPER_INGOT);
@@ -235,56 +266,56 @@ public final class ProjectE extends JavaPlugin {
         upgradeMap.put(Material.IRON_INGOT, Material.GOLD_INGOT);
         upgradeMap.put(Material.GOLD_INGOT, Material.DIAMOND);
         upgradeMap.put(Material.DIAMOND, Material.NETHERITE_INGOT);
-        
+
         // 方块升级路径：煤炭块 -> 铜块 -> 铁块 -> 金块 -> 钻石块 -> 下界合金块
         upgradeMap.put(Material.COAL_BLOCK, Material.COPPER_BLOCK);
         upgradeMap.put(Material.COPPER_BLOCK, Material.IRON_BLOCK);
         upgradeMap.put(Material.IRON_BLOCK, Material.GOLD_BLOCK);
         upgradeMap.put(Material.GOLD_BLOCK, Material.DIAMOND_BLOCK);
         upgradeMap.put(Material.DIAMOND_BLOCK, Material.NETHERITE_BLOCK);
-        
+
         // 矿石升级路径：煤矿石 -> 铜矿石 -> 铁矿石 -> 金矿石 -> 钻石矿石 -> 远古残骸
         upgradeMap.put(Material.COAL_ORE, Material.COPPER_ORE);
         upgradeMap.put(Material.COPPER_ORE, Material.IRON_ORE);
         upgradeMap.put(Material.IRON_ORE, Material.GOLD_ORE);
         upgradeMap.put(Material.GOLD_ORE, Material.DIAMOND_ORE);
         upgradeMap.put(Material.DIAMOND_ORE, Material.ANCIENT_DEBRIS);
-        
+
         // 深层板岩矿石升级路径：深层煤矿石 -> 深层铜矿石 -> 深层铁矿石 -> 深层金矿石 -> 深层钻石矿石 -> 远古残骸
         upgradeMap.put(Material.DEEPSLATE_COAL_ORE, Material.DEEPSLATE_COPPER_ORE);
         upgradeMap.put(Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_IRON_ORE);
         upgradeMap.put(Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_GOLD_ORE);
         upgradeMap.put(Material.DEEPSLATE_GOLD_ORE, Material.DEEPSLATE_DIAMOND_ORE);
         upgradeMap.put(Material.DEEPSLATE_DIAMOND_ORE, Material.ANCIENT_DEBRIS);
-        
+
         // 基础材料降级路径
         downgradeMap.put(Material.COPPER_INGOT, Material.COAL);
         downgradeMap.put(Material.IRON_INGOT, Material.COPPER_INGOT);
         downgradeMap.put(Material.GOLD_INGOT, Material.IRON_INGOT);
         downgradeMap.put(Material.DIAMOND, Material.GOLD_INGOT);
         downgradeMap.put(Material.NETHERITE_INGOT, Material.DIAMOND);
-        
+
         // 方块降级路径
         downgradeMap.put(Material.COPPER_BLOCK, Material.COAL_BLOCK);
         downgradeMap.put(Material.IRON_BLOCK, Material.COPPER_BLOCK);
         downgradeMap.put(Material.GOLD_BLOCK, Material.IRON_BLOCK);
         downgradeMap.put(Material.DIAMOND_BLOCK, Material.GOLD_BLOCK);
         downgradeMap.put(Material.NETHERITE_BLOCK, Material.DIAMOND_BLOCK);
-        
+
         // 矿石降级路径
         downgradeMap.put(Material.COPPER_ORE, Material.COAL_ORE);
         downgradeMap.put(Material.IRON_ORE, Material.COPPER_ORE);
         downgradeMap.put(Material.GOLD_ORE, Material.IRON_ORE);
         downgradeMap.put(Material.DIAMOND_ORE, Material.GOLD_ORE);
         downgradeMap.put(Material.ANCIENT_DEBRIS, Material.DIAMOND_ORE);
-        
+
         // 深层板岩矿石降级路径
         downgradeMap.put(Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_COAL_ORE);
         downgradeMap.put(Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_COPPER_ORE);
         downgradeMap.put(Material.DEEPSLATE_GOLD_ORE, Material.DEEPSLATE_IRON_ORE);
         downgradeMap.put(Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_GOLD_ORE);
     }
-    
+
     public RecipeManager getRecipeManager() {
         return recipeManager;
     }
@@ -327,22 +358,35 @@ public final class ProjectE extends JavaPlugin {
     public LanguageManager getLanguageManager() {
         return languageManager;
     }
-    
+
     public ResourcePackManager getResourcePackManager() {
         return resourcePackManager;
     }
-    
+
     public Material getUpgradedMaterial(Material material) {
         return upgradeMap.getOrDefault(material, null);
     }
-    
+
     public Material getDowngradedMaterial(Material material) {
         return downgradeMap.getOrDefault(material, null);
     }
-    
+
     public FuelManager getFuelManager() {
         return fuelManager;
     }
+
+    public CovalenceDust getCovalenceDust() {
+        return covalenceDust;
+    }
+
+    public Divining_Rod getDiviningRod() {
+        return diviningRod;
+    }
+
+    public Repair_Talisman getRepairTalisman() {
+        return repairTalisman;
+    }
+ 
     private void startContinuousParticleTask() {
         if (!getConfig().getBoolean("philosopher_stone.particle.enabled", true)) {
             return;
@@ -360,10 +404,12 @@ public final class ProjectE extends JavaPlugin {
                     Block targetBlock = null;
                     try {
                         // 添加世界数据检查以防止在Folia环境下的NullPointerException
-                        if (player.getWorld() != null && player.getWorld().isChunkLoaded(player.getLocation().getBlockX() >> 4, player.getLocation().getBlockZ() >> 4)) {
+                        if (player.getWorld() != null && player.getWorld().isChunkLoaded(
+                                player.getLocation().getBlockX() >> 4, player.getLocation().getBlockZ() >> 4)) {
                             targetBlock = player.getTargetBlock(null, 10);
                         }
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                    }
                     if (targetBlock != null && !targetBlock.getType().isAir()) {
                         philosopherStoneListener.showContinuousOutline(player, targetBlock);
                     }
@@ -375,7 +421,7 @@ public final class ProjectE extends JavaPlugin {
     public ItemStack getItemStackFromKey(String key) {
         Pattern pattern = Pattern.compile("(.+)\\{projecte_id:\"(.+)\"\\}");
         Matcher matcher = pattern.matcher(key);
-
+ 
         if (matcher.matches()) {
             String projecteId = matcher.group(2);
             switch (projecteId) {
@@ -391,15 +437,68 @@ public final class ProjectE extends JavaPlugin {
                     return fuelManager.getMobiusFuelBlock();
                 case "aeternalis_fuel_block":
                     return fuelManager.getAeternalisFuelBlock();
+                case "dark_matter":
+                    return fuelManager.getDarkMatter();
+                case "red_matter":
+                    return fuelManager.getRedMatter();
+                case "dark_matter_block":
+                    return fuelManager.getDarkMatterBlock();
+                case "red_matter_block":
+                    return fuelManager.getRedMatterBlock();
+                case "low_covalence_dust":
+                    return covalenceDust.getLowCovalenceDust();
+                case "medium_covalence_dust":
+                    return covalenceDust.getMediumCovalenceDust();
+                case "high_covalence_dust":
+                    return covalenceDust.getHighCovalenceDust();
+                case "low_divining_rod":
+                    return diviningRod.getLowDiviningRod();
+                case "medium_divining_rod":
+                    return diviningRod.getMediumDiviningRod();
+                case "high_divining_rod":
+                    return diviningRod.getHighDiviningRod();
+                case "repair_talisman":
+                    return repairTalisman.getRepairTalisman();
             }
         }
-
+ 
         String materialName = key.replace("minecraft:", "").toUpperCase();
         Material material = versionAdapter.getMaterial(materialName);
         if (material != null) {
             return new ItemStack(material);
         }
-
+ 
         return null;
+    }
+
+    private void registerCustomCommands(CommandManager commandManager) {
+        File commandsFile = new File(getDataFolder(), "command.yml");
+        if (!commandsFile.exists()) {
+            saveResource("command.yml", false);
+        }
+        FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFile);
+        if (commandsConfig.isConfigurationSection("OpenTransmutationTable")) {
+            try {
+                final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+                bukkitCommandMap.setAccessible(true);
+                CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
+
+                for (String key : commandsConfig.getConfigurationSection("OpenTransmutationTable").getKeys(false)) {
+                    String commandName = commandsConfig.getString("OpenTransmutationTable." + key + ".command");
+                    if (commandName.contains(" ")) {
+                        getLogger().info("Skipping registration of sub-command: " + commandName);
+                        continue;
+                    }
+                    String description = commandsConfig.getString("OpenTransmutationTable." + key + ".description");
+
+                    CustomCommand command = new CustomCommand(commandName, commandManager);
+                    command.setDescription(description);
+                    commandMap.register(getDescription().getName(), command);
+                    getLogger().info("Registered custom command: " + commandName);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

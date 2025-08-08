@@ -90,9 +90,15 @@ public class TransmutationGUI implements InventoryHolder {
     }
 
     private void setupMainScreen() {
-        ItemStack sellButton = createGuiItem(Material.ANVIL, languageManager.get("clientside.transmutation_table.buttons.sell"), languageManager.get("clientside.transmutation_table.buttons.sell_lore"));
-        ItemStack buyButton = createGuiItem(Material.EMERALD, languageManager.get("clientside.transmutation_table.buttons.buy"), languageManager.get("clientside.transmutation_table.buttons.buy_lore"));
-        ItemStack learnButton = createGuiItem(Material.BOOK, languageManager.get("clientside.transmutation_table.buttons.learn"), languageManager.get("clientside.transmutation_table.buttons.learn_lore"));
+        ItemStack sellButton = createGuiItem(Material.ANVIL,
+                languageManager.get("clientside.transmutation_table.buttons.sell"),
+                languageManager.get("clientside.transmutation_table.buttons.sell_lore"));
+        ItemStack buyButton = createGuiItem(Material.EMERALD,
+                languageManager.get("clientside.transmutation_table.buttons.buy"),
+                languageManager.get("clientside.transmutation_table.buttons.buy_lore"));
+        ItemStack learnButton = createGuiItem(Material.BOOK,
+                languageManager.get("clientside.transmutation_table.buttons.learn"),
+                languageManager.get("clientside.transmutation_table.buttons.learn_lore"));
         inventory.setItem(21, sellButton);
         inventory.setItem(23, buyButton);
         inventory.setItem(22, learnButton);
@@ -108,8 +114,12 @@ public class TransmutationGUI implements InventoryHolder {
                 inventory.setItem(i * 9 + j, null);
             }
         }
-        ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK, languageManager.get("clientside.transmutation_table.buttons.confirm_sell"), languageManager.get("clientside.transmutation_table.buttons.confirm_sell_lore"));
-        ItemStack backButton = createGuiItem(Material.BARRIER, languageManager.get("clientside.transmutation_table.buttons.back"), languageManager.get("clientside.transmutation_table.buttons.back_lore"));
+        ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK,
+                languageManager.get("clientside.transmutation_table.buttons.confirm_sell"),
+                languageManager.get("clientside.transmutation_table.buttons.confirm_sell_lore"));
+        ItemStack backButton = createGuiItem(Material.BARRIER,
+                languageManager.get("clientside.transmutation_table.buttons.back"),
+                languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(49, confirmButton);
         inventory.setItem(0, backButton);
     }
@@ -144,11 +154,12 @@ public class TransmutationGUI implements InventoryHolder {
                     lorePlaceholders.put("amount", String.valueOf(item.getMaxStackSize()));
 
                     meta.setLore(Arrays.asList(
-                            languageManager.get("clientside.transmutation_table.item_lore.emc_single", lorePlaceholders),
+                            languageManager.get("clientside.transmutation_table.item_lore.emc_single",
+                                    lorePlaceholders),
                             languageManager.get("clientside.transmutation_table.item_lore.emc_stack", lorePlaceholders),
                             languageManager.get("clientside.transmutation_table.item_lore.buy_one", lorePlaceholders),
-                            languageManager.get("clientside.transmutation_table.item_lore.buy_stack", lorePlaceholders)
-                    ));
+                            languageManager.get("clientside.transmutation_table.item_lore.buy_stack",
+                                    lorePlaceholders)));
                     item.setItemMeta(meta);
                     // 计算槽位
                     int row = slotIndex / 7;
@@ -160,16 +171,20 @@ public class TransmutationGUI implements InventoryHolder {
         }
 
         // 控制按钮
-        ItemStack backButton = createGuiItem(Material.BARRIER, languageManager.get("clientside.transmutation_table.buttons.back"), languageManager.get("clientside.transmutation_table.buttons.back_lore"));
+        ItemStack backButton = createGuiItem(Material.BARRIER,
+                languageManager.get("clientside.transmutation_table.buttons.back"),
+                languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(0, backButton);
 
         if (page > 0) {
-            ItemStack prevButton = createGuiItem(Material.ARROW, languageManager.get("clientside.transmutation_table.buttons.prev_page"));
+            ItemStack prevButton = createGuiItem(Material.ARROW,
+                    languageManager.get("clientside.transmutation_table.buttons.prev_page"));
             inventory.setItem(48, prevButton);
         }
 
         if (endIndex < learnedItems.size()) {
-            ItemStack nextButton = createGuiItem(Material.ARROW, languageManager.get("clientside.transmutation_table.buttons.next_page"));
+            ItemStack nextButton = createGuiItem(Material.ARROW,
+                    languageManager.get("clientside.transmutation_table.buttons.next_page"));
             inventory.setItem(50, nextButton);
         }
     }
@@ -184,8 +199,12 @@ public class TransmutationGUI implements InventoryHolder {
                 inventory.setItem(i * 9 + j, null);
             }
         }
-        ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK, languageManager.get("clientside.transmutation_table.buttons.confirm_learn"), languageManager.get("clientside.transmutation_table.buttons.confirm_learn_lore"));
-        ItemStack backButton = createGuiItem(Material.BARRIER, languageManager.get("clientside.transmutation_table.buttons.back"), languageManager.get("clientside.transmutation_table.buttons.back_lore"));
+        ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK,
+                languageManager.get("clientside.transmutation_table.buttons.confirm_learn"),
+                languageManager.get("clientside.transmutation_table.buttons.confirm_learn_lore"));
+        ItemStack backButton = createGuiItem(Material.BARRIER,
+                languageManager.get("clientside.transmutation_table.buttons.back"),
+                languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(49, confirmButton);
         inventory.setItem(0, backButton);
     }

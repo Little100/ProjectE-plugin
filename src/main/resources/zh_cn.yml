@@ -155,7 +155,7 @@ serverside:
       sell_success: "§a成功卖出物品，获得 {emc} EMC。"
       no_emc_value_learn: "§c物品 {item} 没有EMC值，无法学习。"
       learn_success: "§a成功学习新物品！"
-      
+
   # 资源包相关信息
   resourcepack:
     prompt: "§6服务器使用了自定义资源包，这可以提供更好的视觉体验。"
@@ -203,6 +203,49 @@ item:
     name: "§c永恒燃料块"
     lore1: "§7近乎永恒的燃料块"
     lore2: "§e燃烧时间: 46080s"
+  dark_matter:
+    name: "§4暗物质"
+    lore1: "§7神秘的暗能量结晶"
+    lore2: "§e炼金术的终极材料"
+  red_matter:
+    name: "§c红物质"
+    lore1: "§7暗物质的进阶形态"
+    lore2: "§e传说中的炼金术材料"
+  dark_matter_block:
+    name: "§4暗物质块"
+    lore1: "§7浓缩的暗能量"
+    lore2: "§e极其稀有的材料块"
+  red_matter_block:
+    name: "§c红物质块"
+    lore1: "§7红物质的高密度形态"
+    lore2: "§e终极的炼金术材料块"
+  low_covalence_dust:
+    name: "§f低等共价粉"
+    lore1: "§7可修复木制/石制/锁链装备"
+    lore2: "§e与受损低级工具合成可修复耐久"
+  medium_covalence_dust:
+    name: "§e中等共价粉"
+    lore1: "§7可修复铁制/金制装备"
+    lore2: "§e与受损中级工具合成可修复耐久"
+  high_covalence_dust:
+    name: "§b高等共价粉"
+    lore1: "§7可修复钻石/下界合金装备"
+    lore2: "§e与受损高级工具合成可修复耐久"
+  low_divining_rod:
+    name: "§f初级探知权杖"
+    lore1: "§7用于探知方块EMC"
+    lore2: "§e扫描模式: 3x3x3"
+  medium_divining_rod:
+    name: "§e中级探知权杖"
+    lore1: "§7用于探知方块EMC"
+    lore2: "§e扫描模式: 3x3x3, 16x3x3"
+  high_divining_rod:
+    name: "§b高级探知权杖"
+    lore1: "§7用于探知方块EMC"
+    lore2: "§e扫描模式: 3x3x3, 16x3x3, 64x3x3"
+  repair_talisman:
+    name: "§a修复护符"
+    lore1: "§7每秒自动修复身上所有物品的耐久"
 
 # 插件相关
 plugin:

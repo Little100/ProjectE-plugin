@@ -1,0 +1,13 @@
+# 命令配置文件
+OpenTransmutationTable:
+  first:
+    command: projecte opentable
+    description: Opens the Transmutation Table GUI
+    permission: op
+    permission-message: You do not have permission to use this command.
+
+  second:
+    command: opentable
+    description: Opens the Transmutation Table GUI
+    permission: op
+    permission-message: You do not have permission to use this command.

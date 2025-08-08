@@ -26,8 +26,10 @@ public class EmcManager {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
         this.versionAdapter = plugin.getVersionAdapter();
-        this.recipeConflictStrategy = plugin.getConfig().getString("TransmutationTable.EMC.recipeConflictStrategy", "lowest").toLowerCase();
-        this.divisionStrategy = plugin.getConfig().getString("TransmutationTable.EMC.divisionStrategy", "floor").toLowerCase();
+        this.recipeConflictStrategy = plugin.getConfig()
+                .getString("TransmutationTable.EMC.recipeConflictStrategy", "lowest").toLowerCase();
+        this.divisionStrategy = plugin.getConfig().getString("TransmutationTable.EMC.divisionStrategy", "floor")
+                .toLowerCase();
     }
 
     public void calculateAndStoreEmcValues() {
@@ -154,6 +156,7 @@ public class EmcManager {
 
         return 0;
     }
+
     public String getItemKey(ItemStack item) {
         if (item == null || item.getType().isAir()) {
             return "minecraft:air";

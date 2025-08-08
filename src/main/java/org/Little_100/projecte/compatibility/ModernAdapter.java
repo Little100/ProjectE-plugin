@@ -55,17 +55,21 @@ public class ModernAdapter implements VersionAdapter {
         if (recipe instanceof ShapedRecipe) {
             ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
             for (RecipeChoice choice : shapedRecipe.getChoiceMap().values()) {
-                if (choice == null) continue;
+                if (choice == null)
+                    continue;
                 long ingredientEmc = getChoiceEmc(choice);
-                if (ingredientEmc == 0) return 0;
+                if (ingredientEmc == 0)
+                    return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof ShapelessRecipe) {
             ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
             for (RecipeChoice choice : shapelessRecipe.getChoiceList()) {
-                if (choice == null) continue;
+                if (choice == null)
+                    continue;
                 long ingredientEmc = getChoiceEmc(choice);
-                if (ingredientEmc == 0) return 0;
+                if (ingredientEmc == 0)
+                    return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof SmithingTransformRecipe) {
@@ -73,7 +77,8 @@ public class ModernAdapter implements VersionAdapter {
             long baseEmc = getChoiceEmc(smithingRecipe.getBase());
             long additionEmc = getChoiceEmc(smithingRecipe.getAddition());
             long templateEmc = getChoiceEmc(smithingRecipe.getTemplate());
-            if (baseEmc == 0 || additionEmc == 0 || templateEmc == 0) return 0;
+            if (baseEmc == 0 || additionEmc == 0 || templateEmc == 0)
+                return 0;
             totalEmc = baseEmc + additionEmc + templateEmc;
 
         } else if (recipe instanceof CookingRecipe) {
@@ -100,7 +105,6 @@ public class ModernAdapter implements VersionAdapter {
             recipeEmc = totalEmc / resultAmount;
         }
 
-
         if (isCooking && recipeEmc > 0) {
             recipeEmc += 1;
         }
@@ -109,12 +113,14 @@ public class ModernAdapter implements VersionAdapter {
     }
 
     private long getIngredientEmc(ItemStack ingredient) {
-        if (ingredient == null) return 0;
+        if (ingredient == null)
+            return 0;
         return getEmcManager().getEmc(getItemKey(ingredient));
     }
 
     private long getChoiceEmc(RecipeChoice choice) {
-        if (choice == null) return 0;
+        if (choice == null)
+            return 0;
 
         long lowestEmc = -1;
 
@@ -144,14 +150,17 @@ public class ModernAdapter implements VersionAdapter {
     @Override
     public void loadInitialEmcValues() {
         org.bukkit.configuration.file.FileConfiguration config = ProjectE.getInstance().getConfig();
-        org.bukkit.configuration.ConfigurationSection emcSection = config.getConfigurationSection("TransmutationTable.EMC.ImportantItems");
+        org.bukkit.configuration.ConfigurationSection emcSection = config
+                .getConfigurationSection("TransmutationTable.EMC.ImportantItems");
         if (emcSection == null) {
-            ProjectE.getInstance().getLogger().warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
+            ProjectE.getInstance().getLogger()
+                    .warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
         List<Map<?, ?>> items = emcSection.getMapList("default");
-        ProjectE.getInstance().getLogger().info("Loading " + items.size() + " EMC entries from config's default list...");
+        ProjectE.getInstance().getLogger()
+                .info("Loading " + items.size() + " EMC entries from config's default list...");
 
         for (Map<?, ?> itemMap : items) {
             if (itemMap == null) {
@@ -163,7 +172,8 @@ public class ModernAdapter implements VersionAdapter {
                     String configKey = entry.getKey().toString();
 
                     if (!(entry.getValue() instanceof Number)) {
-                        ProjectE.getInstance().getLogger().warning("Invalid EMC value for '" + configKey + "': not a number. Skipping.");
+                        ProjectE.getInstance().getLogger()
+                                .warning("Invalid EMC value for '" + configKey + "': not a number. Skipping.");
                         continue;
                     }
 
@@ -239,7 +249,7 @@ public class ModernAdapter implements VersionAdapter {
             } catch (Exception e) {
                 debugInfo.add("   - (无法获取成分)");
             }
-        
+
         }
         return debugInfo;
     }
@@ -248,6 +258,7 @@ public class ModernAdapter implements VersionAdapter {
     public boolean isModern() {
         return true;
     }
+
     @Override
     public Map<String, NamespacedKey> registerTransmutationTableRecipes() {
         Map<String, NamespacedKey> newKeys = new HashMap<>();
@@ -259,8 +270,7 @@ public class ModernAdapter implements VersionAdapter {
                 Material.COBBLESTONE,
                 Material.ANDESITE,
                 Material.DIORITE,
-                Material.GRANITE
-        );
+                Material.GRANITE);
 
         NamespacedKey key1 = new NamespacedKey(plugin, "transmutation_table_1");
         ShapedRecipe recipe1 = new ShapedRecipe(key1, transmutationTable);

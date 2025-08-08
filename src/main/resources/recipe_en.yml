@@ -1,88 +1,98 @@
 # this file is the recipe.yml translation
 # sorry about my poor English again!
+# tips: must modify in recipe.yml this file onlu translate.
 # im try my best to make it better :)
-recipes: # this file control the plugin's item recipe
+recipes:
+  # this file control the plugin's item recipe
   philosopher_stone:
-    - enabled: true # enable this recipe？ true/false
-      type: "shaped" # shaped or shapeless recipe？ "shaped"/"shapeless"
-      shape: # the recipe's item(use abbreviation)
-        - "RGR"
-        - "GDG"
-        - "RGR"
-      ingredients: # abbreviation to full item name
-        R: "REDSTONE" # for example, R means redstone
-        # if you want to replace it with other like diamond, you can write D: "DIAMOND"
-        # if you want to use other eg.diamond, you can write D: "DIAMOND"
-        G: "GLOWSTONE_DUST"
-        D: "DIAMOND"
-      result: # result of the recipe
-        material: "POPPED_CHORUS_FRUIT" # Item ID
-        display_name: "§6贤者之石" # the item's name
-        lore: # item description
-          - "§7 powerful alchemy tools"
-          - "§ecan convert minerals"
-          - "§esneak+right click to open workbench"
-        unbreakable: true # only decorative
-    # and also support more recipe like 2 recipes
-    - enabled: true # enable this recipe？ true/false
-      type: "shaped" # shaped or shapeless recipe？ "shaped"/"shapeless"
-      shape: # the recipe's item(use abbreviation)
-        - "GRG"
-        - "RDR"
-        - "GRG"
-      ingredients: # abbreviation to full item name
-        R: "REDSTONE" # for example, R means redstone
-        # if you want to replace it with other like diamond, you can write D: "DIAMOND"
-        # if you want to use other eg.diamond, you can write D: "DIAMOND"
-        G: "GLOWSTONE_DUST"
-        D: "DIAMOND"
-      result: # result of the recipe
-        material: "POPPED_CHORUS_FRUIT" # Item ID
-        display_name: "§6贤者之石" # Item's name
-        lore: # item description
-          - "§7 powerful alchemy tools"
-          - "§ecan convert minerals"
-          - "§esneak+right click to open workbench"
-        unbreakable: true # only decorative
-    # more recipe here... and like this...
+  - enabled: true # enable this recipe？ true/false
+    type: "shaped" # shaped or shapeless recipe？ "shaped"/"shapeless"
+    shape:
+    # the recipe's item(use abbreviation)
+    - "RGR"
+    - "GDG"
+    - "RGR"
+    ingredients:
+      # abbreviation to full item name
+      R: "REDSTONE" # for example, R means redstone
+      # if you want to replace it with other like diamond, you can write D: "DIAMOND"
+      # if you want to use other eg.diamond, you can write D: "DIAMOND"
+      G: "GLOWSTONE_DUST"
+      D: "DIAMOND"
+    result:
+      # result of the recipe
+      material: "POPPED_CHORUS_FRUIT" # Item ID
+      display_name: "§6贤者之石" # the item's name
+      lore:
+      # item description
+      - "§7 powerful alchemy tools"
+      - "§ecan convert minerals"
+      - "§esneak+right click to open workbench"
+      unbreakable: true # only decorative
+  # and also support more recipe like 2 recipes
+  - enabled: true # enable this recipe？ true/false
+    type: "shaped" # shaped or shapeless recipe？ "shaped"/"shapeless"
+    shape:
+    # the recipe's item(use abbreviation)
+    - "GRG"
+    - "RDR"
+    - "GRG"
+    ingredients:
+      # abbreviation to full item name
+      R: "REDSTONE" # for example, R means redstone
+      # if you want to replace it with other like diamond, you can write D: "DIAMOND"
+      # if you want to use other eg.diamond, you can write D: "DIAMOND"
+      G: "GLOWSTONE_DUST"
+      D: "DIAMOND"
+    result:
+      # result of the recipe
+      material: "POPPED_CHORUS_FRUIT" # Item ID
+      display_name: "§6贤者之石" # Item's name
+      lore:
+      # item description
+      - "§7 powerful alchemy tools"
+      - "§ecan convert minerals"
+      - "§esneak+right click to open workbench"
+      unbreakable: true # only decorative
+  # more recipe here... and like this...
   transmutation_table:
-    - enabled: true
-      type: "shaped"
-      shape:
-        - "OSO"
-        - "SPS"
-        - "OSO"
-      ingredients:
-        O: "OBSIDIAN"
-        S: "STONE"
-        P: "projecte:philosopher_stone"
-      result:
-        material: "PETRIFIED_OAK_SLAB"
-        display_name: "§5transmutation table"
-        lore:
-          - "§7save and transmute minerals"
-    - enabled: true
-      type: "shaped"
-      shape:
-        - "SOS"
-        - "OPO"
-        - "SOS"
-      ingredients:
-        S: "STONE"
-        P: "projecte:philosopher_stone"
-      result:
-        material: "PETRIFIED_OAK_SLAB"
-        display_name: "§5transmutation table"
-        lore:
-          - "§7save and transmute minerals"
+  - enabled: true
+    type: "shaped"
+    shape:
+    - "OSO"
+    - "SPS"
+    - "OSO"
+    ingredients:
+      O: "OBSIDIAN"
+      S: "STONE"
+      P: "projecte:philosopher_stone"
+    result:
+      material: "PETRIFIED_OAK_SLAB"
+      display_name: "§5transmutation table"
+      lore:
+      - "§7save and transmute minerals"
+  - enabled: true
+    type: "shaped"
+    shape:
+    - "SOS"
+    - "OPO"
+    - "SOS"
+    ingredients:
+      S: "STONE"
+      P: "projecte:philosopher_stone"
+    result:
+      material: "PETRIFIED_OAK_SLAB"
+      display_name: "§5transmutation table"
+      lore:
+      - "§7save and transmute minerals"
 
   alchemical_bag:
     enabled: true
     type: "shaped"
     shape:
-      - "LDL"
-      - "DCD"
-      - "LDL"
+    - "LDL"
+    - "DCD"
+    - "LDL"
     ingredients:
       L: "LEATHER"
       C: "CHEST"
@@ -91,13 +101,13 @@ recipes: # this file control the plugin's item recipe
       material: "LEATHER_HORSE_ARMOR"
       display_name: "§dAlchemical Bag"
       lore:
-        - "§7a portable storage device"
-# very very not recommended to change the following configuration unless you know what you are doing!
+      - "§7a portable storage device"
+  # very very not recommended to change the following configuration unless you know what you are doing!
   alchemical_bag_dyeing:
     enabled: true
     type: "shapeless"
     ingredients:
-      - "projecte:alchemical_bag"
-      - "any_dye"
+    - "projecte:alchemical_bag"
+    - "any_dye"
     result:
       material: "LEATHER_HORSE_ARMOR"

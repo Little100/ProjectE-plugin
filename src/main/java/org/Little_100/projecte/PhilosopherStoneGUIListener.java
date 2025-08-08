@@ -14,9 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class PhilosopherStoneGUIListener implements Listener {
-    
+
     private final ProjectE plugin;
-    
+
     // 数据键
     private static final NamespacedKey GUI_ITEM_KEY = new NamespacedKey(ProjectE.getInstance(), "gui_item");
     private static final NamespacedKey CHARGE_LEVEL_KEY = new NamespacedKey(ProjectE.getInstance(), "charge_level");
@@ -82,9 +82,11 @@ public class PhilosopherStoneGUIListener implements Listener {
      * 检查是否为充能槽位。
      */
     private boolean isChargeSlot(int slot) {
-        if (slot == 10) return true;
+        if (slot == 10)
+            return true;
         for (int i = 11; i <= 14; i++) {
-            if (slot == i) return true;
+            if (slot == i)
+                return true;
         }
         return false;
     }
@@ -147,7 +149,7 @@ public class PhilosopherStoneGUIListener implements Listener {
             PhilosopherStoneGUI.setCurrentMode(player, newMode);
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
             String message = plugin.getLanguageManager().get("clientside.philosopher_stone.mode_change")
-                                   .replace("{mode}", newMode.getDisplayName(plugin));
+                    .replace("{mode}", newMode.getDisplayName(plugin));
             player.sendMessage(ChatColor.GREEN + message);
         }
 
@@ -162,7 +164,7 @@ public class PhilosopherStoneGUIListener implements Listener {
     private void handleCraftingTableClick(Player player) {
         // 关闭
         player.closeInventory();
-    
+
         plugin.getSchedulerAdapter().runTaskLater(() -> {
             player.openWorkbench(null, true);
         }, 1L);

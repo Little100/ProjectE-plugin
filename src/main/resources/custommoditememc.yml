@@ -1,0 +1,35 @@
+# 自定义物品EMC值配置文件
+# custom item's EMC value configuration file
+# 这个文件用于配置特殊物品的EMC值
+
+# 燃料EMC值
+# Fuel EMC value
+# 基于配方计算：煤炭EMC = 128
+alchemical_coal: 512 # 4个煤炭 + 贤者之石 = 4 * 128 = 512
+mobius_fuel: 2048 # 4个炼金煤炭 + 贤者之石 = 4 * 512 = 2048  
+aeternalis_fuel: 8192 # 4个莫比乌斯燃料 + 贤者之石 = 4 * 2048 = 8192
+
+# 燃料块EMC值
+# FuelBlock EMC value
+alchemical_coal_block: 4608 # 9个炼金煤炭 = 9 * 512 = 4608
+mobius_fuel_block: 18432 # 9个莫比乌斯燃料 = 9 * 2048 = 18432
+aeternalis_fuel_block: 73728 # 9个永恒燃料 = 9 * 8192 = 73728
+
+# 物质EMC值
+# Matter EMC value
+# 暗物质 = 8个永恒燃料 + 1个钻石块 = 8 * 8192 + 73728 = 139264
+dark_matter: 139264
+
+# 红物质配方: 6个永恒燃料 + 3个暗物质 = 6 * 8192 + 3 * 139264 = 466944
+red_matter: 466944
+
+# 共价粉EMC值
+# Covalence Dust EMC value
+low_covalence_dust: 1
+medium_covalence_dust: 8
+high_covalence_dust: 208
+
+# 物质块EMC值
+# Matter Block EMC value
+dark_matter_block: 557056 # 4个暗物质 = 4 * 139264 = 557056
+red_matter_block: 1867776 # 4个红物质 = 4 * 466944 = 1867776

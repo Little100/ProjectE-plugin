@@ -1,6 +1,11 @@
 # ProjectE
 [合成表](./help/recipe.md)
+
 [English Version](./help/README_en.md)
+
+[鸣谢列表](./help/credits.md)
+
+[Credits](./help/credits_en.md)
 
 ## 描述
 
@@ -10,7 +15,11 @@ ProjectE 是一个 Minecraft Spigot 插件，其灵感来源于著名的 "等价
 
 ## 核心功能
 
- * 不必多说，几乎每个人都应该玩过或者了解过此模组。
+ ~~* 不必多说，几乎每个人都应该玩过或者了解过此模组。~~
+
+ ![alt text](help/images/notplayprojecte.png)
+
+  * 拥有和等价交换模组几乎同样体验的插件(需要材质包)
 
 ## 指令
 

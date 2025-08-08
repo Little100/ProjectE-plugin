@@ -50,7 +50,8 @@ public class PlayerInteractListener implements Listener {
         BUKKIT_TO_DYE_COLOR.put(Color.fromRGB(51, 76, 178), DyeColor.BLUE);
     }
 
-    public PlayerInteractListener(ProjectE plugin, AlchemicalBagManager alchemicalBagManager, InventoryManager inventoryManager) {
+    public PlayerInteractListener(ProjectE plugin, AlchemicalBagManager alchemicalBagManager,
+            InventoryManager inventoryManager) {
         this.plugin = plugin;
         this.alchemicalBagManager = alchemicalBagManager;
         this.inventoryManager = inventoryManager;
@@ -75,23 +76,40 @@ public class PlayerInteractListener implements Listener {
         try {
             DyeColor dye = DyeColor.valueOf(colorIdentifier.toUpperCase());
             switch (dye) {
-                case WHITE: return ChatColor.WHITE;
-                case ORANGE: return ChatColor.GOLD;
-                case MAGENTA: return ChatColor.LIGHT_PURPLE;
-                case LIGHT_BLUE: return ChatColor.AQUA;
-                case YELLOW: return ChatColor.YELLOW;
-                case LIME: return ChatColor.GREEN;
-                case PINK: return ChatColor.LIGHT_PURPLE;
-                case GRAY: return ChatColor.DARK_GRAY;
-                case LIGHT_GRAY: return ChatColor.GRAY;
-                case CYAN: return ChatColor.DARK_AQUA;
-                case PURPLE: return ChatColor.DARK_PURPLE;
-                case BLUE: return ChatColor.BLUE;
-                case BROWN: return ChatColor.DARK_RED;
-                case GREEN: return ChatColor.DARK_GREEN;
-                case RED: return ChatColor.RED;
-                case BLACK: return ChatColor.BLACK;
-                default: return ChatColor.WHITE;
+                case WHITE:
+                    return ChatColor.WHITE;
+                case ORANGE:
+                    return ChatColor.GOLD;
+                case MAGENTA:
+                    return ChatColor.LIGHT_PURPLE;
+                case LIGHT_BLUE:
+                    return ChatColor.AQUA;
+                case YELLOW:
+                    return ChatColor.YELLOW;
+                case LIME:
+                    return ChatColor.GREEN;
+                case PINK:
+                    return ChatColor.LIGHT_PURPLE;
+                case GRAY:
+                    return ChatColor.DARK_GRAY;
+                case LIGHT_GRAY:
+                    return ChatColor.GRAY;
+                case CYAN:
+                    return ChatColor.DARK_AQUA;
+                case PURPLE:
+                    return ChatColor.DARK_PURPLE;
+                case BLUE:
+                    return ChatColor.BLUE;
+                case BROWN:
+                    return ChatColor.DARK_RED;
+                case GREEN:
+                    return ChatColor.DARK_GREEN;
+                case RED:
+                    return ChatColor.RED;
+                case BLACK:
+                    return ChatColor.BLACK;
+                default:
+                    return ChatColor.WHITE;
             }
         } catch (IllegalArgumentException e) {
             return ChatColor.WHITE;
@@ -120,13 +138,14 @@ public class PlayerInteractListener implements Listener {
             Color bukkitColor = meta.getColor();
             String bagColorIdentifier = getBagColorIdentifier(bukkitColor);
 
-            ItemStack[] inventoryContents = plugin.getDatabaseManager().loadBagInventory(player.getUniqueId(), bagColorIdentifier);
+            ItemStack[] inventoryContents = plugin.getDatabaseManager().loadBagInventory(player.getUniqueId(),
+                    bagColorIdentifier);
 
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("color", getChatColor(bagColorIdentifier).toString());
             placeholders.put("color_name", bagColorIdentifier);
             String inventoryTitle = languageManager.get("clientside.alchemical_bag.colored_name", placeholders);
-            if(bagColorIdentifier.equals("DEFAULT")) {
+            if (bagColorIdentifier.equals("DEFAULT")) {
                 inventoryTitle = languageManager.get("clientside.alchemical_bag.default_name");
             }
 

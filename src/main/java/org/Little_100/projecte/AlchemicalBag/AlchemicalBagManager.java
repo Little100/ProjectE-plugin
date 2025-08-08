@@ -3,7 +3,6 @@ package org.Little_100.projecte.AlchemicalBag;
 import org.Little_100.projecte.LanguageManager;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -13,15 +12,12 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AlchemicalBagManager implements Listener {
 
     private final ProjectE plugin;
-    private final List<NamespacedKey> registeredRecipeKeys = new ArrayList<>();
     private final InventoryManager inventoryManager;
     private final LanguageManager languageManager;
 
@@ -32,7 +28,8 @@ public class AlchemicalBagManager implements Listener {
     }
 
     public void register() {
-        Bukkit.getServer().getPluginManager().registerEvents(new PlayerInteractListener(plugin, this, inventoryManager), plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerInteractListener(plugin, this, inventoryManager),
+                plugin);
         Bukkit.getServer().getPluginManager().registerEvents(inventoryManager, plugin);
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         removeVanillaRecipes();
@@ -50,39 +47,6 @@ public class AlchemicalBagManager implements Listener {
         } catch (Exception e) {
             plugin.getLogger().warning("Could not remove vanilla leather horse armor recipe: " + e.getMessage());
         }
-    }
-
-
-    public ItemStack createColoredBagItem(String colorIdentifier) {
-        ItemStack bag = new ItemStack(Material.LEATHER_HORSE_ARMOR);
-        LeatherArmorMeta meta = (LeatherArmorMeta) bag.getItemMeta();
-        if (meta == null) return null;
-
-        Color bukkitColor;
-        String displayName;
-
-        if (colorIdentifier.equals("DEFAULT")) {
-            bukkitColor = Bukkit.getServer().getItemFactory().getDefaultLeatherColor();
-            displayName = languageManager.get("clientside.alchemical_bag.default_name");
-        } else {
-            try {
-                DyeColor dye = DyeColor.valueOf(colorIdentifier.toUpperCase());
-                bukkitColor = dye.getColor();
-                Map<String, String> placeholders = new HashMap<>();
-                placeholders.put("color", PlayerInteractListener.getChatColor(colorIdentifier).toString());
-                placeholders.put("color_name", colorIdentifier);
-                displayName = languageManager.get("clientside.alchemical_bag.colored_name", placeholders);
-
-            } catch (IllegalArgumentException e) {
-                plugin.getLogger().severe("Could not parse '" + colorIdentifier + "' as a valid color! Cannot create result item.");
-                return null;
-            }
-        }
-
-        meta.setColor(bukkitColor);
-        meta.setDisplayName(displayName);
-        bag.setItemMeta(meta);
-        return bag;
     }
 
     @EventHandler

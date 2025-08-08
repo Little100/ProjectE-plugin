@@ -1,5 +1,5 @@
 name: ProjectE
-version: '0.1.3'
+version: '0.1.4'
 main: org.Little_100.projecte.ProjectE
 api-version: '1.16'
 folia-supported: true

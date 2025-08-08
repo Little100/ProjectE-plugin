@@ -133,7 +133,7 @@ serverside:
       sell_success: "§aSuccessfully sold items for {emc} EMC."
       no_emc_value_learn: "§cItem {item} has no EMC value and cannot be learned."
       learn_success: "§aSuccessfully learned new items!"
-      
+
   # Resource pack related messages
   resourcepack:
     prompt: "§6The server uses a custom resource pack for better visual experience."
@@ -181,7 +181,34 @@ item:
     name: "§cAeternalis Fuel Block"
     lore1: "§7Nearly eternal fuel block"
     lore2: "§eBurn time: 46080s"
-
+  dark_matter:
+    name: "§4Dark Matter"
+    lore1: "§7A mysterious matter"
+    lore2: "§eThe source of all matter"
+  red_matter:
+    name: "§cRed Matter"
+    lore1: "§7A rare matter"
+    lore2: "§eIn the heart of the universe"
+  dark_matter_block:
+    name: "§4Dark Matter Block"
+    lore1: "§7The concentrated form of matter"
+    lore2: "§eVery powerful"
+  red_matter_block:
+    name: "§cRed Matter Block"
+    lore1: "§7The highest density form of matter"
+    lore2: "§eultimate alchemical material block"
+  low_covalence_dust:
+    name: "§fLow Covalence Dust"
+    lore1: "§7Can repair wooden/stone/chainmail equipment"
+    lore2: "§eCombine with damaged low-tier tools to repair durability"
+medium_covalence_dust:
+  name: "§eMedium Covalence Dust"
+  lore1: "§7Can repair iron/gold equipment"
+  lore2: "§eCombine with damaged mid-tier tools to repair durability"
+high_covalence_dust:
+  name: "§bHigh Covalence Dust"
+  lore1: "§7Can repair diamond/netherite equipment"
+  lore2: "§eCombine with damaged high-tier tools to repair durability"
 # Plugin related
 plugin:
   autofix_language_file: "Auto-releasing language file: {file}"
