@@ -225,7 +225,7 @@ public class PhilosopherStoneListener implements Listener {
         }
 
         if (transformedCount > 0) {
-            player.playSound(clickedBlock.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            player.playSound(clickedBlock.getLocation(), "projecte:custom.petransmute", 1.0f, 1.0f); //需要 材质包支持
 
             // 发送转换消息
             String modeText = area.getMode().getDisplayName(plugin);

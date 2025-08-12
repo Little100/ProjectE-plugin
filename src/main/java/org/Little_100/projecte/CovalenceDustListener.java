@@ -27,6 +27,28 @@ public class CovalenceDustListener implements Listener {
             return;
         }
 
+        ItemStack item1 = contents[0];
+        ItemStack item2 = contents[1];
+        ItemStack anvilResult = event.getResult();
+
+        String item1Key = plugin.getEmcManager().getItemKey(item1);
+        String item2Key = plugin.getEmcManager().getItemKey(item2);
+
+        if (!item1Key.contains("projecte_id") && !item2Key.contains("projecte_id")) {
+            java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+            placeholders.put("item", item1.getType().toString());
+            DebugManager.log("debug.anvil.item_not_plugin_item", placeholders);
+            placeholders.put("item", item2.getType().toString());
+            DebugManager.log("debug.anvil.item_not_plugin_item", placeholders);
+            return;
+        }
+
+        java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+        placeholders.put("item1", item1.getType().toString());
+        placeholders.put("item2", item2.getType().toString());
+        placeholders.put("result", anvilResult != null ? anvilResult.getType().toString() : "null");
+        DebugManager.log("debug.anvil.combining_items", placeholders);
+
         ItemStack tool = contents[0];
         ItemStack dust = contents[1];
 

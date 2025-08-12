@@ -1,6 +1,9 @@
 package org.Little_100.projecte;
 
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
+import org.Little_100.projecte.BlockPackManager.Fuel;
+import org.Little_100.projecte.util.MapArtUtil;
+import org.Little_100.projecte.Tools.DiviningRodGUI;
 import org.Little_100.projecte.Tools.Divining_Rod;
 import org.Little_100.projecte.Tools.Repair_Talisman;
 import org.Little_100.projecte.compatibility.SchedulerAdapter;
@@ -44,24 +47,33 @@ public final class ProjectE extends JavaPlugin {
     private AlchemicalBagManager alchemicalBagManager;
     private LanguageManager languageManager;
     private ResourcePackManager resourcePackManager;
+    private DatapackManager datapackManager;
     private SchedulerAdapter schedulerAdapter;
     private PhilosopherStoneListener philosopherStoneListener;
     private FuelManager fuelManager;
     private CovalenceDust covalenceDust;
     private Divining_Rod diviningRod;
     private Repair_Talisman repairTalisman;
+    private DiviningRodGUI diviningRodGUI;
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
+    private boolean excludePDC;
+ 
+     @Override
+     public void onEnable() {
+         instance = this;
+ 
+         // 保存默认配置
+         saveDefaultConfig();
+         
+        // 加载配置
+        loadConfigOptions();
+ 
+         // 初始化语言管理器
+         languageManager = new LanguageManager(this);
 
-    @Override
-    public void onEnable() {
-        instance = this;
-
-        // 保存默认配置
-        saveDefaultConfig();
-
-        // 初始化语言管理器
-        languageManager = new LanguageManager(this);
+        // 初始化调试管理器
+        DebugManager.init(this);
 
         // 自动将jar中的所有yml文件释放到数据文件夹中
         try {
@@ -121,18 +133,25 @@ public final class ProjectE extends JavaPlugin {
         getServer().getPluginManager().registerEvents(fuelManager, this);
         getLogger().info("FuelManager initialized with special fuels.");
 
+        // 初始化地图画工具
+        new MapArtUtil(this);
+
+        // 初始化方块包管理器
+        new Fuel(this);
+
         // 设置特殊燃料的EMC值
         fuelManager.setFuelEmcValues();
 
         // 输出特殊燃料的NBT标签信息，供用户添加材质
-        getLogger().info(fuelManager.getNbtTagInfo());
 
         // 初始化共价粉
         covalenceDust = new CovalenceDust(this);
-
+        covalenceDust.setCovalenceDustEmcValues();
+ 
         // 初始化探知之杖
         diviningRod = new Divining_Rod(this);
         diviningRod.setDiviningRodEmcValues();
+        diviningRodGUI = new DiviningRodGUI(this);
 
         // 初始化修复护符
         repairTalisman = new Repair_Talisman(this);
@@ -159,6 +178,7 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CovalenceDustListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CovalenceDustCraftListener(), this);
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.DiviningRodListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
  
         // 初始化共价粉
         covalenceDust = new CovalenceDust(this);
@@ -183,6 +203,10 @@ public final class ProjectE extends JavaPlugin {
         // 初始化资源包管理器
         resourcePackManager = new ResourcePackManager(this);
         getLogger().info("Resource Pack Manager initialized.");
+
+        // 初始化数据包管理器
+        datapackManager = new DatapackManager(this);
+        datapackManager.setupDatapack();
 
         getLogger().info("ProjectE plugin has been enabled!");
 
@@ -330,7 +354,8 @@ public final class ProjectE extends JavaPlugin {
 
     public void reloadPlugin() {
         reloadConfig();
-
+        loadConfigOptions();
+ 
         // 重新加载语言文件
         languageManager.loadLanguageFiles();
 
@@ -386,6 +411,18 @@ public final class ProjectE extends JavaPlugin {
     public Repair_Talisman getRepairTalisman() {
         return repairTalisman;
     }
+
+    public DiviningRodGUI getDiviningRodGUI() {
+        return diviningRodGUI;
+    }
+ 
+    public boolean isPdcExcluded() {
+        return excludePDC;
+    }
+ 
+    private void loadConfigOptions() {
+        excludePDC = getConfig().getBoolean("Exclude_PDC", true);
+    }
  
     private void startContinuousParticleTask() {
         if (!getConfig().getBoolean("philosopher_stone.particle.enabled", true)) {
@@ -419,55 +456,49 @@ public final class ProjectE extends JavaPlugin {
     }
 
     public ItemStack getItemStackFromKey(String key) {
-        Pattern pattern = Pattern.compile("(.+)\\{projecte_id:\"(.+)\"\\}");
-        Matcher matcher = pattern.matcher(key);
- 
-        if (matcher.matches()) {
-            String projecteId = matcher.group(2);
-            switch (projecteId) {
-                case "alchemical_coal":
-                    return fuelManager.getAlchemicalCoal();
-                case "mobius_fuel":
-                    return fuelManager.getMobiusFuel();
-                case "aeternalis_fuel":
-                    return fuelManager.getAeternalisFuel();
-                case "alchemical_coal_block":
-                    return fuelManager.getAlchemicalCoalBlock();
-                case "mobius_fuel_block":
-                    return fuelManager.getMobiusFuelBlock();
-                case "aeternalis_fuel_block":
-                    return fuelManager.getAeternalisFuelBlock();
-                case "dark_matter":
-                    return fuelManager.getDarkMatter();
-                case "red_matter":
-                    return fuelManager.getRedMatter();
-                case "dark_matter_block":
-                    return fuelManager.getDarkMatterBlock();
-                case "red_matter_block":
-                    return fuelManager.getRedMatterBlock();
-                case "low_covalence_dust":
-                    return covalenceDust.getLowCovalenceDust();
-                case "medium_covalence_dust":
-                    return covalenceDust.getMediumCovalenceDust();
-                case "high_covalence_dust":
-                    return covalenceDust.getHighCovalenceDust();
-                case "low_divining_rod":
-                    return diviningRod.getLowDiviningRod();
-                case "medium_divining_rod":
-                    return diviningRod.getMediumDiviningRod();
-                case "high_divining_rod":
-                    return diviningRod.getHighDiviningRod();
-                case "repair_talisman":
-                    return repairTalisman.getRepairTalisman();
-            }
+        switch (key) {
+            case "alchemical_coal":
+                return fuelManager.getAlchemicalCoal();
+            case "mobius_fuel":
+                return fuelManager.getMobiusFuel();
+            case "aeternalis_fuel":
+                return fuelManager.getAeternalisFuel();
+            case "alchemical_coal_block":
+                return fuelManager.getAlchemicalCoalBlock();
+            case "mobius_fuel_block":
+                return fuelManager.getMobiusFuelBlock();
+            case "aeternalis_fuel_block":
+                return fuelManager.getAeternalisFuelBlock();
+            case "dark_matter":
+                return fuelManager.getDarkMatter();
+            case "red_matter":
+                return fuelManager.getRedMatter();
+            case "dark_matter_block":
+                return fuelManager.getDarkMatterBlock();
+            case "red_matter_block":
+                return fuelManager.getRedMatterBlock();
+            case "low_covalence_dust":
+                return covalenceDust.getLowCovalenceDust();
+            case "medium_covalence_dust":
+                return covalenceDust.getMediumCovalenceDust();
+            case "high_covalence_dust":
+                return covalenceDust.getHighCovalenceDust();
+            case "low_divining_rod":
+                return diviningRod.getLowDiviningRod();
+            case "medium_divining_rod":
+                return diviningRod.getMediumDiviningRod();
+            case "high_divining_rod":
+                return diviningRod.getHighDiviningRod();
+            case "repair_talisman":
+                return repairTalisman.getRepairTalisman();
+            default:
+                String materialName = key.replace("minecraft:", "").toUpperCase();
+                Material material = versionAdapter.getMaterial(materialName);
+                if (material != null) {
+                    return new ItemStack(material);
+                }
+                break;
         }
- 
-        String materialName = key.replace("minecraft:", "").toUpperCase();
-        Material material = versionAdapter.getMaterial(materialName);
-        if (material != null) {
-            return new ItemStack(material);
-        }
- 
         return null;
     }
 
@@ -494,7 +525,6 @@ public final class ProjectE extends JavaPlugin {
                     CustomCommand command = new CustomCommand(commandName, commandManager);
                     command.setDescription(description);
                     commandMap.register(getDescription().getName(), command);
-                    getLogger().info("Registered custom command: " + commandName);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

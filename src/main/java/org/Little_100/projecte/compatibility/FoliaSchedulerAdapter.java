@@ -80,8 +80,8 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
         try {
             Method getScheduler = Entity.class.getMethod("getScheduler");
             Object scheduler = getScheduler.invoke(entity);
-            Method execute = findMethodByNameAndParamCount(scheduler.getClass(), "execute", 2);
-            execute.invoke(scheduler, plugin, task);
+            Method run = findMethodByNameAndParamCount(scheduler.getClass(), "run", 3);
+            run.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), null);
         } catch (Exception e) {
             throw new RuntimeException("Folia scheduler reflection failed for runTaskOnEntity", e);
         }
@@ -96,6 +96,18 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
             runAtFixedRate.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), delay, period);
         } catch (Exception e) {
             throw new RuntimeException("Folia scheduler reflection failed for runTimer", e);
+        }
+    }
+
+    @Override
+    public void runTaskLaterAtLocation(Location location, Runnable task, long delay) {
+        try {
+            Method getRegionScheduler = Bukkit.class.getMethod("getRegionScheduler");
+            Object scheduler = getRegionScheduler.invoke(null);
+            Method runDelayed = findMethodByNameAndParamCount(scheduler.getClass(), "runDelayed", 4);
+            runDelayed.invoke(scheduler, plugin, location, (Consumer<Object>) scheduledTask -> task.run(), delay);
+        } catch (Exception e) {
+            throw new RuntimeException("Folia scheduler reflection failed for runTaskLaterAtLocation", e);
         }
     }
 }

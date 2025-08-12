@@ -59,7 +59,7 @@ public class Divining_Rod {
                                               List<String> loreKeys, NamespacedKey key, String id) {
         ItemStack item = new ItemStack(Material.STICK);
 
-        item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(item, customModelData);
+        item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(item, id, customModelData);
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -70,8 +70,8 @@ public class Divining_Rod {
             meta.setLore(translatedLore);
 
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(key, PersistentDataType.BYTE, (byte) 1);
             container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(key, PersistentDataType.BYTE, (byte) 1);
 
             item.setItemMeta(meta);
         }
@@ -91,10 +91,25 @@ public class Divining_Rod {
     }
 
     public void setDiviningRodEmcValues() {
-        var db = plugin.getDatabaseManager();
-        db.setEmc(plugin.getEmcManager().getItemKey(getLowDiviningRod()), 12);
-        db.setEmc(plugin.getEmcManager().getItemKey(getMediumDiviningRod()), 76);
-        db.setEmc(plugin.getEmcManager().getItemKey(getHighDiviningRod()), 1740);
+        var emcManager = plugin.getEmcManager();
+        java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
+        if (!configFile.exists()) {
+            plugin.getLogger().warning("custommoditememc.yml not found, custom divining rod EMC values will not be loaded.");
+            return;
+        }
+        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+
+        String lowKey = emcManager.getItemKey(getLowDiviningRod());
+        long lowEmc = config.getLong("low_divining_rod", 12);
+        emcManager.registerEmc(lowKey, lowEmc);
+
+        String mediumKey = emcManager.getItemKey(getMediumDiviningRod());
+        long mediumEmc = config.getLong("medium_divining_rod", 68);
+        emcManager.registerEmc(mediumKey, mediumEmc);
+
+        String highKey = emcManager.getItemKey(getHighDiviningRod());
+        long highEmc = config.getLong("high_divining_rod", 1668);
+        emcManager.registerEmc(highKey, highEmc);
     }
 
     public boolean isLowDiviningRod(ItemStack item) {
@@ -112,11 +127,9 @@ public class Divining_Rod {
     private boolean isDiviningRod(ItemStack item, NamespacedKey key, String id) {
         if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        boolean hasKey = container.has(key, PersistentDataType.BYTE);
-        boolean hasId = container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
         String foundId = container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
-
-        return hasKey && hasId && id.equals(foundId);
+        return id.equals(foundId);
     }
 }

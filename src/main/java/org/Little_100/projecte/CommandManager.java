@@ -105,8 +105,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     return handleReport(sender);
                 case "nbtdebug":
                     return handleNbtDebug(sender);
-                case "guitest":
-                    return handleGuiTest(sender, args);
+                case "pdctest":
+                    return handlePdcTest(sender);
                 default:
                     sendHelp(sender);
                     return true;
@@ -185,7 +185,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            String itemKey = plugin.getVersionAdapter().getItemKey(itemInHand);
+            String itemKey = emcManager.getItemKey(itemInHand);
             databaseManager.setEmc(itemKey, emc);
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("item", itemKey);
@@ -537,7 +537,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 1) {
-                List<String> subCommands = new ArrayList<>(Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "guitest"));
+                List<String> subCommands = new ArrayList<>(Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "pdctest"));
                 for (String cmd : openTableCommands.keySet()) {
                     if (cmd.startsWith("projecte ")) {
                         subCommands.add(cmd.split(" ")[1]);
@@ -561,9 +561,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("lang")) {
                 return StringUtil.copyPartialMatches(args[1], Arrays.asList("list", "set"), new ArrayList<>());
             }
-            if (args[0].equalsIgnoreCase("guitest")) {
-                return StringUtil.copyPartialMatches(args[1], Collections.singletonList("<rows>"), new ArrayList<>());
-            }
+            // No arguments for pdctest
         }
 
         if (args.length >= 3 && args[0].equalsIgnoreCase("lang") && args[1].equalsIgnoreCase("set")) {
@@ -580,31 +578,30 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return new ArrayList<>();
     }
 
-    private boolean handleGuiTest(CommandSender sender, String[] args) {
+    private boolean handlePdcTest(CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
             return true;
         }
-
-        if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /projecte guitest <rows>");
-            return true;
-        }
-
         Player player = (Player) sender;
-        try {
-            int rows = Integer.parseInt(args[1]);
-            int size = rows * 9;
 
-            Inventory testGui = Bukkit.createInventory(null, size, "Test GUI (" + rows + " rows)");
-            player.openInventory(testGui);
-
-        } catch (NumberFormatException e) {
-            player.sendMessage(ChatColor.RED + "Invalid number: " + args[1]);
-        } catch (IllegalArgumentException e) {
-            player.sendMessage(ChatColor.RED + "Error creating GUI: " + e.getMessage());
-            player.sendMessage(ChatColor.YELLOW + "Hint: The size of a chest GUI must be a multiple of 9.");
+        ItemStack pdcItem = new ItemStack(Material.DIAMOND);
+        ItemMeta meta = pdcItem.getItemMeta();
+        if (meta != null) {
+            PersistentDataContainer container = meta.getPersistentDataContainer();
+            NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
+            container.set(idKey, PersistentDataType.STRING, "special_diamond");
+            meta.setDisplayName(ChatColor.AQUA + "Special Diamond");
+            pdcItem.setItemMeta(meta);
         }
+
+        String itemKey = emcManager.getEffectiveItemKey(pdcItem);
+        databaseManager.setEmc(itemKey, 10000);
+
+        player.getInventory().addItem(pdcItem);
+        player.sendMessage(ChatColor.GREEN + "You have received a special diamond with 10,000 EMC.");
+
         return true;
     }
+
 }

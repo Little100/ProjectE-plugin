@@ -5,6 +5,26 @@ language:
   - "zh_cn"
   - "en_us"
 
+debug: false # 是否开启调试模式? true/false
+# enable debug mode? true/false
+
+Exclude_PDC: true # 是否排除PDC物品? true/false
+# exclude PDC items? true/false
+
+Advancement_Datapack: true # 是否开启进度数据包? true/false
+# enable advancement datapack? true/false
+
+CustomBlockPack:
+  enabled: true # 是否启用自定义方块材质? true/false
+  # enable custom block pack? true/false
+  limit:
+    enabled: true # 是否启用自定义方块材质限制? true/false
+    # enable custom block pack limit? true/false
+    max: 5 # 自定义方块材质单个区块最大数量 默认5
+    # the maximum number of custom block packs per block default 5
+
+ConfrimDatapack: false
+
 philosopher_stone:
   particle:
     enabled: true # 启用粒子效果? true/false

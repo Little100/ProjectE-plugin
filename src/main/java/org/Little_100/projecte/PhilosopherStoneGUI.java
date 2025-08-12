@@ -238,22 +238,6 @@ public class PhilosopherStoneGUI {
 
         ItemStack item = createGuiItem(material, ChatColor.GOLD + modeName, lore);
 
-        // 如果是当前模式，添加附魔效果
-        if (selected) {
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                // 更兼容的方式获取附魔
-                Enchantment enchantment = Enchantment.getByName("unbreaking");
-                if (enchantment == null) {
-                    enchantment = Enchantment.getByName("durability");
-                }
-                if (enchantment != null) {
-                    meta.addEnchant(enchantment, 1, true);
-                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                }
-                item.setItemMeta(meta);
-            }
-        }
 
         // 添加模式标识
         ItemMeta meta = item.getItemMeta();
@@ -309,8 +293,17 @@ public class PhilosopherStoneGUI {
      * 设置充能等级。
      */
     public static void setChargeLevel(Player player, int level) {
+        int oldLevel = getChargeLevel(player);
         int actualLevel = Math.min(Math.max(0, level), CHARGE_LEVEL_MAX);
-        playerChargeLevel.put(player, actualLevel);
+
+        if (oldLevel != actualLevel) {
+            playerChargeLevel.put(player, actualLevel);
+            if (actualLevel > oldLevel) {
+                player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
+            } else {
+                player.playSound(player.getLocation(), "projecte:custom.peuncharge", 1.0f, 1.0f);
+            }
+        }
     }
 
     /**

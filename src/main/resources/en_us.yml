@@ -71,6 +71,24 @@ clientside:
     crafting:
       title: "Crafting"
       lore: "Click to open the vanilla crafting table"
+  divining_rod:
+    mode_changed: "§aScan mode changed to: {mode}"
+    scan_results: "§bScan Results:"
+    total_blocks: "§6Total Blocks: {count}"
+    average_emc: "§6Average EMC: {emc}"
+    no_emc_blocks: "§cNo blocks with EMC found in the area."
+    max_emc: "§dMax EMC: {emc}"
+    gui:
+      title: "Divining Rod Mode Selection"
+      low:
+        name: "§f3x3x3"
+        lore: "§7Click to select"
+      medium:
+        name: "§e16x3x3"
+        lore: "§7Click to select"
+      high:
+        name: "§b64x3x3"
+        lore: "§7Click to select"
 
 # Server-side visible output
 serverside:
@@ -129,11 +147,15 @@ serverside:
       buy_success: "§aSuccessfully purchased {amount}x {item}"
       not_enough_emc: "§cYou don't have enough EMC."
       no_emc_value_trade: "§cItem {item} has no EMC value and cannot be traded."
+      no_emc_value_pdc_no_base: "§cItem ID {id} and this PDC item both have no EMC value, cannot be traded."
+      no_emc_value_pdc_has_base: "§cItem with ID: {id} has PDC: {pdc_id}, but no separate EMC value is set, so it cannot be traded. If you think this is an error, please contact an administrator."
       partial_trade_fail: "§cSome items could not be traded and were returned."
       sell_success: "§aSuccessfully sold items for {emc} EMC."
       no_emc_value_learn: "§cItem {item} has no EMC value and cannot be learned."
       learn_success: "§aSuccessfully learned new items!"
-
+      interact_with_map_art_fail: "§cBecause of Little_100's ability...he cannot resolve cross itemframe interaction...so please interact with edge positions qwp..."
+  blockpack:
+    limit_exceeded: "§cThis chunk was full! limit block count: ({max})！"
   # Resource pack related messages
   resourcepack:
     prompt: "§6The server uses a custom resource pack for better visual experience."
@@ -143,6 +165,8 @@ serverside:
     command:
       send_success: "§aResource pack sent to {player}."
       no_url: "§cNo resource pack URL configured, cannot send."
+  datapack:
+    not_loaded_warning: "§c Warning,advancement datapack not loaded,please use /reload or contact the server administrator to load it."
 
 # item lore
 item:
@@ -209,6 +233,33 @@ high_covalence_dust:
   name: "§bHigh Covalence Dust"
   lore1: "§7Can repair diamond/netherite equipment"
   lore2: "§eCombine with damaged high-tier tools to repair durability"
+low_divining_rod:
+  name: "§fLow Divining Rod"
+  lore1: "§7Used to detect the EMC of blocks"
+  lore2: "§eScan mode: 3x3x3"
+medium_divining_rod:
+  name: "§eMedium Divining Rod"
+  lore1: "§7Used to detect the EMC of blocks"
+  lore2: "§eScan mode: 3x3x3, 16x3x3"
+high_divining_rod:
+  name: "§bHigh Divining Rod"
+  lore1: "§7Used to detect the EMC of blocks"
+  lore2: "§eScan mode: 3x3x3, 16x3x3, 64x3x3"
+repair_talisman:
+  name: "§aRepair Talisman"
+  lore1: "§7Automatically repairs the durability of all items on your body every second"
+
 # Plugin related
 plugin:
   autofix_language_file: "Auto-releasing language file: {file}"
+
+# Debug messages
+debug:
+  emc:
+    item_emc_info: "Item: {item}, EMC: {emc}"
+  recipe:
+    loading_recipe: "Loading recipe: {recipe}"
+    recipe_emc_calculated: "EMC calculated for recipe {recipe}: {emc}"
+  anvil:
+    combining_items: "Anvil combining: {item1} + {item2} -> {result}"
+    item_not_plugin_item: "Item {item} is not a plugin item, skipping debug."

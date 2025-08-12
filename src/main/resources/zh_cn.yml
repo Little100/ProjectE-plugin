@@ -93,6 +93,24 @@ clientside:
     crafting:
       title: "合成"
       lore: "点击打开原版工作台"
+  divining_rod:
+    mode_changed: "§a扫描模式已切换为: {mode}"
+    scan_results: "§b扫描结果:"
+    total_blocks: "§6总方块数: {count}"
+    average_emc: "§6平均EMC: {emc}"
+    no_emc_blocks: "§c该区域未发现有EMC的方块。"
+    max_emc: "§d最大EMC: {emc}"
+    gui:
+      title: "探知权杖模式选择"
+      low:
+        name: "§f3x3x3"
+        lore: "§7点击选择"
+      medium:
+        name: "§e16x3x3"
+        lore: "§7点击选择"
+      high:
+        name: "§b64x3x3"
+        lore: "§7点击选择"
 
 # 服务端可见的输出
 serverside:
@@ -151,22 +169,28 @@ serverside:
       buy_success: "§a成功购买 {amount}x {item}"
       not_enough_emc: "§c你的EMC不足。"
       no_emc_value_trade: "§c物品 {item} 没有EMC值，无法交易。"
+      no_emc_value_pdc_no_base: "§c物品ID {id} 和此PDC物品都没有EMC值，无法交易。"
+      no_emc_value_pdc_has_base: "§cID: {id} 的物品含有PDC: {pdc_id}，但没有设置独立的EMC值，无法交易。如果您认为这是个错误，请联系管理员。"
       partial_trade_fail: "§c部分物品无法交易，已退回。"
       sell_success: "§a成功卖出物品，获得 {emc} EMC。"
       no_emc_value_learn: "§c物品 {item} 没有EMC值，无法学习。"
       learn_success: "§a成功学习新物品！"
-
+      interact_with_map_art_fail: "§c由于Little_100的能力...他没有办法...所以请你与边缘位置交互qwp...?"
+  blockpack:
+    limit_exceeded: "§c此区块的自定义方块数量已达到上限 ({max})！"
   # 资源包相关信息
   resourcepack:
-    prompt: "§6服务器使用了自定义资源包，这可以提供更好的视觉体验。"
-    download_start: "§a正在下载资源包..."
-    download_success: "§a资源包下载成功！"
-    download_failed: "§c资源包下载失败，请稍后重试或联系服务器管理员。"
-    command:
-      send_success: "§a已向 {player} 发送资源包。"
-      no_url: "§c未配置资源包URL，无法发送。"
-
-# 物品显示的信息
+      prompt: "§6服务器使用了自定义资源包，这可以提供更好的视觉体验。"
+      download_start: "§a正在下载资源包..."
+      download_success: "§a资源包下载成功！"
+      download_failed: "§c资源包下载失败，请稍后重试或联系服务器管理员。"
+      command:
+        send_success: "§a已向 {player} 发送资源包。"
+        no_url: "§c未配置资源包URL，无法发送。"
+  datapack:
+    not_loaded_warning: "§c警告: 进度数据包可能未正确加载。请联系服务器管理员执行'/reload'或重启服务器来解决此问题。"
+  
+  # 物品显示的信息
 item:
   philosopher_stone:
     name: "§6贤者之石"
@@ -250,3 +274,14 @@ item:
 # 插件相关
 plugin:
   autofix_language_file: "自动释放语言文件: {file}"
+
+# 调试信息
+debug:
+  emc:
+    item_emc_info: "物品: {item}, EMC: {emc}"
+  recipe:
+    loading_recipe: "正在加载配方: {recipe}"
+    recipe_emc_calculated: "配方 {recipe} 的EMC计算完成: {emc}"
+  anvil:
+    combining_items: "铁砧合成: {item1} + {item2} -> {result}"
+    item_not_plugin_item: "物品 {item} 不是此插件的物品，跳过调试。"

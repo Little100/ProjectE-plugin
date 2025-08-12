@@ -89,7 +89,7 @@ public class CovalenceDust {
         ItemStack item = new ItemStack(material);
 
         // 统一用CustomModelDataUtil设置cmd，传数字字符串
-        item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(item, customModelData);
+        item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(item, id, customModelData);
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -102,8 +102,8 @@ public class CovalenceDust {
 
             // 设置PDC
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(key, PersistentDataType.BYTE, (byte) 1);
             container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(key, PersistentDataType.BYTE, (byte) 1);
 
             item.setItemMeta(meta);
         }
@@ -124,23 +124,25 @@ public class CovalenceDust {
 
     public void setCovalenceDustEmcValues() {
         var db = plugin.getDatabaseManager();
+        var emcManager = plugin.getEmcManager();
         java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
-        org.bukkit.configuration.file.YamlConfiguration config = null;
-        if (configFile.exists()) {
-            config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
-            plugin.getLogger().info("Loaded custom EMC values from custommoditememc.yml");
-        } else {
-            plugin.getLogger().info("custommoditememc.yml not found, using default EMC values");
+        if (!configFile.exists()) {
+            plugin.getLogger().warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");
+            return;
         }
+        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
 
-        long lowEmc = (config != null) ? config.getLong("low_covalence_dust", 1) : 1;
-        db.setEmc(plugin.getEmcManager().getItemKey(getLowCovalenceDust()), lowEmc);
+        String lowKey = emcManager.getItemKey(getLowCovalenceDust());
+        long lowEmc = config.getLong("low_covalence_dust", 1);
+        emcManager.registerEmc(lowKey, lowEmc);
 
-        long mediumEmc = (config != null) ? config.getLong("medium_covalence_dust", 8) : 8;
-        db.setEmc(plugin.getEmcManager().getItemKey(getMediumCovalenceDust()), mediumEmc);
+        String mediumKey = emcManager.getItemKey(getMediumCovalenceDust());
+        long mediumEmc = config.getLong("medium_covalence_dust", 8);
+        emcManager.registerEmc(mediumKey, mediumEmc);
 
-        long highEmc = (config != null) ? config.getLong("high_covalence_dust", 208) : 208;
-        db.setEmc(plugin.getEmcManager().getItemKey(getHighCovalenceDust()), highEmc);
+        String highKey = emcManager.getItemKey(getHighCovalenceDust());
+        long highEmc = config.getLong("high_covalence_dust", 208);
+        emcManager.registerEmc(highKey, highEmc);
     }
 
     public boolean isLowCovalenceDust(ItemStack item) {
@@ -158,11 +160,9 @@ public class CovalenceDust {
     private boolean isCovalenceDust(ItemStack item, NamespacedKey key, String id) {
         if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        boolean hasKey = container.has(key, PersistentDataType.BYTE);
-        boolean hasId = container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
         String foundId = container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
-
-        return hasKey && hasId && id.equals(foundId);
+        return id.equals(foundId);
     }
 }

@@ -23,7 +23,8 @@ public class Repair_Talisman {
 
     private void createRepairTalisman() {
         repairTalisman = new ItemStack(Material.PAPER);
-        repairTalisman = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(repairTalisman, 1);
+        // 使用setCustomModelDataBoth方法同时设置字符串和整数值
+        repairTalisman = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(repairTalisman, "repair_talisman", 1);
 
         ItemMeta meta = repairTalisman.getItemMeta();
         if (meta != null) {
@@ -45,16 +46,23 @@ public class Repair_Talisman {
     public boolean isRepairTalisman(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        boolean hasKey = container.has(key, PersistentDataType.BYTE);
-        boolean hasId = container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
         String foundId = container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
-
-        return hasKey && hasId && "repair_talisman".equals(foundId);
+        return "repair_talisman".equals(foundId);
     }
 
     public void setEmcValue() {
-        var db = plugin.getDatabaseManager();
-        db.setEmc(plugin.getEmcManager().getItemKey(getRepairTalisman()), 0); // Assuming it has no EMC value or it's calculated from recipe
+        var emcManager = plugin.getEmcManager();
+        java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
+        if (!configFile.exists()) {
+            plugin.getLogger().warning("custommoditememc.yml not found, repair talisman EMC value will not be loaded.");
+            return;
+        }
+        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+
+        String itemKey = emcManager.getItemKey(getRepairTalisman());
+        long emc = config.getLong("repair_talisman", 490);
+        emcManager.registerEmc(itemKey, emc);
     }
 }

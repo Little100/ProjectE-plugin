@@ -33,3 +33,13 @@ high_covalence_dust: 208
 # Matter Block EMC value
 dark_matter_block: 557056 # 4个暗物质 = 4 * 139264 = 557056
 red_matter_block: 1867776 # 4个红物质 = 4 * 466944 = 1867776
+
+# 探知权杖EMC值
+# Divining Rod EMC value
+low_divining_rod: 12
+medium_divining_rod: 68
+high_divining_rod: 1668
+
+# 修复护符EMC值
+# Repair Talisman EMC value
+repair_talisman: 490

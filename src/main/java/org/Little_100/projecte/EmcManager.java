@@ -12,6 +12,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.io.File;
 
 public class EmcManager {
 
@@ -30,6 +31,13 @@ public class EmcManager {
                 .getString("TransmutationTable.EMC.recipeConflictStrategy", "lowest").toLowerCase();
         this.divisionStrategy = plugin.getConfig().getString("TransmutationTable.EMC.divisionStrategy", "floor")
                 .toLowerCase();
+        
+        // 确保文件存在
+        File customEmcFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
+        if (!customEmcFile.exists()) {
+            plugin.getLogger().info("custommoditememc.yml not found, creating default file.");
+            plugin.saveResource("custommoditememc.yml", false);
+        }
     }
 
     public void calculateAndStoreEmcValues() {
@@ -78,7 +86,7 @@ public class EmcManager {
         }
 
         String resultKey = getItemKey(result);
-        long existingEmc = databaseManager.getEmc(resultKey);
+        long existingEmc = getEmc(resultKey);
         long newEmc = versionAdapter.calculateRecipeEmc(recipe, divisionStrategy);
 
         if (newEmc <= 0) {
@@ -87,18 +95,37 @@ public class EmcManager {
 
         if (existingEmc <= 0) {
             databaseManager.setEmc(resultKey, newEmc);
+            java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+            placeholders.put("item", resultKey);
+            placeholders.put("emc", String.valueOf(newEmc));
+            DebugManager.log("debug.emc.item_emc_info", placeholders);
             return true;
         } else {
             boolean updated = false;
             if ("lowest".equals(recipeConflictStrategy) && newEmc < existingEmc) {
                 databaseManager.setEmc(resultKey, newEmc);
+                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                placeholders.put("item", resultKey);
+                placeholders.put("emc", String.valueOf(newEmc));
+                DebugManager.log("debug.emc.item_emc_info", placeholders);
                 updated = true;
             } else if ("highest".equals(recipeConflictStrategy) && newEmc > existingEmc) {
                 databaseManager.setEmc(resultKey, newEmc);
+                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                placeholders.put("item", resultKey);
+                placeholders.put("emc", String.valueOf(newEmc));
+                DebugManager.log("debug.emc.item_emc_info", placeholders);
                 updated = true;
             }
             return updated;
         }
+    }
+
+    public long getEmc(ItemStack item) {
+        if (plugin.isPdcExcluded()) {
+            return getEmc(versionAdapter.getItemKey(item));
+        }
+        return getEmc(getItemKey(item));
     }
 
     public long getEmc(String itemKey) {
@@ -106,7 +133,7 @@ public class EmcManager {
         if (emc > 0) {
             return emc;
         }
-
+ 
         if (currentlyCalculating.contains(itemKey)) {
             return 0;
         }
@@ -168,10 +195,55 @@ public class EmcManager {
                 NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
                 if (container.has(idKey, PersistentDataType.STRING)) {
                     String projecteId = container.get(idKey, PersistentDataType.STRING);
-                    return versionAdapter.getItemKey(item) + "{projecte_id:\"" + projecteId + "\"}";
+                    return "projecte:" + projecteId;
                 }
             }
         }
         return versionAdapter.getItemKey(item);
+    }
+
+    public String getEffectiveItemKey(ItemStack item) {
+        if (plugin.isPdcExcluded()) {
+            return versionAdapter.getItemKey(item);
+        }
+        return getItemKey(item);
+    }
+ 
+    public String getSpecificItemKey(ItemStack item) {
+        return getItemKey(item);
+    }
+ 
+    public boolean isPdcItem(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) {
+            return false;
+        }
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
+        return container.has(idKey, PersistentDataType.STRING);
+    }
+
+    public long getBaseEmc(ItemStack item) {
+        String baseKey = versionAdapter.getItemKey(item);
+        return getEmc(baseKey);
+    }
+
+    public String getPdcId(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) {
+            return null;
+        }
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
+        return container.get(idKey, PersistentDataType.STRING);
+    }
+    public void registerEmc(String itemKey, long emcValue) {
+        databaseManager.setEmc(itemKey, emcValue);
     }
 }

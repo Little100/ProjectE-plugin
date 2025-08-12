@@ -23,16 +23,16 @@ public class RepairTalismanListener {
     private void startRepairTask() {
         scheduler.runTimer(() -> {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
-                boolean hasTalisman = false;
-                for (ItemStack item : player.getInventory().getContents()) {
-                    if (repairTalisman.isRepairTalisman(item)) {
-                        hasTalisman = true;
-                        break;
+                scheduler.runTaskOnEntity(player, () -> {
+                    boolean hasTalisman = false;
+                    for (ItemStack item : player.getInventory().getContents()) {
+                        if (repairTalisman.isRepairTalisman(item)) {
+                            hasTalisman = true;
+                            break;
+                        }
                     }
-                }
 
-                if (hasTalisman) {
-                    scheduler.runTaskOnEntity(player, () -> {
+                    if (hasTalisman) {
                         for (ItemStack item : player.getInventory().getContents()) {
                             if (item != null && item.getItemMeta() instanceof Damageable) {
                                 Damageable meta = (Damageable) item.getItemMeta();
@@ -51,9 +51,9 @@ public class RepairTalismanListener {
                                 }
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
-        }, 1L, 20L); // Run every second (20 ticks), with 1 tick initial delay
+        }, 1L, 20L);
     }
 }

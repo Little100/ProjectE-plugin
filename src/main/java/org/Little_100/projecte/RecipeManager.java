@@ -45,36 +45,24 @@ public class RecipeManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(recipeFile);
         ConfigurationSection recipesSection = config.getConfigurationSection("recipes");
         if (recipesSection == null) {
-            List<Map<?, ?>> recipeList = config.getMapList("recipes");
-            if (recipeList.isEmpty()) {
-                plugin.getLogger().warning("在 recipe.yml 中未找到 'recipes' 区段或列表。");
-                return;
-            }
-            recipesSection = new YamlConfiguration();
-            for (Map<?, ?> map : recipeList) {
-                if (map.containsKey("id")) {
-                    recipesSection.set(map.get("id").toString(), map);
-                }
-            }
+            return;
         }
 
-        // 遍历所有配方ID，解析配方
         for (String id : recipesSection.getKeys(false)) {
-            if (recipesSection.isConfigurationSection(id)) {
-                ConfigurationSection recipeConfig = recipesSection.getConfigurationSection(id);
-                if (recipeConfig != null && recipeConfig.getBoolean("enabled", true)) {
-                    parseRecipe(id, recipeConfig);
-                }
-            } else if (recipesSection.isList(id)) {
+            if (recipesSection.isList(id)) {
                 List<Map<?, ?>> recipeList = recipesSection.getMapList(id);
                 int i = 0;
                 for (Map<?, ?> recipeMap : recipeList) {
-                    ConfigurationSection recipeConfig = new YamlConfiguration().createSection("recipe",
-                            (Map<String, Object>) recipeMap);
+                    ConfigurationSection recipeConfig = new YamlConfiguration().createSection("recipe", (Map<String, Object>) recipeMap);
                     if (recipeConfig.getBoolean("enabled", true)) {
                         parseRecipe(id + "_" + i, recipeConfig);
                         i++;
                     }
+                }
+            } else if (recipesSection.isConfigurationSection(id)) {
+                ConfigurationSection recipeConfig = recipesSection.getConfigurationSection(id);
+                if (recipeConfig != null && recipeConfig.getBoolean("enabled", true)) {
+                    parseRecipe(id, recipeConfig);
                 }
             }
         }
@@ -82,6 +70,10 @@ public class RecipeManager {
 
     // 解析单个配方
     private void parseRecipe(String id, ConfigurationSection config) {
+        java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+        placeholders.put("recipe", id);
+        DebugManager.log("debug.recipe.loading_recipe", placeholders);
+
         String type = config.getString("type", "shaped").toLowerCase();
         if (type.equals("shaped")) {
             parseShapedRecipe(id, config);
@@ -95,7 +87,7 @@ public class RecipeManager {
         NamespacedKey key = new NamespacedKey(plugin, id);
         ItemStack result = createResultStack(config.getConfigurationSection("result"));
         if (result == null) {
-            plugin.getLogger().warning("配方 " + id + " 的结果无效。");
+            plugin.getLogger().warning("[Debug] Recipe " + id + " has a null result. Skipping.");
             return;
         }
 
@@ -110,33 +102,23 @@ public class RecipeManager {
                 RecipeChoice choice = getChoice(ingredientValue);
                 if (choice != null) {
                     recipe.setIngredient(keyChar, choice);
+                    plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient " + keyChar + " = " + ingredientValue);
                 } else {
-                    plugin.getLogger().warning("配方 " + id + " 中的原料 '" + ingredientValue + "' 无效。");
+                    plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + keyChar + " (" + ingredientValue + ") is invalid. Skipping.");
                 }
             }
         }
         Bukkit.addRecipe(recipe);
         recipeKeys.put(id, key);
+        plugin.getLogger().info("[Debug] Successfully registered shaped recipe: " + id);
     }
 
     // 解析无序配方
     private void parseShapelessRecipe(String id, ConfigurationSection config) {
         NamespacedKey key = new NamespacedKey(plugin, id);
-        ItemStack result;
-        if ("low_covalence_dust".equals(id)) {
-            result = plugin.getCovalenceDust().getLowCovalenceDust().clone();
-            result.setAmount(config.getConfigurationSection("result").getInt("amount", 1));
-        } else if ("medium_covalence_dust".equals(id)) {
-            result = plugin.getCovalenceDust().getMediumCovalenceDust().clone();
-            result.setAmount(config.getConfigurationSection("result").getInt("amount", 1));
-        } else if ("high_covalence_dust".equals(id)) {
-            result = plugin.getCovalenceDust().getHighCovalenceDust().clone();
-            result.setAmount(config.getConfigurationSection("result").getInt("amount", 1));
-        } else {
-            result = createResultStack(config.getConfigurationSection("result"));
-        }
+        ItemStack result = createResultStack(config.getConfigurationSection("result"));
         if (result == null) {
-            plugin.getLogger().warning("配方 " + id + " 的结果无效。");
+            plugin.getLogger().warning("[Debug] Recipe " + id + " has a null result. Skipping.");
             return;
         }
 
@@ -146,64 +128,56 @@ public class RecipeManager {
             RecipeChoice choice = getChoice(ingredientValue);
             if (choice != null) {
                 recipe.addIngredient(choice);
+                plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient = " + ingredientValue);
             } else {
-                plugin.getLogger().warning("配方 " + id + " 中的原料 '" + ingredientValue + "' 无效。");
+                plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + ingredientValue + " is invalid. Skipping.");
             }
         }
         Bukkit.addRecipe(recipe);
         recipeKeys.put(id, key);
+        plugin.getLogger().info("[Debug] Successfully registered shapeless recipe: " + id);
     }
 
     // 获取原料选择对象
     private RecipeChoice getChoice(String ingredient) {
-        if (ingredient.equalsIgnoreCase("projecte:philosopher_stone")) {
-            return new RecipeChoice.ExactChoice(plugin.getPhilosopherStone());
-        } else if (ingredient.equalsIgnoreCase("any_wool")) {
+        plugin.getLogger().info("[Debug] Getting choice for ingredient: " + ingredient);
+        if (ingredient.startsWith("projecte:")) {
+            String customItemId = ingredient.substring(9);
+            ItemStack customItem = plugin.getItemStackFromKey(customItemId);
+            if (customItem != null) {
+                plugin.getLogger().info("[Debug] Matched custom item: " + customItemId);
+                return new RecipeChoice.ExactChoice(customItem);
+            } else {
+                plugin.getLogger().warning("[Debug] Custom item not found: " + customItemId);
+                return null;
+            }
+        }
+
+        if (ingredient.equalsIgnoreCase("any_wool")) {
+            plugin.getLogger().info("[Debug] Matched special case: any_wool");
             return new RecipeChoice.MaterialChoice(
                     Material.WHITE_WOOL, Material.ORANGE_WOOL, Material.MAGENTA_WOOL,
                     Material.LIGHT_BLUE_WOOL, Material.YELLOW_WOOL, Material.LIME_WOOL,
                     Material.PINK_WOOL, Material.GRAY_WOOL, Material.LIGHT_GRAY_WOOL,
                     Material.CYAN_WOOL, Material.PURPLE_WOOL, Material.BLUE_WOOL,
                     Material.BROWN_WOOL, Material.GREEN_WOOL, Material.RED_WOOL, Material.BLACK_WOOL);
-        } else if (ingredient.equalsIgnoreCase("any_dye")) {
+        }
+
+        if (ingredient.equalsIgnoreCase("any_dye")) {
+            plugin.getLogger().info("[Debug] Matched special case: any_dye");
             return new RecipeChoice.MaterialChoice(Material.RED_DYE, Material.GREEN_DYE, Material.BLUE_DYE,
                     Material.WHITE_DYE, Material.BLACK_DYE, Material.YELLOW_DYE, Material.PURPLE_DYE,
                     Material.ORANGE_DYE);
-        } else if (ingredient.equalsIgnoreCase("projecte:alchemical_bag")) {
-            return new RecipeChoice.MaterialChoice(Material.LEATHER_HORSE_ARMOR);
-        } else if (ingredient.equalsIgnoreCase("projecte:alchemical_coal")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getAlchemicalCoal());
-        } else if (ingredient.equalsIgnoreCase("projecte:mobius_fuel")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getMobiusFuel());
-        } else if (ingredient.equalsIgnoreCase("projecte:aeternalis_fuel")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getAeternalisFuel());
-        } else if (ingredient.equalsIgnoreCase("projecte:alchemical_coal_block")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getAlchemicalCoalBlock());
-        } else if (ingredient.equalsIgnoreCase("projecte:mobius_fuel_block")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getMobiusFuelBlock());
-        } else if (ingredient.equalsIgnoreCase("projecte:aeternalis_fuel_block")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getAeternalisFuelBlock());
-        } else if (ingredient.equalsIgnoreCase("projecte:dark_matter")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getDarkMatter());
-        } else if (ingredient.equalsIgnoreCase("projecte:red_matter")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getRedMatter());
-        } else if (ingredient.equalsIgnoreCase("projecte:dark_matter_block")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getDarkMatterBlock());
-        } else if (ingredient.equalsIgnoreCase("projecte:red_matter_block")) {
-            return new RecipeChoice.ExactChoice(plugin.getFuelManager().getRedMatterBlock());
-        } else if (ingredient.equalsIgnoreCase("projecte:low_covalence_dust")) {
-            return new RecipeChoice.ExactChoice(plugin.getCovalenceDust().getLowCovalenceDust());
-        } else if (ingredient.equalsIgnoreCase("projecte:medium_covalence_dust")) {
-            return new RecipeChoice.ExactChoice(plugin.getCovalenceDust().getMediumCovalenceDust());
-        } else if (ingredient.equalsIgnoreCase("projecte:high_covalence_dust")) {
-            return new RecipeChoice.ExactChoice(plugin.getCovalenceDust().getHighCovalenceDust());
-        } else {
-            Material mat = Material.matchMaterial(ingredient);
-            if (mat != null) {
-                return new RecipeChoice.MaterialChoice(mat);
-            }
         }
-        return null;
+
+        try {
+            Material material = Material.valueOf(ingredient.toUpperCase());
+            plugin.getLogger().info("[Debug] Matched material: " + material.name());
+            return new RecipeChoice.MaterialChoice(material);
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("[Debug] No choice found for ingredient: " + ingredient);
+            return null;
+        }
     }
 
     private void registerSpecialFuelRecipes() {
@@ -215,8 +189,49 @@ public class RecipeManager {
 
         if (config.contains("projecte_id")) {
             String projecteId = config.getString("projecte_id");
-            String materialName = config.getString("material", "GLOWSTONE_DUST");
-            ItemStack item = plugin.getItemStackFromKey(materialName + "{projecte_id:\"" + projecteId + "\"}");
+            ItemStack item = null;
+
+            switch (projecteId) {
+                case "low_covalence_dust":
+                    item = plugin.getCovalenceDust().getLowCovalenceDust();
+                    break;
+                case "medium_covalence_dust":
+                    item = plugin.getCovalenceDust().getMediumCovalenceDust();
+                    break;
+                case "high_covalence_dust":
+                    item = plugin.getCovalenceDust().getHighCovalenceDust();
+                    break;
+                case "low_divining_rod":
+                    item = plugin.getDiviningRod().getLowDiviningRod();
+                    break;
+                case "medium_divining_rod":
+                    item = plugin.getDiviningRod().getMediumDiviningRod();
+                    break;
+                case "high_divining_rod":
+                    item = plugin.getDiviningRod().getHighDiviningRod();
+                    break;
+                case "repair_talisman":
+                    item = plugin.getRepairTalisman().getRepairTalisman();
+                    break;
+                case "dark_matter":
+                    item = plugin.getFuelManager().getDarkMatter();
+                    break;
+                case "red_matter":
+                    item = plugin.getFuelManager().getRedMatter();
+                    break;
+                case "dark_matter_block":
+                    item = plugin.getFuelManager().getDarkMatterBlock();
+                    break;
+                case "red_matter_block":
+                    item = plugin.getFuelManager().getRedMatterBlock();
+                    break;
+                default:
+                    // Fallback for other custom items if any
+                    String materialName = config.getString("material", "GLOWSTONE_DUST");
+                    item = plugin.getItemStackFromKey(materialName + "{projecte_id:\"" + projecteId + "\"}");
+                    break;
+            }
+
             if (item != null) {
                 item.setAmount(config.getInt("amount", 1));
                 return item;

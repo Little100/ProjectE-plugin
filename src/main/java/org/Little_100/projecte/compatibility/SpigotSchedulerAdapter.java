@@ -5,6 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Method;
+
 public class SpigotSchedulerAdapter implements SchedulerAdapter {
 
     private final JavaPlugin plugin;
@@ -35,11 +37,23 @@ public class SpigotSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public void runTaskOnEntity(Entity entity, Runnable task) {
-        runTask(task);
+        try {
+            Method schedulingMethod = Entity.class.getMethod("scheduling");
+            Object entityScheduler = schedulingMethod.invoke(entity);
+            Method runMethod = entityScheduler.getClass().getMethod("run", org.bukkit.plugin.Plugin.class, Runnable.class, Runnable.class);
+            runMethod.invoke(entityScheduler, plugin, task, null);
+        } catch (Exception e) {
+            runTask(task);
+        }
     }
 
     @Override
     public void runTimer(Runnable task, long delay, long period) {
         Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+    }
+
+    @Override
+    public void runTaskLaterAtLocation(Location location, Runnable task, long delay) {
+        Bukkit.getScheduler().runTaskLater(plugin, task, delay);
     }
 }

@@ -169,7 +169,7 @@ public class FuelManager implements Listener {
             item.setItemMeta(meta);
             // 统一用CustomModelDataUtil设置cmd
             System.out.println("Before setting CustomModelData: " + item);
-            item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(item, customModelData);
+            item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(item, id, customModelData);
             System.out.println("After setting CustomModelData: " + item);
             addFuelTags(item, key, value, id);
         }

@@ -55,6 +55,13 @@ public class GUIListener implements Listener {
             }
         }
 
+        if (gui.getCurrentState() == TransmutationGUI.GuiState.BUY) {
+            if (event.getClickedInventory() != gui.getInventory()) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (event.getClickedInventory() != gui.getInventory()) {
             return;
         }
@@ -263,10 +270,7 @@ public class GUIListener implements Listener {
                         totalEmcChange += itemEmc * item.getAmount();
                         ProjectE.getInstance().getDatabaseManager().addLearnedItem(player.getUniqueId(), itemKey);
                     } else {
-                        LanguageManager lang = ProjectE.getInstance().getLanguageManager();
-                        Map<String, String> placeholders = new HashMap<>();
-                        placeholders.put("item", item.getType().name());
-                        player.sendMessage(lang.get("serverside.command.generic.no_emc_value_trade", placeholders));
+                        handleNoEmcItem(player, item);
                         player.getInventory().addItem(item);
                         inventory.setItem(i, null);
                         transactionValid = false;
@@ -329,10 +333,7 @@ public class GUIListener implements Listener {
                         ProjectE.getInstance().getDatabaseManager().addLearnedItem(player.getUniqueId(), itemKey);
                         learnedSomething = true;
                     } else {
-                        LanguageManager lang = ProjectE.getInstance().getLanguageManager();
-                        Map<String, String> placeholders = new HashMap<>();
-                        placeholders.put("item", item.getType().name());
-                        player.sendMessage(lang.get("serverside.command.generic.no_emc_value_learn", placeholders));
+                        handleNoEmcItem(player, item);
                     }
                 }
             }
@@ -419,6 +420,31 @@ public class GUIListener implements Listener {
             if (startIndex < gui.getItems().size()) {
                 new NoEmcItemGUI(gui.getItems(), gui.getPage() + 1).openInventory(player);
             }
+        }
+    }
+    private void handleNoEmcItem(Player player, ItemStack item) {
+        LanguageManager lang = ProjectE.getInstance().getLanguageManager();
+        EmcManager emcManager = ProjectE.getInstance().getEmcManager();
+        Map<String, String> placeholders = new HashMap<>();
+        String itemKey = emcManager.getItemKey(item);
+
+        if (emcManager.isPdcItem(item)) {
+            long baseEmc = emcManager.getBaseEmc(item);
+            if (baseEmc > 0) {
+                // PDC item has no specific EMC, but its base item does
+                String pdcId = emcManager.getPdcId(item);
+                placeholders.put("id", itemKey);
+                placeholders.put("pdc_id", pdcId != null ? pdcId : "N/A");
+                player.sendMessage(lang.get("serverside.command.generic.no_emc_value_pdc_has_base", placeholders));
+            } else {
+                // Neither PDC item nor its base item has an EMC value
+                placeholders.put("id", itemKey);
+                player.sendMessage(lang.get("serverside.command.generic.no_emc_value_pdc_no_base", placeholders));
+            }
+        } else {
+            // Standard item with no EMC value
+            placeholders.put("item", item.getType().name());
+            player.sendMessage(lang.get("serverside.command.generic.no_emc_value_trade", placeholders));
         }
     }
 }

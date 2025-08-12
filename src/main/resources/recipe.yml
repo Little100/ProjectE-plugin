@@ -57,7 +57,7 @@ recipes:
     ingredients:
       O: "OBSIDIAN"
       S: "STONE"
-      P: "projecte:philosopher_stone"
+      P: "POPPED_CHORUS_FRUIT"
     result:
       material: "PETRIFIED_OAK_SLAB"
       display_name: "item.transmutation_table.name"

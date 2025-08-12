@@ -15,4 +15,6 @@ public interface SchedulerAdapter {
     void runTaskOnEntity(Entity entity, Runnable task);
 
     void runTimer(Runnable task, long delay, long period);
+
+    void runTaskLaterAtLocation(Location location, Runnable task, long delay);
 }
