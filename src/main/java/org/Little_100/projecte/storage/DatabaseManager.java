@@ -95,6 +95,25 @@ public class DatabaseManager {
         }
         return 0;
     }
+public boolean hasEmcValues() {
+        String sql = "SELECT 1 FROM emc_values LIMIT 1;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void clearEmcValues() {
+        String sql = "DELETE FROM emc_values;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public long getPlayerEmc(UUID playerUuid) {
         String sql = "SELECT emc FROM player_emc WHERE player_uuid = ?;";

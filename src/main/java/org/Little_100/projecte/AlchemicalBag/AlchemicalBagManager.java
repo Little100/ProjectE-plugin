@@ -20,11 +20,24 @@ public class AlchemicalBagManager implements Listener {
     private final ProjectE plugin;
     private final InventoryManager inventoryManager;
     private final LanguageManager languageManager;
+    private static ItemStack alchemicalBag;
 
     public AlchemicalBagManager(ProjectE plugin) {
         this.plugin = plugin;
         this.inventoryManager = new InventoryManager(plugin, this);
         this.languageManager = plugin.getLanguageManager();
+        createAlchemicalBag();
+    }
+
+    private void createAlchemicalBag() {
+        alchemicalBag = new ItemStack(Material.LEATHER_HORSE_ARMOR);
+        LeatherArmorMeta meta = (LeatherArmorMeta) alchemicalBag.getItemMeta();
+        meta.setDisplayName(languageManager.get("clientside.alchemical_bag.name"));
+        alchemicalBag.setItemMeta(meta);
+    }
+
+    public static ItemStack getAlchemicalBag() {
+        return alchemicalBag;
     }
 
     public void register() {

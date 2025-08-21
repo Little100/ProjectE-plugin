@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FuelManager implements Listener {
     private final ProjectE plugin;
@@ -80,6 +81,7 @@ public class FuelManager implements Listener {
                 + (isModernVersion ? " (using modern material handling)" : " (using legacy material handling)"));
 
         createFuelItems();
+        registerCustomBlocks();
     }
 
     private boolean isVersion1_21_4OrNewer() {
@@ -146,11 +148,11 @@ public class FuelManager implements Listener {
                 redMatterKey, (byte) 1, "red_matter");
 
         // 物质块
-        darkMatterBlock = createFuelItem(Material.SLIME_BALL, "item.dark_matter_block.name", 3,
+        darkMatterBlock = createFuelItem(Material.BLACK_CONCRETE, "item.dark_matter_block.name", 1,
                 Arrays.asList("item.dark_matter_block.lore1", "item.dark_matter_block.lore2"),
                 darkMatterKey, (byte) 2, "dark_matter_block");
 
-        redMatterBlock = createFuelItem(Material.SLIME_BALL, "item.red_matter_block.name", 4,
+        redMatterBlock = createFuelItem(Material.REDSTONE_BLOCK, "item.red_matter_block.name", 1,
                 Arrays.asList("item.red_matter_block.lore1", "item.red_matter_block.lore2"),
                 redMatterKey, (byte) 2, "red_matter_block");
     }
@@ -168,9 +170,13 @@ public class FuelManager implements Listener {
 
             item.setItemMeta(meta);
             // 统一用CustomModelDataUtil设置cmd
-            System.out.println("Before setting CustomModelData: " + item);
+            if (plugin.getConfig().getBoolean("debug")) {
+                System.out.println("Before setting CustomModelData: " + item);
+            }
             item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(item, id, customModelData);
-            System.out.println("After setting CustomModelData: " + item);
+            if (plugin.getConfig().getBoolean("debug")) {
+                System.out.println("After setting CustomModelData: " + item);
+            }
             addFuelTags(item, key, value, id);
         }
         return item;
@@ -770,12 +776,6 @@ public class FuelManager implements Listener {
         return container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
     }
 
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
-        if (isFuelItem(event.getItemInHand())) {
-            event.setCancelled(true);
-        }
-    }
 
     // 获取特殊燃料的NBT标签信息以供材质包使用
     public String getNbtTagInfo() {
@@ -890,5 +890,15 @@ public class FuelManager implements Listener {
         // 红物质块 = 4个红物质 = 4 * 466944 = 1867776 EMC
         long redMatterBlockEmc = (config != null) ? config.getLong("red_matter_block", 1867776) : 1867776;
         db.setEmc(plugin.getEmcManager().getItemKey(getRedMatterBlock()), redMatterBlockEmc);
+    }
+
+    private void registerCustomBlocks() {
+        BlockDataManager bdm = plugin.getBlockDataManager();
+        bdm.saveBlock("alchemical_coal_block", getAlchemicalCoalBlock(), null);
+        bdm.saveBlock("mobius_fuel_block", getMobiusFuelBlock(), null);
+        bdm.saveBlock("aeternalis_fuel_block", getAeternalisFuelBlock(), null);
+        bdm.saveBlock("dark_matter_block", getDarkMatterBlock(), null);
+        bdm.saveBlock("red_matter_block", getRedMatterBlock(), null);
+        plugin.getLogger().info("Registered custom fuel blocks with BlockDataManager.");
     }
 }

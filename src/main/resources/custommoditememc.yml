@@ -43,3 +43,14 @@ high_divining_rod: 1668
 # 修复护符EMC值
 # Repair Talisman EMC value
 repair_talisman: 490
+
+# 克莱因之星EMC值
+# Klein Star EMC value
+klein_star_ein: 24576
+klein_star_zwei: 98304
+klein_star_drei: 393216
+klein_star_vier: 1572864
+klein_star_sphere: 6291456
+klein_star_omega: 25165824
+
+transmutation_tablet_book: 0

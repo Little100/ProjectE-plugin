@@ -1,6 +1,8 @@
 package org.Little_100.projecte;
 
+import org.Little_100.projecte.Tome.TransmutationTabletBook;
 import org.bukkit.Bukkit;
+import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
 import org.bukkit.Material;
 import org.Little_100.projecte.util.ReflectionUtil;
 import org.bukkit.NamespacedKey;
@@ -85,9 +87,21 @@ public class RecipeManager {
     // 解析有序配方
     private void parseShapedRecipe(String id, ConfigurationSection config) {
         NamespacedKey key = new NamespacedKey(plugin, id);
-        ItemStack result = createResultStack(config.getConfigurationSection("result"));
+        ItemStack result;
+
+        String originalId = id.split("_")[0];
+        int kleinStarLevel = getKleinStarLevelFromId(originalId);
+
+        if (kleinStarLevel != -1) {
+            result = plugin.getKleinStarManager().getKleinStar(kleinStarLevel);
+        } else {
+            result = createResultStack(config.getConfigurationSection("result"));
+        }
+
         if (result == null) {
-            plugin.getLogger().warning("[Debug] Recipe " + id + " has a null result. Skipping.");
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().warning("[Debug] Recipe " + id + " has a null result. Skipping.");
+            }
             return;
         }
 
@@ -102,23 +116,41 @@ public class RecipeManager {
                 RecipeChoice choice = getChoice(ingredientValue);
                 if (choice != null) {
                     recipe.setIngredient(keyChar, choice);
-                    plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient " + keyChar + " = " + ingredientValue);
+                    if (plugin.getConfig().getBoolean("debug")) {
+                        plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient " + keyChar + " = " + ingredientValue);
+                    }
                 } else {
-                    plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + keyChar + " (" + ingredientValue + ") is invalid. Skipping.");
+                    if (plugin.getConfig().getBoolean("debug")) {
+                        plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + keyChar + " (" + ingredientValue + ") is invalid. Skipping.");
+                    }
                 }
             }
         }
         Bukkit.addRecipe(recipe);
         recipeKeys.put(id, key);
-        plugin.getLogger().info("[Debug] Successfully registered shaped recipe: " + id);
+        if (plugin.getConfig().getBoolean("debug")) {
+            plugin.getLogger().info("[Debug] Successfully registered shaped recipe: " + id);
+        }
     }
 
     // 解析无序配方
     private void parseShapelessRecipe(String id, ConfigurationSection config) {
         NamespacedKey key = new NamespacedKey(plugin, id);
-        ItemStack result = createResultStack(config.getConfigurationSection("result"));
+        ItemStack result;
+
+        String originalId = id.split("_")[0];
+        int kleinStarLevel = getKleinStarLevelFromId(originalId);
+
+        if (kleinStarLevel != -1) {
+            result = plugin.getKleinStarManager().getKleinStar(kleinStarLevel);
+        } else {
+            result = createResultStack(config.getConfigurationSection("result"));
+        }
+
         if (result == null) {
-            plugin.getLogger().warning("[Debug] Recipe " + id + " has a null result. Skipping.");
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().warning("[Debug] Recipe " + id + " has a null result. Skipping.");
+            }
             return;
         }
 
@@ -128,33 +160,52 @@ public class RecipeManager {
             RecipeChoice choice = getChoice(ingredientValue);
             if (choice != null) {
                 recipe.addIngredient(choice);
-                plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient = " + ingredientValue);
+                if (plugin.getConfig().getBoolean("debug")) {
+                    plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient = " + ingredientValue);
+                }
             } else {
-                plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + ingredientValue + " is invalid. Skipping.");
+                if (plugin.getConfig().getBoolean("debug")) {
+                    plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + ingredientValue + " is invalid. Skipping.");
+                }
             }
         }
         Bukkit.addRecipe(recipe);
         recipeKeys.put(id, key);
-        plugin.getLogger().info("[Debug] Successfully registered shapeless recipe: " + id);
+        if (plugin.getConfig().getBoolean("debug")) {
+            plugin.getLogger().info("[Debug] Successfully registered shapeless recipe: " + id);
+        }
     }
 
     // 获取原料选择对象
     private RecipeChoice getChoice(String ingredient) {
-        plugin.getLogger().info("[Debug] Getting choice for ingredient: " + ingredient);
+        if (plugin.getConfig().getBoolean("debug")) {
+            plugin.getLogger().info("[Debug] Getting choice for ingredient: " + ingredient);
+        }
         if (ingredient.startsWith("projecte:")) {
             String customItemId = ingredient.substring(9);
-            ItemStack customItem = plugin.getItemStackFromKey(customItemId);
+            ItemStack customItem;
+            if (customItemId.equals("alchemical_bag")) {
+                customItem = AlchemicalBagManager.getAlchemicalBag();
+            } else {
+                customItem = plugin.getItemStackFromKey(customItemId);
+            }
             if (customItem != null) {
-                plugin.getLogger().info("[Debug] Matched custom item: " + customItemId);
+                if (plugin.getConfig().getBoolean("debug")) {
+                    plugin.getLogger().info("[Debug] Matched custom item: " + customItemId);
+                }
                 return new RecipeChoice.ExactChoice(customItem);
             } else {
-                plugin.getLogger().warning("[Debug] Custom item not found: " + customItemId);
+                if (plugin.getConfig().getBoolean("debug")) {
+                    plugin.getLogger().warning("[Debug] Custom item not found: " + customItemId);
+                }
                 return null;
             }
         }
 
         if (ingredient.equalsIgnoreCase("any_wool")) {
-            plugin.getLogger().info("[Debug] Matched special case: any_wool");
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[Debug] Matched special case: any_wool");
+            }
             return new RecipeChoice.MaterialChoice(
                     Material.WHITE_WOOL, Material.ORANGE_WOOL, Material.MAGENTA_WOOL,
                     Material.LIGHT_BLUE_WOOL, Material.YELLOW_WOOL, Material.LIME_WOOL,
@@ -164,7 +215,9 @@ public class RecipeManager {
         }
 
         if (ingredient.equalsIgnoreCase("any_dye")) {
-            plugin.getLogger().info("[Debug] Matched special case: any_dye");
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[Debug] Matched special case: any_dye");
+            }
             return new RecipeChoice.MaterialChoice(Material.RED_DYE, Material.GREEN_DYE, Material.BLUE_DYE,
                     Material.WHITE_DYE, Material.BLACK_DYE, Material.YELLOW_DYE, Material.PURPLE_DYE,
                     Material.ORANGE_DYE);
@@ -172,10 +225,14 @@ public class RecipeManager {
 
         try {
             Material material = Material.valueOf(ingredient.toUpperCase());
-            plugin.getLogger().info("[Debug] Matched material: " + material.name());
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[Debug] Matched material: " + material.name());
+            }
             return new RecipeChoice.MaterialChoice(material);
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("[Debug] No choice found for ingredient: " + ingredient);
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().warning("[Debug] No choice found for ingredient: " + ingredient);
+            }
             return null;
         }
     }
@@ -225,8 +282,28 @@ public class RecipeManager {
                 case "red_matter_block":
                     item = plugin.getFuelManager().getRedMatterBlock();
                     break;
+                case "klein_star_ein":
+                    item = plugin.getKleinStarManager().getKleinStar(1);
+                    break;
+                case "klein_star_zwei":
+                    item = plugin.getKleinStarManager().getKleinStar(2);
+                    break;
+                case "klein_star_drei":
+                    item = plugin.getKleinStarManager().getKleinStar(3);
+                    break;
+                case "klein_star_vier":
+                    item = plugin.getKleinStarManager().getKleinStar(4);
+                    break;
+                case "klein_star_sphere":
+                    item = plugin.getKleinStarManager().getKleinStar(5);
+                    break;
+                case "klein_star_omega":
+                    item = plugin.getKleinStarManager().getKleinStar(6);
+                    break;
+                case "transmutation_tablet_book":
+                    item = TransmutationTabletBook.createTransmutationTabletBook();
+                    break;
                 default:
-                    // Fallback for other custom items if any
                     String materialName = config.getString("material", "GLOWSTONE_DUST");
                     item = plugin.getItemStackFromKey(materialName + "{projecte_id:\"" + projecteId + "\"}");
                     break;
@@ -234,6 +311,14 @@ public class RecipeManager {
 
             if (item != null) {
                 item.setAmount(config.getInt("amount", 1));
+                File customEmcFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
+                if (customEmcFile.exists()) {
+                    YamlConfiguration emcConfig = YamlConfiguration.loadConfiguration(customEmcFile);
+                    if (emcConfig.contains(projecteId)) {
+                        long emc = emcConfig.getLong(projecteId);
+                        plugin.getEmcManager().setEmcValue(item, emc);
+                    }
+                }
                 return item;
             }
         }
@@ -392,4 +477,15 @@ public class RecipeManager {
         recipeKeys.put("transmute_" + id, key);
     }
 
+    private int getKleinStarLevelFromId(String id) {
+        switch (id) {
+            case "klein_star_ein": return 1;
+            case "klein_star_zwei": return 2;
+            case "klein_star_drei": return 3;
+            case "klein_star_vier": return 4;
+            case "klein_star_sphere": return 5;
+            case "klein_star_omega": return 6;
+            default: return -1;
+        }
+    }
 }

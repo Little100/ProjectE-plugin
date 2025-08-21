@@ -6,6 +6,7 @@ clientside:
     title: "T.T. | Your EMC: {emc}"
     sell_title: "T.T. | Sell | Your EMC: {emc}"
     buy_title: "T.T. | Buy | Your EMC: {emc}"
+    charge_title: "T.T. | Charge | Your EMC: {emc}"
     buttons:
       sell: "§aSell"
       sell_lore: "Click to enter the sell interface"
@@ -13,10 +14,14 @@ clientside:
       buy_lore: "Click to enter the buy interface"
       learn: "§eLearn"
       learn_lore: "Click to enter the learn interface"
+      charge: "§cCharge"
+      charge_lore: "Click to enter the charge interface"
       confirm_sell: "§aConfirm"
       confirm_sell_lore: "Click to confirm the transaction"
       confirm_learn: "§aLearn"
       confirm_learn_lore: "Click to learn the item"
+      confirm_charge: "§cCharge"
+      confirm_charge_lore: "Click to charge the item"
       back: "§cBack"
       back_lore: "Click to return to the main menu"
       next_page: "§eNext Page"
@@ -29,6 +34,7 @@ clientside:
       buy_one: "§7Left-click to buy 1"
       buy_stack: "§7Right-click to buy {amount}"
   alchemical_bag:
+    name: "§fAlchemical Bag"
     default_name: "§fAlchemical Bag"
     colored_name: "{color}{color_name} Alchemical Bag"
   philosopher_stone_gui:
@@ -132,6 +138,12 @@ serverside:
       file_not_found: "§cLanguage file not found: {file}"
     report:
       message: "§aif you have any issues or suggestions, please report them on our GitHub page: https://github.com/Little-100/ProjectE-plugin"
+    open:
+      no_menu: "§cThe item in your hand does not have a menu."
+      geyser_only: "§cThis command is only for Bedrock players."
+    recalculate:
+      start: "Recalculating EMC values..."
+      success: "EMC values have been recalculated successfully."
     help:
       header: "§6ProjectE Plugin Command Help:"
       reload: "§b/projecte reload§f - Reloads the plugin configuration"
@@ -142,6 +154,7 @@ serverside:
       bag_list: "§b/projecte bag list§f - Lists all alchemical bags you own"
       lang: "§b/projecte lang <list|set>§f - Manages language files"
       report: "§b/projecte report§f - report a bug or suggest a feature"
+      open: "§b/projecte open§f - Opens the item menu for Bedrock players"
     generic:
       already_have_philosopher_stone: "§cYou already have a Philosopher's Stone!"
       buy_success: "§aSuccessfully purchased {amount}x {item}"
@@ -154,8 +167,15 @@ serverside:
       no_emc_value_learn: "§cItem {item} has no EMC value and cannot be learned."
       learn_success: "§aSuccessfully learned new items!"
       interact_with_map_art_fail: "§cBecause of Little_100's ability...he cannot resolve cross itemframe interaction...so please interact with edge positions qwp..."
-  blockpack:
-    limit_exceeded: "§cThis chunk was full! limit block count: ({max})！"
+      shulker_box_no_emc: "{color}Shulker({item_id}) {item} has no EMC"
+      multiple_klein_stars: "When you have multiple Klein Stars, you can only use one at a time."
+      invalid_charge_item: "You can only place one Klein Stars"
+      no_klein_star: "Please place a Klein Star in there"
+      multiple_items_in_charge: "You can only place one Klein Star in there"
+      klein_star_full: "This Klein Star is already full"
+      not_enough_emc_to_charge: "You has no EMC to charge this Klein Star"
+      charge_success: "Successful charge {emc} EMC！"
+  blockpack: {}
   # Resource pack related messages
   resourcepack:
     prompt: "§6The server uses a custom resource pack for better visual experience."
@@ -225,29 +245,62 @@ item:
     name: "§fLow Covalence Dust"
     lore1: "§7Can repair wooden/stone/chainmail equipment"
     lore2: "§eCombine with damaged low-tier tools to repair durability"
-medium_covalence_dust:
-  name: "§eMedium Covalence Dust"
-  lore1: "§7Can repair iron/gold equipment"
-  lore2: "§eCombine with damaged mid-tier tools to repair durability"
-high_covalence_dust:
-  name: "§bHigh Covalence Dust"
-  lore1: "§7Can repair diamond/netherite equipment"
-  lore2: "§eCombine with damaged high-tier tools to repair durability"
-low_divining_rod:
-  name: "§fLow Divining Rod"
-  lore1: "§7Used to detect the EMC of blocks"
-  lore2: "§eScan mode: 3x3x3"
-medium_divining_rod:
-  name: "§eMedium Divining Rod"
-  lore1: "§7Used to detect the EMC of blocks"
-  lore2: "§eScan mode: 3x3x3, 16x3x3"
-high_divining_rod:
-  name: "§bHigh Divining Rod"
-  lore1: "§7Used to detect the EMC of blocks"
-  lore2: "§eScan mode: 3x3x3, 16x3x3, 64x3x3"
-repair_talisman:
-  name: "§aRepair Talisman"
-  lore1: "§7Automatically repairs the durability of all items on your body every second"
+  medium_covalence_dust:
+    name: "§eMedium Covalence Dust"
+    lore1: "§7Can repair iron/gold equipment"
+    lore2: "§eCombine with damaged mid-tier tools to repair durability"
+  high_covalence_dust:
+    name: "§bHigh Covalence Dust"
+    lore1: "§7Can repair diamond/netherite equipment"
+    lore2: "§eCombine with damaged high-tier tools to repair durability"
+  low_divining_rod:
+    name: "§fLow Divining Rod"
+    lore1: "§7Used to detect the EMC of blocks"
+    lore2: "§eScan mode: 3x3x3"
+  medium_divining_rod:
+    name: "§eMedium Divining Rod"
+    lore1: "§7Used to detect the EMC of blocks"
+    lore2: "§eScan mode: 3x3x3, 16x3x3"
+  high_divining_rod:
+    name: "§bHigh Divining Rod"
+    lore1: "§7Used to detect the EMC of blocks"
+    lore2: "§eScan mode: 3x3x3, 16x3x3, 64x3x3"
+  repair_talisman:
+    name: "§aRepair Talisman"
+    lore1: "§7Automatically repairs the durability of all items on your body every second"
+  klein_star_ein:
+    name: "§6Klein Star Ein"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 50000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_zwei:
+    name: "§6Klein Star Zwei"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 200000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_drei:
+    name: "§6Klein Star Drei"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 800000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_vier:
+    name: "§6Klein Star Vier"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 3200000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_sphere:
+    name: "§6Klein Star Sphere"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 12800000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_omega:
+    name: "§6Klein Star Omega"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 51200000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  transmutation_tablet_book:
+    name: "§6Transmutation Tablet"
+    lore: "§7Right-click to open the Transmutation Table"
 
 # Plugin related
 plugin:
@@ -263,3 +316,4 @@ debug:
   anvil:
     combining_items: "Anvil combining: {item1} + {item2} -> {result}"
     item_not_plugin_item: "Item {item} is not a plugin item, skipping debug."
+

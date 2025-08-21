@@ -3,6 +3,7 @@ package org.Little_100.projecte.TransmutationTable;
 import org.Little_100.projecte.EmcManager;
 import org.Little_100.projecte.LanguageManager;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
 import org.Little_100.projecte.compatibility.VersionAdapter;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
@@ -33,7 +34,8 @@ public class TransmutationGUI implements InventoryHolder {
         MAIN,
         SELL,
         BUY,
-        LEARN
+        LEARN,
+        CHARGE
     }
 
     public TransmutationGUI(Player player) {
@@ -66,6 +68,8 @@ public class TransmutationGUI implements InventoryHolder {
                 return languageManager.get("clientside.transmutation_table.sell_title", placeholders);
             case BUY:
                 return languageManager.get("clientside.transmutation_table.buy_title", placeholders);
+           case CHARGE:
+               return languageManager.get("clientside.transmutation_table.charge_title", placeholders);
             default:
                 return languageManager.get("clientside.transmutation_table.title", placeholders);
         }
@@ -86,6 +90,9 @@ public class TransmutationGUI implements InventoryHolder {
             case LEARN:
                 setupLearnScreen();
                 break;
+           case CHARGE:
+               setupChargeScreen();
+               break;
         }
     }
 
@@ -96,12 +103,16 @@ public class TransmutationGUI implements InventoryHolder {
         ItemStack buyButton = createGuiItem(Material.EMERALD,
                 languageManager.get("clientside.transmutation_table.buttons.buy"),
                 languageManager.get("clientside.transmutation_table.buttons.buy_lore"));
-        ItemStack learnButton = createGuiItem(Material.BOOK,
-                languageManager.get("clientside.transmutation_table.buttons.learn"),
-                languageManager.get("clientside.transmutation_table.buttons.learn_lore"));
-        inventory.setItem(21, sellButton);
-        inventory.setItem(23, buyButton);
-        inventory.setItem(22, learnButton);
+       ItemStack learnButton = createGuiItem(Material.BOOK,
+               languageManager.get("clientside.transmutation_table.buttons.learn"),
+               languageManager.get("clientside.transmutation_table.buttons.learn_lore"));
+       ItemStack chargeButton = createGuiItem(Material.REDSTONE_TORCH,
+               languageManager.get("clientside.transmutation_table.buttons.charge"),
+               languageManager.get("clientside.transmutation_table.buttons.charge_lore"));
+        inventory.setItem(20, sellButton);
+        inventory.setItem(21, chargeButton);
+        inventory.setItem(22, buyButton);
+        inventory.setItem(24, learnButton);
     }
 
     private void setupSellScreen() {
@@ -209,6 +220,26 @@ public class TransmutationGUI implements InventoryHolder {
         inventory.setItem(0, backButton);
     }
 
+   private void setupChargeScreen() {
+       ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
+       for (int i = 0; i < 54; i++) {
+           inventory.setItem(i, grayPane);
+       }
+       for (int i = 1; i < 5; i++) {
+           for (int j = 1; j < 8; j++) {
+               inventory.setItem(i * 9 + j, null);
+           }
+       }
+       ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK,
+               languageManager.get("clientside.transmutation_table.buttons.confirm_charge"),
+               languageManager.get("clientside.transmutation_table.buttons.confirm_charge_lore"));
+       ItemStack backButton = createGuiItem(Material.BARRIER,
+               languageManager.get("clientside.transmutation_table.buttons.back"),
+               languageManager.get("clientside.transmutation_table.buttons.back_lore"));
+       inventory.setItem(49, confirmButton);
+       inventory.setItem(0, backButton);
+   }
+
     public GuiState getCurrentState() {
         return currentState;
     }
@@ -235,5 +266,15 @@ public class TransmutationGUI implements InventoryHolder {
         meta.setLore(Arrays.asList(lore));
         item.setItemMeta(meta);
         return item;
+    }
+
+    private boolean isGuiItem(int slot, GuiState state) {
+        if (state == GuiState.CHARGE) {
+            if (slot == 49 || slot == 0) return true;
+            if (slot >= 1 && slot <= 7) return true;
+            if (slot >= 46 && slot <= 52) return true;
+            if (slot % 9 == 0 || slot % 9 == 8) return true;
+        }
+        return false;
     }
 }

@@ -1,90 +1,90 @@
 recipes:
   # 此文件是合成表配置文件
   philosopher_stone:
-  - enabled: true # 启用此合成表？ true/false
-    type: "shaped" # 有序合成还是无序合成？ "shaped"/"shapeless"
-    shape:
-    # 合成表内的物品(使用单字缩写)
-    - "RGR"
-    - "GDG"
-    - "RGR"
-    ingredients:
-      # 缩写对应的完整物品名
-      R: "REDSTONE" # 比如这里的R代表红石 
-      # 如果你想替换为其他的比如 钻石 可以写成 D: "DIAMOND"
-      G: "GLOWSTONE_DUST"
-      D: "DIAMOND"
-    result:
-      # 合成结果
-      material: "POPPED_CHORUS_FRUIT" # 物品ID
-      display_name: "item.philosopher_stone.name"
-      lore:
-      - "item.philosopher_stone.lore1"
-      - "item.philosopher_stone.lore2"
-      - "item.philosopher_stone.lore3"
-      unbreakable: true # 仅装饰
-  # 也支持多合成表的配置
-  - enabled: true # 启用此合成表？ true/false
-    type: "shaped" # 有序合成还是无序合成？ "shaped"/"shapeless"
-    shape:
-    # 合成表内的物品(使用单字缩写)
-    - "GRG"
-    - "RDR"
-    - "GRG"
-    ingredients:
-      # 缩写对应的完整物品名
-      R: "REDSTONE" # 比如这里的R代表红石 
-      # 如果你想替换为其他的比如 钻石 可以写成 D: "DIAMOND"
-      G: "GLOWSTONE_DUST"
-      D: "DIAMOND"
-    result:
-      # 合成结果
-      material: "POPPED_CHORUS_FRUIT" # 物品ID
-      display_name: "item.philosopher_stone.name"
-      lore:
-      - "item.philosopher_stone.lore1"
-      - "item.philosopher_stone.lore2"
-      - "item.philosopher_stone.lore3"
-      unbreakable: true # 仅装饰
+    - enabled: true # 启用此合成表？ true/false
+      type: "shaped" # 有序合成还是无序合成？ "shaped"/"shapeless"
+      shape:
+        # 合成表内的物品(使用单字缩写)
+        - "RGR"
+        - "GDG"
+        - "RGR"
+      ingredients:
+        # 缩写对应的完整物品名
+        R: "REDSTONE" # 比如这里的R代表红石
+        # 如果你想替换为其他的比如 钻石 可以写成 D: "DIAMOND"
+        G: "GLOWSTONE_DUST"
+        D: "DIAMOND"
+      result:
+        # 合成结果
+        material: "POPPED_CHORUS_FRUIT" # 物品ID
+        display_name: "item.philosopher_stone.name"
+        lore:
+          - "item.philosopher_stone.lore1"
+          - "item.philosopher_stone.lore2"
+          - "item.philosopher_stone.lore3"
+        unbreakable: true # 仅装饰
+    # 也支持多合成表的配置
+    - enabled: true # 启用此合成表？ true/false
+      type: "shaped" # 有序合成还是无序合成？ "shaped"/"shapeless"
+      shape:
+        # 合成表内的物品(使用单字缩写)
+        - "GRG"
+        - "RDR"
+        - "GRG"
+      ingredients:
+        # 缩写对应的完整物品名
+        R: "REDSTONE" # 比如这里的R代表红石
+        # 如果你想替换为其他的比如 钻石 可以写成 D: "DIAMOND"
+        G: "GLOWSTONE_DUST"
+        D: "DIAMOND"
+      result:
+        # 合成结果
+        material: "POPPED_CHORUS_FRUIT" # 物品ID
+        display_name: "item.philosopher_stone.name"
+        lore:
+          - "item.philosopher_stone.lore1"
+          - "item.philosopher_stone.lore2"
+          - "item.philosopher_stone.lore3"
+        unbreakable: true # 仅装饰
   # 下方配置文件和上方描述一致
   transmutation_table:
-  - enabled: true
-    type: "shaped"
-    shape:
-    - "OSO"
-    - "SPS"
-    - "OSO"
-    ingredients:
-      O: "OBSIDIAN"
-      S: "STONE"
-      P: "POPPED_CHORUS_FRUIT"
-    result:
-      material: "PETRIFIED_OAK_SLAB"
-      display_name: "item.transmutation_table.name"
-      lore:
-      - "item.transmutation_table.lore1"
-  - enabled: true
-    type: "shaped"
-    shape:
-    - "SOS"
-    - "OPO"
-    - "SOS"
-    ingredients:
-      S: "STONE"
-      P: "projecte:philosopher_stone"
-    result:
-      material: "PETRIFIED_OAK_SLAB"
-      display_name: "item.transmutation_table.name"
-      lore:
-      - "item.transmutation_table.lore1"
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "OSO"
+        - "SPS"
+        - "OSO"
+      ingredients:
+        O: "OBSIDIAN"
+        S: "STONE"
+        P: "POPPED_CHORUS_FRUIT"
+      result:
+        material: "PETRIFIED_OAK_SLAB"
+        display_name: "item.transmutation_table.name"
+        lore:
+          - "item.transmutation_table.lore1"
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "SOS"
+        - "OPO"
+        - "SOS"
+      ingredients:
+        S: "STONE"
+        P: "POPPED_CHORUS_FRUIT"
+      result:
+        material: "PETRIFIED_OAK_SLAB"
+        display_name: "item.transmutation_table.name"
+        lore:
+          - "item.transmutation_table.lore1"
 
   alchemical_bag:
     enabled: true
     type: "shaped"
     shape:
-    - "LDL"
-    - "DCD"
-    - "LDL"
+      - "LDL"
+      - "DCD"
+      - "LDL"
     ingredients:
       L: "LEATHER"
       C: "CHEST"
@@ -93,16 +93,16 @@ recipes:
       material: "LEATHER_HORSE_ARMOR"
       display_name: "item.alchemical_bag.name"
       lore:
-      - "item.alchemical_bag.lore1"
+        - "item.alchemical_bag.lore1"
 
   # 暗物质配方 - AAA + ADA + AAA = 1个暗物质 (A=永恒燃料, D=钻石块)
   dark_matter:
     enabled: true
     type: "shaped"
     shape:
-    - "AAA"
-    - "ADA"
-    - "AAA"
+      - "AAA"
+      - "ADA"
+      - "AAA"
     ingredients:
       A: "projecte:aeternalis_fuel"
       D: "DIAMOND_BLOCK"
@@ -111,17 +111,17 @@ recipes:
       custom_model_data: "1"
       display_name: "item.dark_matter.name"
       lore:
-      - "item.dark_matter.lore1"
-      - "item.dark_matter.lore2"
+        - "item.dark_matter.lore1"
+        - "item.dark_matter.lore2"
 
   # 红物质配方1 - AMA + AMA + AMA = 1个红物质
   red_matter_1:
     enabled: true
     type: "shaped"
     shape:
-    - "AMA"
-    - "AMA"
-    - "AMA"
+      - "AMA"
+      - "AMA"
+      - "AMA"
     ingredients:
       A: "projecte:aeternalis_fuel"
       M: "projecte:dark_matter"
@@ -130,17 +130,17 @@ recipes:
       custom_model_data: "2"
       display_name: "item.red_matter.name"
       lore:
-      - "item.red_matter.lore1"
-      - "item.red_matter.lore2"
+        - "item.red_matter.lore1"
+        - "item.red_matter.lore2"
 
   # 红物质配方2 - AAA + MMM + AAA = 1个红物质
   red_matter_2:
     enabled: true
     type: "shaped"
     shape:
-    - "AAA"
-    - "MMM"
-    - "AAA"
+      - "AAA"
+      - "MMM"
+      - "AAA"
     ingredients:
       A: "projecte:aeternalis_fuel"
       M: "projecte:dark_matter"
@@ -149,80 +149,80 @@ recipes:
       custom_model_data: "2"
       display_name: "item.red_matter.name"
       lore:
-      - "item.red_matter.lore1"
-      - "item.red_matter.lore2"
+        - "item.red_matter.lore1"
+        - "item.red_matter.lore2"
 
   # 暗物质块配方 - 4个暗物质 = 1个暗物质块 (无序)
   dark_matter_block:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "projecte:dark_matter"
-    - "projecte:dark_matter"
-    - "projecte:dark_matter"
-    - "projecte:dark_matter"
+      - "projecte:dark_matter"
+      - "projecte:dark_matter"
+      - "projecte:dark_matter"
+      - "projecte:dark_matter"
     result:
       material: "SLIME_BALL"
       custom_model_data: "3"
       display_name: "item.dark_matter_block.name"
       lore:
-      - "item.dark_matter_block.lore1"
-      - "item.dark_matter_block.lore2"
+        - "item.dark_matter_block.lore1"
+        - "item.dark_matter_block.lore2"
 
   # 红物质块配方 - 4个红物质 = 1个红物质块 (无序)
   red_matter_block:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "projecte:red_matter"
-    - "projecte:red_matter"
-    - "projecte:red_matter"
-    - "projecte:red_matter"
+      - "projecte:red_matter"
+      - "projecte:red_matter"
+      - "projecte:red_matter"
+      - "projecte:red_matter"
     result:
       material: "SLIME_BALL"
       custom_model_data: "4"
       display_name: "item.red_matter_block.name"
       lore:
-      - "item.red_matter_block.lore1"
-      - "item.red_matter_block.lore2"
+        - "item.red_matter_block.lore1"
+        - "item.red_matter_block.lore2"
 
   # 暗物质块分解 - 1个暗物质块 = 4个暗物质
   dark_matter_block_decompose:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "projecte:dark_matter_block"
+      - "projecte:dark_matter_block"
     result:
       material: "SLIME_BALL"
       custom_model_data: "1"
       amount: 4
       display_name: "item.dark_matter.name"
       lore:
-      - "item.dark_matter.lore1"
-      - "item.dark_matter.lore2"
+        - "item.dark_matter.lore1"
+        - "item.dark_matter.lore2"
 
   # 红物质块分解 - 1个红物质块 = 4个红物质
   red_matter_block_decompose:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "projecte:red_matter_block"
+      - "projecte:red_matter_block"
     result:
       material: "SLIME_BALL"
       custom_model_data: "2"
       amount: 4
       display_name: "item.red_matter.name"
       lore:
-      - "item.red_matter.lore1"
-      - "item.red_matter.lore2"
+        - "item.red_matter.lore1"
+        - "item.red_matter.lore2"
 
   # 非常不建议更改下面的配置，除非你知道你在做什么！
   alchemical_bag_dyeing:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "projecte:alchemical_bag"
-    - "any_dye"
+      - "projecte:alchemical_bag"
+      - "any_dye"
     result:
       material: "LEATHER_HORSE_ARMOR"
 
@@ -233,15 +233,15 @@ recipes:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "COBBLESTONE"
-    - "CHARCOAL"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "COBBLESTONE"
+      - "CHARCOAL"
     result:
       material: "GLOWSTONE_DUST"
       projecte_id: "low_covalence_dust"
@@ -249,15 +249,15 @@ recipes:
       amount: 40
       display_name: "item.low_covalence_dust.name"
       lore:
-      - "item.low_covalence_dust.lore1"
-      - "item.low_covalence_dust.lore2"
+        - "item.low_covalence_dust.lore1"
+        - "item.low_covalence_dust.lore2"
 
   medium_covalence_dust:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "IRON_INGOT"
-    - "REDSTONE"
+      - "IRON_INGOT"
+      - "REDSTONE"
     result:
       material: "GLOWSTONE_DUST"
       projecte_id: "medium_covalence_dust"
@@ -265,15 +265,15 @@ recipes:
       amount: 40
       display_name: "item.medium_covalence_dust.name"
       lore:
-      - "item.medium_covalence_dust.lore1"
-      - "item.medium_covalence_dust.lore2"
+        - "item.medium_covalence_dust.lore1"
+        - "item.medium_covalence_dust.lore2"
 
   high_covalence_dust:
     enabled: true
     type: "shapeless"
     ingredients:
-    - "DIAMOND"
-    - "COAL"
+      - "DIAMOND"
+      - "COAL"
     result:
       material: "GLOWSTONE_DUST"
       projecte_id: "high_covalence_dust"
@@ -281,16 +281,16 @@ recipes:
       amount: 40
       display_name: "item.high_covalence_dust.name"
       lore:
-      - "item.high_covalence_dust.lore1"
-      - "item.high_covalence_dust.lore2"
+        - "item.high_covalence_dust.lore1"
+        - "item.high_covalence_dust.lore2"
 
   low_divining_rod:
     enabled: true
     type: "shaped"
     shape:
-    - "CCC"
-    - "CSC"
-    - "CCC"
+      - "CCC"
+      - "CSC"
+      - "CCC"
     ingredients:
       C: "projecte:low_covalence_dust"
       S: "STICK"
@@ -300,16 +300,16 @@ recipes:
       custom_model_data: "1"
       display_name: "item.low_divining_rod.name"
       lore:
-      - "item.low_divining_rod.lore1"
-      - "item.low_divining_rod.lore2"
+        - "item.low_divining_rod.lore1"
+        - "item.low_divining_rod.lore2"
 
   medium_divining_rod:
     enabled: true
     type: "shaped"
     shape:
-    - "CCC"
-    - "CSC"
-    - "CCC"
+      - "CCC"
+      - "CSC"
+      - "CCC"
     ingredients:
       C: "projecte:medium_covalence_dust"
       S: "STICK"
@@ -319,16 +319,16 @@ recipes:
       custom_model_data: "2"
       display_name: "item.medium_divining_rod.name"
       lore:
-      - "item.medium_divining_rod.lore1"
-      - "item.medium_divining_rod.lore2"
+        - "item.medium_divining_rod.lore1"
+        - "item.medium_divining_rod.lore2"
 
   high_divining_rod:
     enabled: true
     type: "shaped"
     shape:
-    - "CCC"
-    - "CSC"
-    - "CCC"
+      - "CCC"
+      - "CSC"
+      - "CCC"
     ingredients:
       C: "projecte:high_covalence_dust"
       S: "STICK"
@@ -338,24 +338,161 @@ recipes:
       custom_model_data: "3"
       display_name: "item.high_divining_rod.name"
       lore:
-      - "item.high_divining_rod.lore1"
-      - "item.high_divining_rod.lore2"
+        - "item.high_divining_rod.lore1"
+        - "item.high_divining_rod.lore2"
 
   repair_talisman:
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "HML"
+        - "SPS"
+        - "LMH"
+      ingredients:
+        H: "projecte:high_covalence_dust"
+        M: "projecte:medium_covalence_dust"
+        L: "projecte:low_covalence_dust"
+        S: "STRING"
+        P: "PAPER"
+      result:
+        material: "PAPER"
+        projecte_id: "repair_talisman"
+        custom_model_data: "1"
+        display_name: "item.repair_talisman.name"
+        lore:
+          - "item.repair_talisman.lore1"
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "LMH"
+        - "SPS"
+        - "HML"
+      ingredients:
+        H: "projecte:high_covalence_dust"
+        M: "projecte:medium_covalence_dust"
+        L: "projecte:low_covalence_dust"
+        S: "STRING"
+        P: "PAPER"
+      result:
+        material: "PAPER"
+        projecte_id: "repair_talisman"
+        custom_model_data: "1"
+        display_name: "item.repair_talisman.name"
+        lore:
+          - "item.repair_talisman.lore1"
+
+  klein_star_ein:
+    - enabled: true
+      type: "shaped"
+      shape:
+        - "MMM"
+        - "MDM"
+        - "MMM"
+      ingredients:
+        M: "projecte:mobius_fuel"
+        D: "DIAMOND"
+      result:
+        material: "DIAMOND_HOE"
+        projecte_id: "klein_star_ein"
+        custom_model_data: "1"
+        display_name: "item.klein_star_ein.name"
+        lore:
+          - "item.klein_star_ein.lore"
+
+  klein_star_zwei:
+    - enabled: true
+      type: "shapeless"
+      ingredients:
+        - "projecte:klein_star_ein"
+        - "projecte:klein_star_ein"
+        - "projecte:klein_star_ein"
+        - "projecte:klein_star_ein"
+      result:
+        material: "DIAMOND_HOE"
+        projecte_id: "klein_star_zwei"
+        custom_model_data: "2"
+        display_name: "item.klein_star_zwei.name"
+        lore:
+          - "item.klein_star_zwei.lore"
+
+  klein_star_drei:
+    - enabled: true
+      type: "shapeless"
+      ingredients:
+        - "projecte:klein_star_zwei"
+        - "projecte:klein_star_zwei"
+        - "projecte:klein_star_zwei"
+        - "projecte:klein_star_zwei"
+      result:
+        material: "DIAMOND_HOE"
+        projecte_id: "klein_star_drei"
+        custom_model_data: "3"
+        display_name: "item.klein_star_drei.name"
+        lore:
+          - "item.klein_star_drei.lore"
+
+  klein_star_vier:
+    - enabled: true
+      type: "shapeless"
+      ingredients:
+        - "projecte:klein_star_drei"
+        - "projecte:klein_star_drei"
+        - "projecte:klein_star_drei"
+        - "projecte:klein_star_drei"
+      result:
+        material: "DIAMOND_HOE"
+        projecte_id: "klein_star_vier"
+        custom_model_data: "4"
+        display_name: "item.klein_star_vier.name"
+        lore:
+          - "item.klein_star_vier.lore"
+
+  klein_star_sphere:
+    - enabled: true
+      type: "shapeless"
+      ingredients:
+        - "projecte:klein_star_vier"
+        - "projecte:klein_star_vier"
+        - "projecte:klein_star_vier"
+        - "projecte:klein_star_vier"
+      result:
+        material: "DIAMOND_HOE"
+        projecte_id: "klein_star_sphere"
+        custom_model_data: "5"
+        display_name: "item.klein_star_sphere.name"
+        lore:
+          - "item.klein_star_sphere.lore"
+
+  klein_star_omega:
+    - enabled: true
+      type: "shapeless"
+      ingredients:
+        - "projecte:klein_star_sphere"
+        - "projecte:klein_star_sphere"
+        - "projecte:klein_star_sphere"
+        - "projecte:klein_star_sphere"
+      result:
+        material: "DIAMOND_HOE"
+        projecte_id: "klein_star_omega"
+        custom_model_data: "6"
+        display_name: "item.klein_star_omega.name"
+        lore:
+          - "item.klein_star_omega.lore"
+
+  transmutation_tablet_book:
     enabled: true
     type: "shaped"
-    shape:
-    - "RDR"
-    - "DPD"
-    - "RDR"
-    ingredients:
-      R: "projecte:red_matter"
-      D: "projecte:dark_matter"
-      P: "projecte:philosopher_stone"
     result:
-      material: "PAPER"
-      projecte_id: "repair_talisman"
-      custom_model_data: "1"
-      display_name: "item.repair_talisman.name"
+      projecte_id: "transmutation_tablet_book"
+      amount: 1
+      display_name: "item.transmutation_tablet_book.name"
       lore:
-      - "item.repair_talisman.lore1"
+        - "item.transmutation_tablet_book.lore"
+    shape:
+      - "DSD"
+      - "SPS"
+      - "DSD"
+    ingredients:
+      D: "projecte:dark_matter_block"
+      S: "STONE"
+      P: "PETRIFIED_OAK_SLAB"

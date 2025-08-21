@@ -1,0 +1,41 @@
+# Geyser物品映射配置
+# 我不会再去做Geyser的基岩版玩家兼容了 这个文件留着等待有缘人做
+# 你可以将Java版的CustomModelData物品映射到基岩版的物品ID
+#
+# 格式:
+# geyser-mappings:
+#   <java_item_id>: # 对应于插件中为物品设置的唯一ID (例如: "alchemical_coal")
+#     bedrock_identifier: "minecraft:apple" # 基岩版物品的ID
+#     custom_model_data: 12345 # Java版物品的CustomModelData值 不知道可以参考java材质包内部文件
+#
+geyser-mappings:
+  alchemical_coal:
+    bedrock_identifier: "pe:alchemical_coal"
+    custom_model_data: 1
+  mobius_fuel:
+    bedrock_identifier: "pe:mobius_fuel"
+    custom_model_data: 2
+  aeternalis_fuel:
+    bedrock_identifier: "pe:aeternalis_fuel"
+    custom_model_data: 3
+  alchemical_coal_block:
+    bedrock_identifier: "pe:alchemical_coal_block"
+    custom_model_data: 1
+  mobius_fuel_block:
+    bedrock_identifier: "pe:mobius_fuel_block"
+    custom_model_data: 2
+  aeternalis_fuel_block:
+    bedrock_identifier: "pe:aeternalis_fuel_block"
+    custom_model_data: 3
+  dark_matter:
+    bedrock_identifier: "pe:dark_matter"
+    custom_model_data: 1
+  red_matter:
+    bedrock_identifier: "pe:red_matter"
+    custom_model_data: 2
+  dark_matter_block:
+    bedrock_identifier: "pe:dark_matter_block"
+    custom_model_data: 1
+  red_matter_block:
+    bedrock_identifier: "pe:red_matter_block"
+    custom_model_data: 1

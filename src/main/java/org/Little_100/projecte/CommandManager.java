@@ -28,6 +28,8 @@ import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.Little_100.projecte.TransmutationTable.TransmutationGUI;
+import org.geysermc.geyser.api.GeyserApi;
+import org.Little_100.projecte.Tools.Divining_Rod;
  
 public class CommandManager implements CommandExecutor, TabCompleter {
  
@@ -75,6 +77,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 0) {
+                if (label.equalsIgnoreCase("po")) {
+                    return handleOpen(sender);
+                }
                 sendHelp(sender);
                 return true;
             }
@@ -87,6 +92,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
 
             switch (subCommand) {
+                case "recalculate":
+                    return handleRecalculate(sender);
                 case "reload":
                     return handleReload(sender);
                 case "setemc":
@@ -105,14 +112,27 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     return handleReport(sender);
                 case "nbtdebug":
                     return handleNbtDebug(sender);
-                case "pdctest":
-                    return handlePdcTest(sender);
+               case "o":
+               case "open":
+                   return handleOpen(sender);
                 default:
                     sendHelp(sender);
                     return true;
             }
         }
         return false;
+    }
+private boolean handleRecalculate(CommandSender sender) {
+        if (!sender.hasPermission("projecte.command.recalculate")) {
+            sender.sendMessage(languageManager.get("serverside.command.no_permission"));
+            return true;
+        }
+        plugin.getSchedulerAdapter().runTaskAsynchronously(() -> {
+            sender.sendMessage(languageManager.get("serverside.command.recalculate.start"));
+            emcManager.calculateAndStoreEmcValues(true);
+            sender.sendMessage(languageManager.get("serverside.command.recalculate.success"));
+        });
+        return true;
     }
 
     private boolean handleOpenTable(CommandSender sender, String commandName) {
@@ -143,6 +163,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         sender.sendMessage(languageManager.get("serverside.command.help.bag_list"));
         sender.sendMessage(languageManager.get("serverside.command.help.lang"));
         sender.sendMessage(languageManager.get("serverside.command.help.report"));
+        sender.sendMessage(languageManager.get("serverside.command.help.open"));
         // 移除 resourcepack 帮助信息
     }
 
@@ -533,11 +554,46 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    private boolean handleOpen(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        try {
+            Class.forName("org.geysermc.geyser.api.GeyserApi");
+            if (!GeyserApi.api().isBedrockPlayer(player.getUniqueId())) {
+                player.sendMessage(languageManager.get("serverside.command.geyser_only"));
+                return true;
+            }
+        } catch (ClassNotFoundException e) {
+            player.sendMessage(languageManager.get("serverside.command.geyser_only"));
+            return true;
+        }
+
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+
+        if (plugin.isPhilosopherStone(itemInHand)) {
+            new PhilosopherStoneGUI(plugin, player).open();
+            return true;
+        }
+
+        Divining_Rod diviningRod = plugin.getDiviningRod();
+        if (diviningRod.isLowDiviningRod(itemInHand) || diviningRod.isMediumDiviningRod(itemInHand) || diviningRod.isHighDiviningRod(itemInHand)) {
+            plugin.getDiviningRodGUI().openGUI(player);
+            return true;
+        }
+
+        player.sendMessage(languageManager.get("serverside.command.open.no_menu"));
+        return true;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 1) {
-                List<String> subCommands = new ArrayList<>(Arrays.asList("reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "pdctest"));
+                List<String> subCommands = new ArrayList<>(Arrays.asList("recalculate", "reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "open", "o"));
                 for (String cmd : openTableCommands.keySet()) {
                     if (cmd.startsWith("projecte ")) {
                         subCommands.add(cmd.split(" ")[1]);
@@ -561,7 +617,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("lang")) {
                 return StringUtil.copyPartialMatches(args[1], Arrays.asList("list", "set"), new ArrayList<>());
             }
-            // No arguments for pdctest
         }
 
         if (args.length >= 3 && args[0].equalsIgnoreCase("lang") && args[1].equalsIgnoreCase("set")) {
@@ -576,32 +631,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return StringUtil.copyPartialMatches(args[args.length - 1], langFiles, new ArrayList<>());
         }
         return new ArrayList<>();
-    }
-
-    private boolean handlePdcTest(CommandSender sender) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
-            return true;
-        }
-        Player player = (Player) sender;
-
-        ItemStack pdcItem = new ItemStack(Material.DIAMOND);
-        ItemMeta meta = pdcItem.getItemMeta();
-        if (meta != null) {
-            PersistentDataContainer container = meta.getPersistentDataContainer();
-            NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
-            container.set(idKey, PersistentDataType.STRING, "special_diamond");
-            meta.setDisplayName(ChatColor.AQUA + "Special Diamond");
-            pdcItem.setItemMeta(meta);
-        }
-
-        String itemKey = emcManager.getEffectiveItemKey(pdcItem);
-        databaseManager.setEmc(itemKey, 10000);
-
-        player.getInventory().addItem(pdcItem);
-        player.sendMessage(ChatColor.GREEN + "You have received a special diamond with 10,000 EMC.");
-
-        return true;
     }
 
 }

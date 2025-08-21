@@ -7,6 +7,7 @@
 
 [Credits](./help/credits_en.md)
 
+[Issues](./help/issues.md)
 ## 描述
 
 ProjectE 是一个 Minecraft Spigot 插件，其灵感来源于著名的 "等价交换" Mod。它为服务器带来了一个核心的物质转换系统，允许玩家将物品分解为能量物质单位 (EMC)，并使用 EMC 创造新的物品。
@@ -53,3 +54,5 @@ ProjectE 是一个 Minecraft Spigot 插件，其灵感来源于著名的 "等价
 3.  插件将在 `plugins/ProjectE/` 文件夹中生成默认的配置文件。
 4.  根据您的需要修改 `config.yml`。
 5.  使用 `/projecte reload` 指令应用更改。
+
+> 注意:很有可能不会继续兼容Geyser的基岩版玩家,这真的太难了,有极大可能需要社区贡献...~~虽然没人用~~

@@ -38,9 +38,17 @@ public class EmcManager {
             plugin.getLogger().info("custommoditememc.yml not found, creating default file.");
             plugin.saveResource("custommoditememc.yml", false);
         }
+        
     }
 
-    public void calculateAndStoreEmcValues() {
+    public void calculateAndStoreEmcValues(boolean forceRecalculate) {
+        if (!forceRecalculate && databaseManager.hasEmcValues()) {
+            plugin.getLogger().info("EMC values already exist in the database. Skipping calculation.");
+            return;
+        }
+        if (forceRecalculate) {
+            databaseManager.clearEmcValues();
+        }
         plugin.getLogger().info("Start calculating EMC values...");
         versionAdapter.loadInitialEmcValues();
 
@@ -63,6 +71,9 @@ public class EmcManager {
                 break;
             }
         }
+        
+        // 如果是第一次计算，存储到数据库
+
         plugin.getLogger().info("EMC value calculation completed.");
     }
 
@@ -122,9 +133,13 @@ public class EmcManager {
     }
 
     public long getEmc(ItemStack item) {
-        if (plugin.isPdcExcluded()) {
-            return getEmc(versionAdapter.getItemKey(item));
+        if (plugin.isPdcExcluded() && isPdcItem(item)) {
+            // 如果排除了PDC物品，并且这个物品是PDC物品，
+            // 只返回数据库中可能由 setemc 命令手动设置的值。
+            // 如果没有手动设置，getEmc(String) 会返回 0。
+            return databaseManager.getEmc(getItemKey(item));
         }
+        // 否则，使用标准逻辑
         return getEmc(getItemKey(item));
     }
 
@@ -195,7 +210,25 @@ public class EmcManager {
                 NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
                 if (container.has(idKey, PersistentDataType.STRING)) {
                     String projecteId = container.get(idKey, PersistentDataType.STRING);
-                    return "projecte:" + projecteId;
+                    if ("transmutation_tablet_book".equals(projecteId)) {
+                        // Check for CustomModelData to be more specific
+                        if (meta.hasCustomModelData() && meta.getCustomModelData() == 1) {
+                            return "projecte:" + projecteId;
+                        }
+                    } else {
+                         return "projecte:" + projecteId;
+                    }
+                }
+                
+                NamespacedKey kleinStarKey = new NamespacedKey(plugin, "klein_star_level");
+                if (container.has(kleinStarKey, PersistentDataType.INTEGER)) {
+                    int level = container.get(kleinStarKey, PersistentDataType.INTEGER);
+                    if (level > 0) {
+                        String levelName = getLevelName(level);
+                        if (levelName != null) {
+                            return "projecte:klein_star_" + levelName;
+                        }
+                    }
                 }
             }
         }
@@ -226,6 +259,18 @@ public class EmcManager {
         return container.has(idKey, PersistentDataType.STRING);
     }
 
+    private String getLevelName(int level) {
+        switch (level) {
+            case 1: return "ein";
+            case 2: return "zwei";
+            case 3: return "drei";
+            case 4: return "vier";
+            case 5: return "sphere";
+            case 6: return "omega";
+            default: return null;
+        }
+    }
+
     public long getBaseEmc(ItemStack item) {
         String baseKey = versionAdapter.getItemKey(item);
         return getEmc(baseKey);
@@ -245,5 +290,10 @@ public class EmcManager {
     }
     public void registerEmc(String itemKey, long emcValue) {
         databaseManager.setEmc(itemKey, emcValue);
+    }
+    public void setEmcValue(ItemStack item, long emc) {
+        if (item == null) return;
+        String key = getItemKey(item);
+        databaseManager.setEmc(key, emc);
     }
 }

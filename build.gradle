@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.Little_100'
-version = '0.2.0'
+version = '0.2.1'
 
 repositories {
     mavenCentral()
@@ -17,12 +17,16 @@ repositories {
         url = "https://oss.sonatype.org/content/groups/public/"
     }
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    maven {
+        url = uri("https://repo.opencollab.dev/main/")
+    }
 }
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    compileOnly('org.geysermc.geyser:api:2.8.3-SNAPSHOT')
 }
 
 tasks {

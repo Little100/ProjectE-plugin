@@ -4,6 +4,7 @@ clientside:
     title: "转换桌 | 您的EMC: {emc}"
     sell_title: "转换桌 | 卖出 | 您的EMC: {emc}"
     buy_title: "转换桌 | 购买 | 您的EMC: {emc}"
+    charge_title: "转换桌 | 充能 | 您的EMC: {emc}"
     buttons:
       sell: "§a售卖"
       sell_lore: "点击进入售卖界面"
@@ -11,10 +12,14 @@ clientside:
       buy_lore: "点击进入购买界面"
       learn: "§e学习"
       learn_lore: "点击进入学习界面"
+      charge: "§c充能"
+      charge_lore: "点击进入充能界面"
       confirm_sell: "§a确认"
       confirm_sell_lore: "点击以确认交易"
       confirm_learn: "§a学习"
       confirm_learn_lore: "点击以学习物品"
+      confirm_charge: "§c充能"
+      confirm_charge_lore: "点击以充能物品"
       back: "§c返回"
       back_lore: "点击返回主菜单"
       next_page: "§e下一页"
@@ -27,6 +32,7 @@ clientside:
       buy_one: "§7左键点击购买 1 个"
       buy_stack: "§7右键点击购买 {amount} 个"
   alchemical_bag:
+    name: "§f炼金术袋"
     default_name: "§f炼金术袋"
     colored_name: "{color}{color_name} 炼金术袋"
   philosopher_stone_gui:
@@ -154,6 +160,12 @@ serverside:
       file_not_found: "§c找不到语言文件: {file}"
     report:
       message: "§a如果遇到问题，请访问我们的GitHub仓库提交issue: https://github.com/Little100/ProjectE-plugin"
+    open:
+      no_menu: "§c你手中的物品没有可用的菜单。"
+      geyser_only: "§c此命令仅适用于基岩版玩家。"
+    recalculate:
+      start: "正在重新计算EMC值..."
+      success: "EMC值已成功重新计算。"
     help:
       header: "§6等价交换插件版命令帮助:"
       reload: "§b/projecte reload§f - 重载插件配置"
@@ -164,6 +176,7 @@ serverside:
       bag_list: "§b/projecte bag list§f - 列出你拥有的所有炼金术袋"
       lang: "§b/projecte lang <list|set>§f - 管理语言文件"
       report: "§b/projecte report§f - 报告问题或提出建议"
+      open: "§b/projecte open§f - 为基岩版玩家打开物品菜单"
     generic:
       already_have_philosopher_stone: "§c你已经拥有一个贤者之石了！"
       buy_success: "§a成功购买 {amount}x {item}"
@@ -176,8 +189,15 @@ serverside:
       no_emc_value_learn: "§c物品 {item} 没有EMC值，无法学习。"
       learn_success: "§a成功学习新物品！"
       interact_with_map_art_fail: "§c由于Little_100的能力...他没有办法...所以请你与边缘位置交互qwp...?"
-  blockpack:
-    limit_exceeded: "§c此区块的自定义方块数量已达到上限 ({max})！"
+      shulker_box_no_emc: "{color}潜影盒({item_id})中{item}没有EMC值！"
+      multiple_klein_stars: "充能时只能放入一个克莱因之星！"
+      invalid_charge_item: "充能区域只能放入克莱因之星！"
+      no_klein_star: "请在充能区域放入一个克莱因之星。"
+      multiple_items_in_charge: "充能时只能放入一个物品！"
+      klein_star_full: "这个克莱因之星已经充满了！"
+      not_enough_emc_to_charge: "你没有足够的EMC来充能。"
+      charge_success: "成功充能 {emc} EMC！"
+  blockpack: {}
   # 资源包相关信息
   resourcepack:
       prompt: "§6服务器使用了自定义资源包，这可以提供更好的视觉体验。"
@@ -190,7 +210,7 @@ serverside:
   datapack:
     not_loaded_warning: "§c警告: 进度数据包可能未正确加载。请联系服务器管理员执行'/reload'或重启服务器来解决此问题。"
   
-  # 物品显示的信息
+# 物品显示的信息
 item:
   philosopher_stone:
     name: "§6贤者之石"
@@ -270,6 +290,39 @@ item:
   repair_talisman:
     name: "§a修复护符"
     lore1: "§7每秒自动修复身上所有物品的耐久"
+  klein_star_ein:
+    name: "§6一级卡莱恩能量之星"
+    lore: "§7用于储存EMC"
+    lore1: "§7储存上限: 50000 EMC"
+    lore2: "§e当前储存: {staremc} EMC"
+  klein_star_zwei:
+    name: "§6二级卡莱恩能量之星"
+    lore: "§7用于储存EMC"
+    lore1: "§7储存上限: 200000 EMC"
+    lore2: "§e当前储存: {staremc} EMC"
+  klein_star_drei:
+    name: "§6三级卡莱恩能量之星"
+    lore: "§7用于储存EMC"
+    lore1: "§7储存上限: 800000 EMC"
+    lore2: "§e当前储存: {staremc} EMC"
+  klein_star_vier:
+    name: "§6四级卡莱恩能量之星"
+    lore: "§7用于储存EMC"
+    lore1: "§7储存上限: 3200000 EMC"
+    lore2: "§e当前储存: {staremc} EMC"
+  klein_star_sphere:
+    name: "§6五级卡莱恩能量之星"
+    lore: "§7用于储存EMC"
+    lore1: "§7储存上限: 12800000 EMC"
+    lore2: "§e当前储存: {staremc} EMC"
+  klein_star_omega:
+    name: "§6六级卡莱恩能量之星"
+    lore: "§7用于储存EMC"
+    lore1: "§7储存上限: 51200000 EMC"
+    lore2: "§e当前储存: {staremc} EMC"
+  transmutation_tablet_book:
+    name: "§6便携式转换桌"
+    lore: "§7右键点击打开转换桌"
 
 # 插件相关
 plugin:
@@ -279,6 +332,7 @@ plugin:
 debug:
   emc:
     item_emc_info: "物品: {item}, EMC: {emc}"
+    custom_emc_loaded: "加载自定义EMC: {item} = {emc}"
   recipe:
     loading_recipe: "正在加载配方: {recipe}"
     recipe_emc_calculated: "配方 {recipe} 的EMC计算完成: {emc}"

@@ -1,11 +1,13 @@
 package org.Little_100.projecte;
 
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
-import org.Little_100.projecte.BlockPackManager.Fuel;
-import org.Little_100.projecte.util.MapArtUtil;
+import org.Little_100.projecte.Tome.TransmutationTabletBookListener;
+import org.Little_100.projecte.util.CustomBlockArtUtil;
 import org.Little_100.projecte.Tools.DiviningRodGUI;
 import org.Little_100.projecte.Tools.Divining_Rod;
+import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
 import org.Little_100.projecte.Tools.Repair_Talisman;
+import org.Little_100.projecte.compatibility.GeyserAdapter;
 import org.Little_100.projecte.compatibility.SchedulerAdapter;
 import org.Little_100.projecte.compatibility.SchedulerMatcher;
 import org.Little_100.projecte.compatibility.VersionAdapter;
@@ -21,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.command.CommandMap;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,9 +32,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class ProjectE extends JavaPlugin {
 
@@ -49,15 +47,18 @@ public final class ProjectE extends JavaPlugin {
     private ResourcePackManager resourcePackManager;
     private DatapackManager datapackManager;
     private SchedulerAdapter schedulerAdapter;
+    private BlockDataManager blockDataManager;
     private PhilosopherStoneListener philosopherStoneListener;
     private FuelManager fuelManager;
     private CovalenceDust covalenceDust;
     private Divining_Rod diviningRod;
     private Repair_Talisman repairTalisman;
     private DiviningRodGUI diviningRodGUI;
+    private KleinStarManager kleinStarManager;
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
     private boolean excludePDC;
+    private GeyserAdapter geyserAdapter;
  
      @Override
      public void onEnable() {
@@ -113,17 +114,23 @@ public final class ProjectE extends JavaPlugin {
         // 初始化调度程序
         schedulerAdapter = SchedulerMatcher.getSchedulerAdapter(this);
 
+        // 初始化方块数据管理器
+        blockDataManager = new BlockDataManager(this);
+
         // 初始化EMC管理器
         emcManager = new EmcManager(this);
         try {
             getLogger().info("Calculating EMC values...");
-            emcManager.calculateAndStoreEmcValues();
+            emcManager.calculateAndStoreEmcValues(false);
             getLogger().info("EMC calculation complete.");
         } catch (Exception e) {
             getLogger().severe(
                     "An error occurred during EMC calculation. Some items may not have EMC values. Please check your config.yml for formatting errors.");
             e.printStackTrace();
         }
+
+        // 加载自定义EMC值
+        loadCustomEmcValues();
 
         // 初始化贤者之石物品
         createPhilosopherStone();
@@ -134,10 +141,7 @@ public final class ProjectE extends JavaPlugin {
         getLogger().info("FuelManager initialized with special fuels.");
 
         // 初始化地图画工具
-        new MapArtUtil(this);
-
-        // 初始化方块包管理器
-        new Fuel(this);
+        new CustomBlockArtUtil(this, schedulerAdapter);
 
         // 设置特殊燃料的EMC值
         fuelManager.setFuelEmcValues();
@@ -157,7 +161,12 @@ public final class ProjectE extends JavaPlugin {
         repairTalisman = new Repair_Talisman(this);
         repairTalisman.setEmcValue();
         new org.Little_100.projecte.Tools.RepairTalismanListener(this);
- 
+
+       // 初始化克莱因之星
+       kleinStarManager = new KleinStarManager(this);
+
+        // AlchemicalBagManager is now initialized below, based on config
+
         // 初始化配方管理器
         recipeManager = new RecipeManager(this);
         recipeManager.registerAllRecipes();
@@ -176,9 +185,13 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new CovalenceDustListener(this), this);
+        // AlchemicalBagManager's listeners are now registered within its own register() method
         Bukkit.getPluginManager().registerEvents(new CovalenceDustCraftListener(), this);
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.DiviningRodListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.KleinStar.KleinStarListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new CraftingListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new TransmutationTabletBookListener(), this);
  
         // 初始化共价粉
         covalenceDust = new CovalenceDust(this);
@@ -190,6 +203,8 @@ public final class ProjectE extends JavaPlugin {
         getCommand("projecte").setTabCompleter(commandManager);
 
         registerCustomCommands(commandManager);
+
+        // The setblock logic is now inside CommandManager
  
         // 初始化炼金袋管理器
         if (getConfig().getBoolean("AlchemicalBag.enabled", true)) {
@@ -212,6 +227,12 @@ public final class ProjectE extends JavaPlugin {
 
         // 启动连续粒子效果任务
         startContinuousParticleTask();
+
+        // 初始化 Geyser 适配器
+        geyserAdapter = new GeyserAdapter(this);
+        if (geyserAdapter.isGeyserApiAvailable()) {
+           getServer().getPluginManager().registerEvents(new GeyserPlayerJoinListener(this), this);
+        }
     }
 
     @Override
@@ -367,7 +388,10 @@ public final class ProjectE extends JavaPlugin {
         }
 
         emcManager = new EmcManager(this);
-        emcManager.calculateAndStoreEmcValues();
+        emcManager.calculateAndStoreEmcValues(true);
+
+        // 重新加载所有自定义EMC值
+        loadCustomEmcValues();
 
         getLogger().info("ProjectE plugin has been reloaded!");
     }
@@ -386,6 +410,10 @@ public final class ProjectE extends JavaPlugin {
 
     public ResourcePackManager getResourcePackManager() {
         return resourcePackManager;
+    }
+
+    public GeyserAdapter getGeyserAdapter() {
+       return geyserAdapter;
     }
 
     public Material getUpgradedMaterial(Material material) {
@@ -412,12 +440,21 @@ public final class ProjectE extends JavaPlugin {
         return repairTalisman;
     }
 
+    public KleinStarManager getKleinStarManager() {
+        return kleinStarManager;
+    }
+
     public DiviningRodGUI getDiviningRodGUI() {
         return diviningRodGUI;
     }
+
  
     public boolean isPdcExcluded() {
         return excludePDC;
+    }
+
+    public BlockDataManager getBlockDataManager() {
+        return blockDataManager;
     }
  
     private void loadConfigOptions() {
@@ -456,48 +493,55 @@ public final class ProjectE extends JavaPlugin {
     }
 
     public ItemStack getItemStackFromKey(String key) {
+        // 首先，规范化键，移除任何已知的命名空间前缀
+        if (key.startsWith("projecte:")) {
+            key = key.substring("projecte:".length());
+        } else if (key.startsWith("minecraft:")) {
+            key = key.substring("minecraft:".length());
+        }
+
         switch (key) {
-            case "alchemical_coal":
-                return fuelManager.getAlchemicalCoal();
-            case "mobius_fuel":
-                return fuelManager.getMobiusFuel();
-            case "aeternalis_fuel":
-                return fuelManager.getAeternalisFuel();
-            case "alchemical_coal_block":
-                return fuelManager.getAlchemicalCoalBlock();
-            case "mobius_fuel_block":
-                return fuelManager.getMobiusFuelBlock();
-            case "aeternalis_fuel_block":
-                return fuelManager.getAeternalisFuelBlock();
-            case "dark_matter":
-                return fuelManager.getDarkMatter();
-            case "red_matter":
-                return fuelManager.getRedMatter();
-            case "dark_matter_block":
-                return fuelManager.getDarkMatterBlock();
-            case "red_matter_block":
-                return fuelManager.getRedMatterBlock();
-            case "low_covalence_dust":
-                return covalenceDust.getLowCovalenceDust();
-            case "medium_covalence_dust":
-                return covalenceDust.getMediumCovalenceDust();
-            case "high_covalence_dust":
-                return covalenceDust.getHighCovalenceDust();
-            case "low_divining_rod":
-                return diviningRod.getLowDiviningRod();
-            case "medium_divining_rod":
-                return diviningRod.getMediumDiviningRod();
-            case "high_divining_rod":
-                return diviningRod.getHighDiviningRod();
-            case "repair_talisman":
-                return repairTalisman.getRepairTalisman();
+            // Fuels
+            case "alchemical_coal": return fuelManager.getAlchemicalCoal();
+            case "mobius_fuel": return fuelManager.getMobiusFuel();
+            case "aeternalis_fuel": return fuelManager.getAeternalisFuel();
+            case "alchemical_coal_block": return fuelManager.getAlchemicalCoalBlock();
+            case "mobius_fuel_block": return fuelManager.getMobiusFuelBlock();
+            case "aeternalis_fuel_block": return fuelManager.getAeternalisFuelBlock();
+
+            // Materials
+            case "dark_matter": return fuelManager.getDarkMatter();
+            case "red_matter": return fuelManager.getRedMatter();
+            case "dark_matter_block": return fuelManager.getDarkMatterBlock();
+            case "red_matter_block": return fuelManager.getRedMatterBlock();
+
+            // Covalence Dust
+            case "low_covalence_dust": return covalenceDust.getLowCovalenceDust();
+            case "medium_covalence_dust": return covalenceDust.getMediumCovalenceDust();
+            case "high_covalence_dust": return covalenceDust.getHighCovalenceDust();
+
+            // Divining Rods
+            case "low_divining_rod": return diviningRod.getLowDiviningRod();
+            case "medium_divining_rod": return diviningRod.getMediumDiviningRod();
+            case "high_divining_rod": return diviningRod.getHighDiviningRod();
+
+            // Talismans
+            case "repair_talisman": return repairTalisman.getRepairTalisman();
+
+            // Klein Stars (Corrected Keys)
+            case "klein_star_ein": return kleinStarManager.getKleinStar(1);
+            case "klein_star_zwei": return kleinStarManager.getKleinStar(2);
+            case "klein_star_drei": return kleinStarManager.getKleinStar(3);
+            case "klein_star_vier": return kleinStarManager.getKleinStar(4);
+            case "klein_star_sphere": return kleinStarManager.getKleinStar(5);
+            case "klein_star_omega": return kleinStarManager.getKleinStar(6);
+
             default:
-                String materialName = key.replace("minecraft:", "").toUpperCase();
-                Material material = versionAdapter.getMaterial(materialName);
+                // 尝试将剩余的键解析为原生Minecraft材料
+                Material material = versionAdapter.getMaterial(key.toUpperCase());
                 if (material != null) {
                     return new ItemStack(material);
                 }
-                break;
         }
         return null;
     }
@@ -530,5 +574,32 @@ public final class ProjectE extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void loadCustomEmcValues() {
+        File customEmcFile = new File(getDataFolder(), "custommoditememc.yml");
+        if (!customEmcFile.exists()) {
+            saveResource("custommoditememc.yml", false);
+        }
+        FileConfiguration config = YamlConfiguration.loadConfiguration(customEmcFile);
+        DatabaseManager db = getDatabaseManager();
+
+        for (String key : config.getKeys(false)) {
+            long emcValue = config.getLong(key);
+            if (emcValue > 0) {
+                String fullKey = "projecte:" + key;
+                db.setEmc(fullKey, emcValue);
+                Map<String, String> placeholders = new HashMap<>();
+                placeholders.put("item", fullKey);
+                placeholders.put("emc", String.valueOf(emcValue));
+                DebugManager.log("debug.emc.custom_emc_loaded", placeholders);
+            }
+        }
+        getLogger().info("Loaded custom EMC values from custommoditememc.yml");
+    }
+
+    private void setKleinStarEmcValues() {
+        // This method is now obsolete and replaced by loadCustomEmcValues()
+        // It is kept to prevent compilation errors from old calls.
     }
 }
