@@ -86,7 +86,7 @@ public class PhilosopherStoneListener implements Listener {
             plugin.getSchedulerAdapter().runTaskLater(() -> {
                 interactedThisTick.remove(player.getUniqueId());
 
-                plugin.getSchedulerAdapter().runTaskAtLocation(clickedBlock.getLocation(), () -> {
+                plugin.getSchedulerAdapter().runTaskAt(clickedBlock.getLocation(), () -> {
                     handleBlockTransformation(player, player.isSneaking(), clickedBlock, blockFace);
                 });
             }, 1L);

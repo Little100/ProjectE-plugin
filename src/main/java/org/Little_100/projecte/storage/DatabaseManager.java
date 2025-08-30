@@ -151,6 +151,14 @@ public boolean hasEmcValues() {
         }
     }
 
+    public boolean learnItem(UUID playerUuid, String itemKey) {
+        if (isLearned(playerUuid, itemKey)) {
+            return false;
+        }
+        addLearnedItem(playerUuid, itemKey);
+        return true;
+    }
+
     public java.util.List<String> getLearnedItems(UUID playerUuid) {
         java.util.List<String> learnedItems = new java.util.ArrayList<>();
         String sql = "SELECT item_key FROM learned_items WHERE player_uuid = ?;";

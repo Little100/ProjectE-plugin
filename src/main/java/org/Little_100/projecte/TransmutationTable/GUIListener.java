@@ -254,14 +254,14 @@ public class GUIListener implements Listener {
                     ProjectE.getInstance().getDatabaseManager().setPlayerEmc(player.getUniqueId(),
                             playerEmc - totalCost);
 
-                    ItemStack purchasedItem;
-                    purchasedItem = ProjectE.getInstance().getItemStackFromKey(itemKey);
-                    if (purchasedItem == null) {
-                        purchasedItem = new ItemStack(clickedItem.getType());
-                    }
-                    purchasedItem.setAmount(amountToBuy);
-                    if (clickedItem.hasItemMeta()) {
-                        purchasedItem.setItemMeta(clickedItem.getItemMeta());
+                    ItemStack purchasedItem = ProjectE.getInstance().getItemStackFromKey(itemKey);
+                    if (purchasedItem != null) {
+                        purchasedItem.setAmount(amountToBuy);
+                    } else {
+                        purchasedItem = new ItemStack(clickedItem.getType(), amountToBuy);
+                        if (clickedItem.hasItemMeta()) {
+                            purchasedItem.setItemMeta(clickedItem.getItemMeta());
+                        }
                     }
 
 

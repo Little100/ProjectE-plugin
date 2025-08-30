@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.Little_100'
-version = '0.2.1'
+version = '0.2.2'
 
 repositories {
     mavenCentral()
@@ -75,8 +75,8 @@ task verifyResourcesExist {
     doLast {
         def buildDir = file("${buildDir}/resources/main")
         def requiredFiles = [
-            'en_us.yml',
-            'zh_cn.yml',
+            'lang/en_us.yml',
+            'lang/zh_cn.yml',
             'config.yml',
             'plugin.yml',
             'pack/ProjectE Resourcepack.zip'

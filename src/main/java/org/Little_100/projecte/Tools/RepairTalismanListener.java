@@ -38,6 +38,9 @@ public class RepairTalismanListener {
                                 if (plugin.getKleinStarManager().isKleinStar(item)) {
                                     continue;
                                 }
+                                if (plugin.getToolManager().isProjectETool(item)) {
+                                    continue;
+                                }
                                 Damageable meta = (Damageable) item.getItemMeta();
                                 if (meta.hasDamage() && meta.getDamage() > 0) {
                                     meta.setDamage(Math.max(0, meta.getDamage() - 1));
@@ -48,6 +51,9 @@ public class RepairTalismanListener {
                         for (ItemStack item : player.getInventory().getArmorContents()) {
                             if (item != null && item.getItemMeta() instanceof Damageable) {
                                 if (plugin.getKleinStarManager().isKleinStar(item)) {
+                                    continue;
+                                }
+                                if (plugin.getToolManager().isProjectETool(item)) {
                                     continue;
                                 }
                                 Damageable meta = (Damageable) item.getItemMeta();

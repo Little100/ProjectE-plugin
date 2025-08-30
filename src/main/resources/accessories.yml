@@ -1,0 +1,50 @@
+# this file can control projectE's accessories
+# 这个文件控制等价交换饰品
+accessories:
+  body_stone:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "SSS"
+      - "RDR"
+      - "SSS"
+    ingredients:
+      S: "SUGAR"
+      R: "projecte:red_matter"
+      D: "LAPIS_LAZULI"
+    result:
+      projecte_id: "body_stone"
+  soul_stone:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "GGG"
+      - "RDR"
+      - "GGG"
+    ingredients:
+      G: "GLOWSTONE_DUST"
+      R: "projecte:red_matter"
+      D: "LAPIS_LAZULI"
+    result:
+      projecte_id: "soul_stone"
+  life_stone:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:body_stone"
+      - "projecte:soul_stone"
+    result:
+      projecte_id: "life_stone"
+  mind_stone:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "BBB"
+      - "RDR"
+      - "BBB"
+    ingredients:
+      B: "BOOK"
+      R: "projecte:red_matter"
+      D: "LAPIS_LAZULI"
+    result:
+      projecte_id: "mind_stone"

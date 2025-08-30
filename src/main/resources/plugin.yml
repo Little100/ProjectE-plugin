@@ -1,5 +1,5 @@
 name: ProjectE
-version: '0.2.1'
+version: '0.2.2'
 main: org.Little_100.projecte.ProjectE
 api-version: '1.14'
 folia-supported: true
@@ -11,11 +11,6 @@ commands:
     description: "ProjectE插件主命令"
     usage: "/projecte <sub-command>"
     aliases: [ po ]
-    subcommands:
-      bag:
-        description: "Opens the Alchemical Bag."
-        usage: "/projecte bag"
-        permission: projecte.command.bag
 permissions:
   projecte.command.setemc:
     description: "允许设置物品的EMC值"
@@ -26,11 +21,20 @@ permissions:
   projecte.command.debug:
     description: "允许调试物品的EMC信息"
     default: op
-  projecte.command.give:
+  projecte.command.pay:
     description: "允许转账EMC给其他玩家"
     default: true
+  projecte.command.item:
+    description: "允许获取插件物品"
+    default: op
+  projecte.command.give:
+    description: "允许给予玩家插件物品"
+    default: op
   projecte.command.noemcitem:
     description: "允许列出所有没有EMC值的物品"
+    default: op
+  projecte.command.table.learn:
+    description: "允许学习所有有EMC的物品"
     default: op
   projecte.interact.transmutationtable:
     description: "允许玩家打开和使用转换桌"

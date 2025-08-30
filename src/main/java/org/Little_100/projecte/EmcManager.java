@@ -230,6 +230,28 @@ public class EmcManager {
                         }
                     }
                 }
+
+                NamespacedKey darkMatterFurnaceKey = new NamespacedKey(plugin, "dark_matter_furnace");
+                NamespacedKey redMatterFurnaceKey = new NamespacedKey(plugin, "red_matter_furnace");
+                NamespacedKey alchemicalChestKey = new NamespacedKey(plugin, "alchemical_chest");
+                NamespacedKey energyCondenserKey = new NamespacedKey(plugin, "energy_condenser");
+                NamespacedKey energyCondenserMK2Key = new NamespacedKey(plugin, "energy_condenser_mk2");
+
+                if (container.has(darkMatterFurnaceKey, PersistentDataType.BYTE)) {
+                    return "projecte:dark_matter_furnace";
+                }
+                if (container.has(redMatterFurnaceKey, PersistentDataType.BYTE)) {
+                    return "projecte:red_matter_furnace";
+                }
+                if (container.has(alchemicalChestKey, PersistentDataType.BYTE)) {
+                    return "projecte:alchemical_chest";
+                }
+                if (container.has(energyCondenserKey, PersistentDataType.BYTE)) {
+                    return "projecte:energy_condenser";
+                }
+                if (container.has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+                    return "projecte:energy_condenser_mk2";
+                }
             }
         }
         return versionAdapter.getItemKey(item);

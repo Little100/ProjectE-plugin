@@ -1,6 +1,6 @@
 # this file is the recipe.yml translation
 # sorry about my poor English again!
-# tips: must modify in recipe.yml this file onlu translate.
+# tips: must modify in recipe.yml this file onlu translate. and will not update when the plugin update
 # im try my best to make it better :)
 recipes:
   # this file control the plugin's item recipe

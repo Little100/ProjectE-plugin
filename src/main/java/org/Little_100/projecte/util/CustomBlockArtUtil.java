@@ -120,7 +120,7 @@ public class CustomBlockArtUtil implements Listener {
                 }
 
                 final Material finalBaseMaterial = baseMaterial;
-                scheduler.runTaskAtLocation(block.getLocation(), () -> {
+                scheduler.runTaskAt(block.getLocation(), () -> {
                     block.setType(finalBaseMaterial, false);
                     if (block.getBlockData() instanceof Stairs) {
                         Stairs stairsData = (Stairs) block.getBlockData();

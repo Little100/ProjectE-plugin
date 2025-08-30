@@ -1,6 +1,8 @@
 package org.Little_100.projecte;
 
 import org.Little_100.projecte.Tome.TransmutationTabletBook;
+import org.Little_100.projecte.Tools.ToolManager;
+import org.Little_100.projecte.devices.DeviceManager;
 import org.bukkit.Bukkit;
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
 import org.bukkit.Material;
@@ -13,6 +15,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.util.HashMap;
@@ -24,9 +27,11 @@ public class RecipeManager {
 
     private final ProjectE plugin;
     private final Map<String, NamespacedKey> recipeKeys = new HashMap<>();
+    private final ToolManager toolManager;
 
     public RecipeManager(ProjectE plugin) {
         this.plugin = plugin;
+        this.toolManager = plugin.getToolManager();
     }
 
     public void registerAllRecipes() {
@@ -34,6 +39,27 @@ public class RecipeManager {
         registerUpgradeRecipes();
         registerDowngradeRecipes();
         registerOreTransmutationRecipes();
+        loadDeviceRecipes();
+    }
+
+    private void loadDeviceRecipes() {
+        File deviceFile = new File(plugin.getDataFolder(), "devices.yml");
+        if (!deviceFile.exists()) {
+            plugin.saveResource("devices.yml", false);
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(deviceFile);
+        ConfigurationSection devicesSection = config.getConfigurationSection("devices");
+        if (devicesSection == null) {
+            return;
+        }
+
+        for (String id : devicesSection.getKeys(false)) {
+            ConfigurationSection recipeConfig = devicesSection.getConfigurationSection(id);
+            if (recipeConfig != null && recipeConfig.getBoolean("enabled", true)) {
+                parseRecipe(id, recipeConfig);
+            }
+        }
+        plugin.getLogger().info("devices.yml loaded");
     }
 
     // 从 recipe.yml 加载所有配方
@@ -68,10 +94,20 @@ public class RecipeManager {
                 }
             }
         }
+        plugin.getLogger().info("recipe.yml loaded");
     }
 
     // 解析单个配方
     private void parseRecipe(String id, ConfigurationSection config) {
+        if (id.contains("_pickaxe") || id.contains("_axe") || id.contains("_shovel") || id.contains("_hoe") || id.contains("_sword") || id.contains("_shears") || id.contains("_hammer")) {
+            if (id.startsWith("dark_matter_") && !plugin.getConfig().getBoolean("Tools.dark_matter_tools_enabled", true)) {
+                return;
+            }
+            if (id.startsWith("red_matter_") && !plugin.getConfig().getBoolean("Tools.red_matter_tools_enabled", true)) {
+                return;
+            }
+        }
+
         java.util.Map<String, String> placeholders = new java.util.HashMap<>();
         placeholders.put("recipe", id);
         DebugManager.log("debug.recipe.loading_recipe", placeholders);
@@ -193,6 +229,12 @@ public class RecipeManager {
                 if (plugin.getConfig().getBoolean("debug")) {
                     plugin.getLogger().info("[Debug] Matched custom item: " + customItemId);
                 }
+
+                if (customItemId.contains("_pickaxe") || customItemId.contains("_axe") || customItemId.contains("_shovel") ||
+                    customItemId.contains("_hoe") || customItemId.contains("_sword") || customItemId.contains("_shears") ||
+                    customItemId.contains("_hammer")) {
+                    return new RecipeChoice.MaterialChoice(customItem.getType());
+                }
                 return new RecipeChoice.ExactChoice(customItem);
             } else {
                 if (plugin.getConfig().getBoolean("debug")) {
@@ -224,7 +266,11 @@ public class RecipeManager {
         }
 
         try {
-            Material material = Material.valueOf(ingredient.toUpperCase());
+            String materialName = ingredient;
+            if (materialName.startsWith("minecraft:")) {
+                materialName = materialName.substring(10);
+            }
+            Material material = Material.valueOf(materialName.toUpperCase());
             if (plugin.getConfig().getBoolean("debug")) {
                 plugin.getLogger().info("[Debug] Matched material: " + material.name());
             }
@@ -246,67 +292,102 @@ public class RecipeManager {
 
         if (config.contains("projecte_id")) {
             String projecteId = config.getString("projecte_id");
+            if (projecteId != null && projecteId.startsWith("projecte:")) {
+                projecteId = projecteId.substring(9);
+            }
             ItemStack item = null;
 
-            switch (projecteId) {
-                case "low_covalence_dust":
-                    item = plugin.getCovalenceDust().getLowCovalenceDust();
-                    break;
-                case "medium_covalence_dust":
-                    item = plugin.getCovalenceDust().getMediumCovalenceDust();
-                    break;
-                case "high_covalence_dust":
-                    item = plugin.getCovalenceDust().getHighCovalenceDust();
-                    break;
-                case "low_divining_rod":
-                    item = plugin.getDiviningRod().getLowDiviningRod();
-                    break;
-                case "medium_divining_rod":
-                    item = plugin.getDiviningRod().getMediumDiviningRod();
-                    break;
-                case "high_divining_rod":
-                    item = plugin.getDiviningRod().getHighDiviningRod();
-                    break;
-                case "repair_talisman":
-                    item = plugin.getRepairTalisman().getRepairTalisman();
-                    break;
-                case "dark_matter":
-                    item = plugin.getFuelManager().getDarkMatter();
-                    break;
-                case "red_matter":
-                    item = plugin.getFuelManager().getRedMatter();
-                    break;
-                case "dark_matter_block":
-                    item = plugin.getFuelManager().getDarkMatterBlock();
-                    break;
-                case "red_matter_block":
-                    item = plugin.getFuelManager().getRedMatterBlock();
-                    break;
-                case "klein_star_ein":
-                    item = plugin.getKleinStarManager().getKleinStar(1);
-                    break;
-                case "klein_star_zwei":
-                    item = plugin.getKleinStarManager().getKleinStar(2);
-                    break;
-                case "klein_star_drei":
-                    item = plugin.getKleinStarManager().getKleinStar(3);
-                    break;
-                case "klein_star_vier":
-                    item = plugin.getKleinStarManager().getKleinStar(4);
-                    break;
-                case "klein_star_sphere":
-                    item = plugin.getKleinStarManager().getKleinStar(5);
-                    break;
-                case "klein_star_omega":
-                    item = plugin.getKleinStarManager().getKleinStar(6);
-                    break;
-                case "transmutation_tablet_book":
-                    item = TransmutationTabletBook.createTransmutationTabletBook();
-                    break;
-                default:
-                    String materialName = config.getString("material", "GLOWSTONE_DUST");
-                    item = plugin.getItemStackFromKey(materialName + "{projecte_id:\"" + projecteId + "\"}");
-                    break;
+            if (plugin.getToolManager().isTool(projecteId)) {
+                item = plugin.getToolManager().getTool(projecteId);
+            } else if (plugin.getArmorManager().isArmor(projecteId)) {
+                item = plugin.getArmorManager().getArmor(projecteId);
+            } else {
+                switch (projecteId) {
+                    case "low_covalence_dust":
+                        item = plugin.getCovalenceDust().getLowCovalenceDust();
+                        break;
+                    case "medium_covalence_dust":
+                        item = plugin.getCovalenceDust().getMediumCovalenceDust();
+                        break;
+                    case "high_covalence_dust":
+                        item = plugin.getCovalenceDust().getHighCovalenceDust();
+                        break;
+                    case "low_divining_rod":
+                        item = plugin.getDiviningRod().getLowDiviningRod();
+                        break;
+                    case "medium_divining_rod":
+                        item = plugin.getDiviningRod().getMediumDiviningRod();
+                        break;
+                    case "high_divining_rod":
+                        item = plugin.getDiviningRod().getHighDiviningRod();
+                        break;
+                    case "repair_talisman":
+                        item = plugin.getRepairTalisman().getRepairTalisman();
+                        break;
+                    case "dark_matter":
+                        item = plugin.getFuelManager().getDarkMatter();
+                        break;
+                    case "red_matter":
+                        item = plugin.getFuelManager().getRedMatter();
+                        break;
+                    case "dark_matter_furnace":
+                        item = plugin.getDeviceManager().getDarkMatterFurnaceItem();
+                        break;
+                    case "red_matter_furnace":
+                        item = plugin.getDeviceManager().getRedMatterFurnaceItem();
+                        break;
+                    case "alchemical_chest":
+                        item = plugin.getDeviceManager().getAlchemicalChestItem();
+                        break;
+                    case "energy_condenser":
+                        item = plugin.getDeviceManager().getEnergyCondenserItem();
+                        break;
+                    case "energy_condenser_mk2":
+                        item = plugin.getDeviceManager().getEnergyCondenserMK2Item();
+                        break;
+                    case "dark_matter_block":
+                        item = plugin.getFuelManager().getDarkMatterBlock();
+                        break;
+                    case "red_matter_block":
+                        item = plugin.getFuelManager().getRedMatterBlock();
+                        break;
+                    case "klein_star_ein":
+                        item = plugin.getKleinStarManager().getKleinStar(1);
+                        break;
+                    case "klein_star_zwei":
+                        item = plugin.getKleinStarManager().getKleinStar(2);
+                        break;
+                    case "klein_star_drei":
+                        item = plugin.getKleinStarManager().getKleinStar(3);
+                        break;
+                    case "klein_star_vier":
+                        item = plugin.getKleinStarManager().getKleinStar(4);
+                        break;
+                    case "klein_star_sphere":
+                        item = plugin.getKleinStarManager().getKleinStar(5);
+                        break;
+                    case "klein_star_omega":
+                        item = plugin.getKleinStarManager().getKleinStar(6);
+                        break;
+                    case "transmutation_tablet_book":
+                        item = TransmutationTabletBook.createTransmutationTabletBook();
+                        break;
+                    case "body_stone":
+                        item = org.Little_100.projecte.accessories.BodyStone.createBodyStone();
+                        break;
+                    case "soul_stone":
+                        item = org.Little_100.projecte.accessories.SoulStone.createSoulStone();
+                        break;
+                    case "life_stone":
+                        item = org.Little_100.projecte.accessories.LifeStone.createLifeStone();
+                        break;
+                    case "mind_stone":
+                        item = org.Little_100.projecte.accessories.MindStone.createMindStone();
+                        break;
+                    default:
+                        // This case should ideally not be hit if all items are handled
+                        break;
+                }
             }
 
             if (item != null) {
@@ -321,11 +402,10 @@ public class RecipeManager {
                 }
                 return item;
             }
-        }
-
-        String materialName = config.getString("material");
-        Material material = plugin.getVersionAdapter().getMaterial(materialName);
-        if (material == null) {
+        } else {
+            String materialName = config.getString("material");
+            Material material = plugin.getVersionAdapter().getMaterial(materialName);
+            if (material == null) {
             material = Material.matchMaterial(materialName);
         }
         if (material == null)
@@ -363,8 +443,10 @@ public class RecipeManager {
                 meta.setUnbreakable(true);
             }
             item.setItemMeta(meta);
+            }
+            return item;
         }
-        return item;
+        return null;
     }
 
     // 注册升级配方
@@ -424,6 +506,10 @@ public class RecipeManager {
     // 获取所有配方键
     public Map<String, NamespacedKey> getRecipeKeys() {
         return recipeKeys;
+    }
+
+    public java.util.Set<String> getRegisteredItemIds() {
+        return recipeKeys.keySet();
     }
 
     // 注销所有配方

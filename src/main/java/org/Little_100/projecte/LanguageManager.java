@@ -34,20 +34,26 @@ public class LanguageManager {
             langNames.add("zh_cn"); // 默认使用中文
         }
 
+        File langFolder = new File(plugin.getDataFolder(), "lang");
+        if (!langFolder.exists()) {
+            langFolder.mkdirs();
+        }
+
         for (String lang : langNames) {
-            File langFile = new File(plugin.getDataFolder(), lang + ".yml");
+            String langFileName = "lang/" + lang + ".yml";
+            File langFile = new File(plugin.getDataFolder(), langFileName);
             if (!langFile.exists()) {
-                plugin.saveResource(lang + ".yml", false);
+                plugin.saveResource(langFileName, false);
             }
             FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
 
-            try (InputStream defLangStream = plugin.getResource(lang + ".yml")) {
+            try (InputStream defLangStream = plugin.getResource(langFileName)) {
                 if (defLangStream != null) {
                     config.setDefaults(YamlConfiguration
                             .loadConfiguration(new InputStreamReader(defLangStream, StandardCharsets.UTF_8)));
                 }
             } catch (Exception e) {
-                plugin.getLogger().severe("Could not load language file: " + lang + ".yml");
+                plugin.getLogger().severe("Could not load language file: " + langFileName);
                 e.printStackTrace();
             }
             langConfigs.add(config);
@@ -69,6 +75,7 @@ public class LanguageManager {
 
         if (message == null) {
             plugin.getLogger().warning("缺少翻译键: " + key);
+plugin.getLogger().warning("缺少翻译键: " + key);
             return key;
         }
 

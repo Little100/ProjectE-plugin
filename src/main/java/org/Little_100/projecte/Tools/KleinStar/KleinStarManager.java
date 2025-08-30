@@ -4,6 +4,7 @@ import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -57,29 +58,20 @@ public class KleinStarManager {
 
         ItemMeta meta = kleinStar.getItemMeta();
         if (meta != null) {
-            // 名称
             meta.setDisplayName(plugin.getLanguageManager().get("item." + nameKey + ".name"));
-            
-            // Lore
             List<String> lore = new ArrayList<>();
             lore.add(plugin.getLanguageManager().get("item." + nameKey + ".lore1"));
             lore.add(plugin.getLanguageManager().get("item." + nameKey + ".lore2").replace("{staremc}", "0"));
             meta.setLore(lore);
-            
-            // 隐藏默认属性
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-
-            // 设置耐久度
             if (meta instanceof Damageable) {
                 ((Damageable) meta).setDamage(kleinStar.getType().getMaxDurability() - 2);
             }
-            
             kleinStar.setItemMeta(meta);
         }
 
         kleinStar = CustomModelDataUtil.setCustomModelDataBoth(kleinStar, "klein_star_" + level, level);
 
-        // 添加PDC标签
         ItemMeta finalMeta = kleinStar.getItemMeta();
         if (finalMeta != null) {
             PersistentDataContainer container = finalMeta.getPersistentDataContainer();
@@ -108,6 +100,7 @@ public class KleinStarManager {
         PersistentDataContainer container = meta.getPersistentDataContainer();
         return container.has(kleinStarKey, PersistentDataType.INTEGER);
     }
+
     public long getStoredEmc(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return 0;
         ItemMeta meta = item.getItemMeta();
@@ -194,10 +187,51 @@ public class KleinStarManager {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return -1;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        // 如果没有对应的key，返回-1表示无效
         if (!container.has(kleinStarKey, PersistentDataType.INTEGER)) {
             return -1;
         }
         return container.get(kleinStarKey, PersistentDataType.INTEGER);
+    }
+
+    public static boolean hasEnoughEMC(Player player, long amount) {
+        long totalEmc = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && getInstance().isKleinStar(item)) {
+                totalEmc += getInstance().getStoredEmc(item);
+            }
+        }
+        return totalEmc >= amount;
+    }
+
+    public static void consumeEMC(Player player, long amount) {
+        long remaining = amount;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (item != null && getInstance().isKleinStar(item)) {
+                long stored = getInstance().getStoredEmc(item);
+                if (stored >= remaining) {
+                    player.getInventory().setItem(i, getInstance().setStoredEmc(item, stored - remaining));
+                    remaining = 0;
+                    break;
+                } else {
+                    player.getInventory().setItem(i, getInstance().setStoredEmc(item, 0));
+                    remaining -= stored;
+                }
+            }
+        }
+    }
+
+    public static boolean hasKleinStar(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && getInstance().isKleinStar(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static KleinStarManager getInstance() {
+        return ProjectE.getInstance().getKleinStarManager();
     }
 }

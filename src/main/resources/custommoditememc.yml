@@ -54,3 +54,18 @@ klein_star_sphere: 6291456
 klein_star_omega: 25165824
 
 transmutation_tablet_book: 0
+
+# 饰品EMC值
+# Accessories EMC value
+body_stone: 934944
+soul_stone: 937056
+life_stone: 1872000
+mind_stone: 935712
+
+# 熔炉EMC值
+# Furnace EMC value
+projecte:dark_matter_furnace: 4456456
+projecte:red_matter_furnace: 10059784
+alchemical_chest: 8987
+energy_condenser: 42011
+energy_condenser_mk2: 9741339

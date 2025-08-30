@@ -35,6 +35,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
  
     private final ProjectE plugin;
     private final Map<String, Map<String, String>> openTableCommands = new HashMap<>();
+    private final Map<Player, String> openGuiEditors = new HashMap<>();
     private final DatabaseManager databaseManager;
     private final EmcManager emcManager;
     private final LanguageManager languageManager;
@@ -100,8 +101,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     return handleSetEmc(sender, args);
                 case "debug":
                     return handleDebug(sender);
+                case "pay":
+                    return handlePayEmc(sender, args);
+                case "item":
+                    return handleGetItem(sender, args);
                 case "give":
-                    return handleGiveEmc(sender, args);
+                    return handleGiveItem(sender, args);
                 case "noemcitem":
                     return handleNoEmcItem(sender);
                 case "bag":
@@ -115,6 +120,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                case "o":
                case "open":
                    return handleOpen(sender);
+               case "gui":
+                   return handleGui(sender, args);
+               case "table":
+                   return handleTableCommand(sender, args);
                 default:
                     sendHelp(sender);
                     return true;
@@ -122,6 +131,43 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
         return false;
     }
+
+   public Map<Player, String> getOpenGuiEditors() {
+       return openGuiEditors;
+   }
+
+   private boolean handleGui(CommandSender sender, String[] args) {
+       if (!(sender instanceof Player)) {
+           sender.sendMessage(languageManager.get("serverside.command.player_only"));
+           return true;
+       }
+       if (!sender.hasPermission("projecte.command.gui")) {
+           sender.sendMessage(languageManager.get("serverside.command.no_permission"));
+           return true;
+       }
+       if (args.length != 2) {
+           sender.sendMessage(languageManager.get("serverside.command.gui.usage"));
+           return true;
+       }
+
+       Player player = (Player) sender;
+       String fileName = args[1];
+       if (!fileName.toLowerCase().endsWith(".yml")) {
+           fileName += ".yml";
+       }
+
+       String title = "GUI Editor: " + fileName;
+       Inventory gui = Bukkit.createInventory(player, 54, title); // Use player as owner
+
+       openGuiEditors.put(player, fileName);
+       player.openInventory(gui);
+
+       Map<String, String> placeholders = new HashMap<>();
+       placeholders.put("file", fileName);
+       player.sendMessage(languageManager.get("serverside.command.gui.opening_editor", placeholders));
+
+       return true;
+   }
 private boolean handleRecalculate(CommandSender sender) {
         if (!sender.hasPermission("projecte.command.recalculate")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
@@ -157,6 +203,8 @@ private boolean handleRecalculate(CommandSender sender) {
         sender.sendMessage(languageManager.get("serverside.command.help.header"));
         sender.sendMessage(languageManager.get("serverside.command.help.reload"));
         sender.sendMessage(languageManager.get("serverside.command.help.setemc"));
+        sender.sendMessage(languageManager.get("serverside.command.help.pay"));
+        sender.sendMessage(languageManager.get("serverside.command.help.item"));
         sender.sendMessage(languageManager.get("serverside.command.help.give"));
         sender.sendMessage(languageManager.get("serverside.command.help.debug"));
         sender.sendMessage(languageManager.get("serverside.command.help.noemcitem"));
@@ -164,6 +212,7 @@ private boolean handleRecalculate(CommandSender sender) {
         sender.sendMessage(languageManager.get("serverside.command.help.lang"));
         sender.sendMessage(languageManager.get("serverside.command.help.report"));
         sender.sendMessage(languageManager.get("serverside.command.help.open"));
+        sender.sendMessage(languageManager.get("serverside.command.help.table_learn"));
         // 移除 resourcepack 帮助信息
     }
 
@@ -278,17 +327,17 @@ private boolean handleRecalculate(CommandSender sender) {
         return true;
     }
 
-    private boolean handleGiveEmc(CommandSender sender, String[] args) {
+    private boolean handlePayEmc(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
             return true;
         }
-        if (!sender.hasPermission("projecte.command.give")) {
+        if (!sender.hasPermission("projecte.command.pay")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
             return true;
         }
         if (args.length != 3) {
-            sender.sendMessage(languageManager.get("serverside.command.give_emc.usage"));
+            sender.sendMessage(languageManager.get("serverside.command.pay_emc.usage"));
             return true;
         }
 
@@ -298,12 +347,12 @@ private boolean handleRecalculate(CommandSender sender) {
         if (targetPlayer == null) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("player", args[1]);
-            sender.sendMessage(languageManager.get("serverside.command.give_emc.player_not_found", placeholders));
+            sender.sendMessage(languageManager.get("serverside.command.pay_emc.player_not_found", placeholders));
             return true;
         }
 
         if (targetPlayer.equals(senderPlayer)) {
-            sender.sendMessage(languageManager.get("serverside.command.give_emc.cant_give_self"));
+            sender.sendMessage(languageManager.get("serverside.command.pay_emc.cant_pay_self"));
             return true;
         }
 
@@ -311,13 +360,13 @@ private boolean handleRecalculate(CommandSender sender) {
         try {
             amount = Long.parseLong(args[2]);
             if (amount <= 0) {
-                sender.sendMessage(languageManager.get("serverside.command.give_emc.must_be_positive"));
+                sender.sendMessage(languageManager.get("serverside.command.pay_emc.must_be_positive"));
                 return true;
             }
         } catch (NumberFormatException e) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("amount", args[2]);
-            sender.sendMessage(languageManager.get("serverside.command.give_emc.invalid_amount", placeholders));
+            sender.sendMessage(languageManager.get("serverside.command.pay_emc.invalid_amount", placeholders));
             return true;
         }
 
@@ -331,7 +380,7 @@ private boolean handleRecalculate(CommandSender sender) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("total", String.valueOf(totalDeduction));
             placeholders.put("fee", String.valueOf(fee));
-            sender.sendMessage(languageManager.get("serverside.command.give_emc.not_enough_emc", placeholders));
+            sender.sendMessage(languageManager.get("serverside.command.pay_emc.not_enough_emc", placeholders));
             return true;
         }
 
@@ -344,14 +393,108 @@ private boolean handleRecalculate(CommandSender sender) {
         senderPlaceholders.put("player", targetPlayer.getName());
         senderPlaceholders.put("amount", String.valueOf(amount));
         senderPlaceholders.put("fee", String.valueOf(fee));
-        senderPlayer.sendMessage(languageManager.get("serverside.command.give_emc.give_success", senderPlaceholders));
+        senderPlayer.sendMessage(languageManager.get("serverside.command.pay_emc.pay_success", senderPlaceholders));
 
         Map<String, String> targetPlaceholders = new HashMap<>();
         targetPlaceholders.put("player", senderPlayer.getName());
         targetPlaceholders.put("amount", String.valueOf(amount));
         targetPlayer
-                .sendMessage(languageManager.get("serverside.command.give_emc.receive_success", targetPlaceholders));
+                .sendMessage(languageManager.get("serverside.command.pay_emc.receive_success", targetPlaceholders));
 
+        return true;
+    }
+
+    private boolean handleGetItem(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return true;
+        }
+        if (!sender.hasPermission("projecte.command.item")) {
+            sender.sendMessage(languageManager.get("serverside.command.no_permission"));
+            return true;
+        }
+        if (args.length < 2) {
+            sender.sendMessage(languageManager.get("serverside.command.item.usage"));
+            return true;
+        }
+
+        String itemId = args[1];
+        ItemStack item = plugin.getItemStackFromKey(itemId);
+
+        if (item == null) {
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("item", itemId);
+            sender.sendMessage(languageManager.get("serverside.command.item.not_found", placeholders));
+            return true;
+        }
+
+        int amount = 1;
+        if (args.length > 2) {
+            try {
+                amount = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage(languageManager.get("serverside.command.item.invalid_amount"));
+                return true;
+            }
+        }
+        item.setAmount(amount);
+
+        Player player = (Player) sender;
+        player.getInventory().addItem(item);
+
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("item", itemId);
+        placeholders.put("amount", String.valueOf(amount));
+        sender.sendMessage(languageManager.get("serverside.command.item.success", placeholders));
+        return true;
+    }
+
+    private boolean handleGiveItem(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("projecte.command.give")) {
+            sender.sendMessage(languageManager.get("serverside.command.no_permission"));
+            return true;
+        }
+        if (args.length < 3) {
+            sender.sendMessage(languageManager.get("serverside.command.give.usage"));
+            return true;
+        }
+
+        Player targetPlayer = Bukkit.getPlayer(args[1]);
+        if (targetPlayer == null) {
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("player", args[1]);
+            sender.sendMessage(languageManager.get("serverside.command.give.player_not_found", placeholders));
+            return true;
+        }
+
+        String itemId = args[2];
+        ItemStack item = plugin.getItemStackFromKey(itemId);
+
+        if (item == null) {
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("item", itemId);
+            sender.sendMessage(languageManager.get("serverside.command.give.item_not_found", placeholders));
+            return true;
+        }
+
+        int amount = 1;
+        if (args.length > 3) {
+            try {
+                amount = Integer.parseInt(args[3]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage(languageManager.get("serverside.command.give.invalid_amount"));
+                return true;
+            }
+        }
+        item.setAmount(amount);
+
+        targetPlayer.getInventory().addItem(item);
+
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("player", targetPlayer.getName());
+        placeholders.put("item", itemId);
+        placeholders.put("amount", String.valueOf(amount));
+        sender.sendMessage(languageManager.get("serverside.command.give.success", placeholders));
         return true;
     }
 
@@ -434,8 +577,12 @@ private boolean handleRecalculate(CommandSender sender) {
         String action = args[1].toLowerCase();
         if (action.equals("list")) {
             sender.sendMessage(languageManager.get("serverside.command.lang.list_header"));
-            File langFolder = plugin.getDataFolder();
-            File[] files = langFolder.listFiles((dir, name) -> name.endsWith(".yml") && !name.equals("config.yml"));
+            File langFolder = new File(plugin.getDataFolder(), "lang");
+            if (!langFolder.exists() || !langFolder.isDirectory()) {
+                sender.sendMessage(languageManager.get("serverside.command.lang.no_lang_folder"));
+                return true;
+            }
+            File[] files = langFolder.listFiles((dir, name) -> name.endsWith(".yml"));
             if (files != null) {
                 for (File file : files) {
                     sender.sendMessage(ChatColor.YELLOW + "- " + file.getName().replace(".yml", ""));
@@ -451,7 +598,7 @@ private boolean handleRecalculate(CommandSender sender) {
             }
             List<String> newLangs = new ArrayList<>(Arrays.asList(args).subList(2, args.length));
             for (String lang : newLangs) {
-                File langFile = new File(plugin.getDataFolder(), lang + ".yml");
+                File langFile = new File(new File(plugin.getDataFolder(), "lang"), lang + ".yml");
                 if (!langFile.exists()) {
                     Map<String, String> placeholders = new HashMap<>();
                     placeholders.put("file", lang + ".yml");
@@ -462,6 +609,7 @@ private boolean handleRecalculate(CommandSender sender) {
 
             plugin.getConfig().set("language", newLangs);
             plugin.saveConfig();
+            languageManager.loadLanguageFiles(); // 立即重新加载语言文件
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("languages", String.join(", ", newLangs));
             sender.sendMessage(languageManager.get("serverside.command.lang.set_success", placeholders));
@@ -589,11 +737,46 @@ private boolean handleRecalculate(CommandSender sender) {
         return true;
     }
 
+    private boolean handleTableCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return true;
+        }
+        if (args.length < 2 || !args[1].equalsIgnoreCase("learn")) {
+            sender.sendMessage(languageManager.get("serverside.command.table.learn.usage"));
+            return true;
+        }
+        if (!sender.hasPermission("projecte.command.table.learn")) {
+            sender.sendMessage(languageManager.get("serverside.command.no_permission"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        plugin.getSchedulerAdapter().runTaskAsynchronously(() -> {
+            int learnedCount = 0;
+            for (Material material : Material.values()) {
+                if (material.isItem() && !material.isAir()) {
+                    ItemStack item = new ItemStack(material);
+                    String itemKey = plugin.getVersionAdapter().getItemKey(item);
+                    if (emcManager.getEmc(itemKey) > 0) {
+                        if (databaseManager.learnItem(player.getUniqueId(), itemKey)) {
+                            learnedCount++;
+                        }
+                    }
+                }
+            }
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("count", String.valueOf(learnedCount));
+            player.sendMessage(languageManager.get("serverside.command.table.learn.success", placeholders));
+        });
+        return true;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 1) {
-                List<String> subCommands = new ArrayList<>(Arrays.asList("recalculate", "reload", "setemc", "debug", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "open", "o"));
+                List<String> subCommands = new ArrayList<>(Arrays.asList("recalculate", "reload", "setemc", "debug", "pay", "item", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "open", "o", "gui", "table"));
                 for (String cmd : openTableCommands.keySet()) {
                     if (cmd.startsWith("projecte ")) {
                         subCommands.add(cmd.split(" ")[1]);
@@ -604,12 +787,17 @@ private boolean handleRecalculate(CommandSender sender) {
         }
 
         if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("give")) {
+            if (args[0].equalsIgnoreCase("pay") || args[0].equalsIgnoreCase("give")) {
                 List<String> playerNames = new ArrayList<>();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     playerNames.add(player.getName());
                 }
                 return StringUtil.copyPartialMatches(args[1], playerNames, new ArrayList<>());
+            }
+            if (args[0].equalsIgnoreCase("item")) {
+                List<String> itemIds = new ArrayList<>(plugin.getRecipeManager().getRegisteredItemIds());
+                itemIds.addAll(Arrays.asList("dark_matter_helmet", "dark_matter_chestplate", "dark_matter_leggings", "dark_matter_boots", "red_matter_helmet", "red_matter_chestplate", "red_matter_leggings", "red_matter_boots"));
+                return StringUtil.copyPartialMatches(args[1], itemIds, new ArrayList<>());
             }
             if (args[0].equalsIgnoreCase("bag")) {
                 return StringUtil.copyPartialMatches(args[1], Collections.singletonList("list"), new ArrayList<>());
@@ -617,15 +805,37 @@ private boolean handleRecalculate(CommandSender sender) {
             if (args[0].equalsIgnoreCase("lang")) {
                 return StringUtil.copyPartialMatches(args[1], Arrays.asList("list", "set"), new ArrayList<>());
             }
+            if (args[0].equalsIgnoreCase("gui")) {
+                File dataFolder = plugin.getDataFolder();
+                File[] files = dataFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml"));
+                List<String> guiFiles = new ArrayList<>();
+                if (files != null) {
+                    for (File file : files) {
+                        guiFiles.add(file.getName());
+                    }
+                }
+                return StringUtil.copyPartialMatches(args[1], guiFiles, new ArrayList<>());
+            }
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("table")) {
+            return StringUtil.copyPartialMatches(args[1], Collections.singletonList("learn"), new ArrayList<>());
+        }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
+            List<String> itemIds = new ArrayList<>(plugin.getRecipeManager().getRegisteredItemIds());
+            itemIds.addAll(Arrays.asList("dark_matter_helmet", "dark_matter_chestplate", "dark_matter_leggings", "dark_matter_boots", "red_matter_helmet", "red_matter_chestplate", "red_matter_leggings", "red_matter_boots"));
+            return StringUtil.copyPartialMatches(args[2], itemIds, new ArrayList<>());
         }
 
         if (args.length >= 3 && args[0].equalsIgnoreCase("lang") && args[1].equalsIgnoreCase("set")) {
             List<String> langFiles = new ArrayList<>();
-            File langFolder = plugin.getDataFolder();
-            File[] files = langFolder.listFiles((dir, name) -> name.endsWith(".yml") && !name.equals("config.yml"));
-            if (files != null) {
-                for (File file : files) {
-                    langFiles.add(file.getName().replace(".yml", ""));
+            File langFolder = new File(plugin.getDataFolder(), "lang");
+            if (langFolder.exists() && langFolder.isDirectory()) {
+                File[] files = langFolder.listFiles((dir, name) -> name.endsWith(".yml"));
+                if (files != null) {
+                    for (File file : files) {
+                        langFiles.add(file.getName().replace(".yml", ""));
+                    }
                 }
             }
             return StringUtil.copyPartialMatches(args[args.length - 1], langFiles, new ArrayList<>());

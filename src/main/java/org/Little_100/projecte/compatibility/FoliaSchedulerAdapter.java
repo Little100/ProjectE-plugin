@@ -64,14 +64,14 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public void runTaskAtLocation(Location location, Runnable task) {
+    public void runTaskAt(Location location, Runnable task) {
         try {
             Method getRegionScheduler = Bukkit.class.getMethod("getRegionScheduler");
             Object scheduler = getRegionScheduler.invoke(null);
             Method execute = findMethodByNameAndParamCount(scheduler.getClass(), "execute", 3);
             execute.invoke(scheduler, plugin, location, task);
         } catch (Exception e) {
-            throw new RuntimeException("Folia scheduler reflection failed for runTaskAtLocation", e);
+            throw new RuntimeException("Folia scheduler reflection failed for runTaskAt", e);
         }
     }
 
@@ -93,7 +93,8 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
             Method getGlobalRegionScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler");
             Object scheduler = getGlobalRegionScheduler.invoke(null);
             Method runAtFixedRate = findMethodByNameAndParamCount(scheduler.getClass(), "runAtFixedRate", 4);
-            runAtFixedRate.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), delay, period);
+            long foliaDelay = Math.max(1, delay);
+            runAtFixedRate.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), foliaDelay, period);
         } catch (Exception e) {
             throw new RuntimeException("Folia scheduler reflection failed for runTimer", e);
         }

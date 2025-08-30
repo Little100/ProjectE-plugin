@@ -33,10 +33,20 @@ AlchemicalBag:
   enabled: true # 是否启用炼金术袋功能? true/false
   # allow using alchemical bag? true/false
 
+
+Tools:
+  dark_matter_tools_enabled: true # 启用暗物质工具合成? true/false
+  # enable dark matter tools crafting? true/false
+  red_matter_tools_enabled: true # 启用红物质工具合成? true/false
+  # enable red matter tools crafting? true/false
+  area_of_effect_mining_enabled: true # 启用范围效果挖掘? true/false
+  # enable area of effect mining? true/false
+
 TransmutationTable:
   enabled: true # 允许使用转换桌? true/false
   # allow using transmutation table? true/false
   transfer-fee-percentage: 0 # 玩家之间转账EMC的手续费百分比 (例如: 5 表示 5% 的手续费)
+
   # the percentage of transfer fee between players (e.g. 5 means 5% fee)
   EMC:
     recipeConflictStrategy: "lowest" # 当一个物品有多种合成方式时，使用 "lowest" (最低值) 还是 "highest" (最高值)

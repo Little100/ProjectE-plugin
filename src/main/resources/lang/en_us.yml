@@ -1,0 +1,496 @@
+# sorry about my poor English, I'm not a native speaker.
+# but i try my best to make it understandable.
+# Client-side visible output
+clientside:
+  transmutation_table:
+    title: "T.T. | Your EMC: {emc}"
+    sell_title: "T.T. | Sell | Your EMC: {emc}"
+    buy_title: "T.T. | Buy | Your EMC: {emc}"
+    charge_title: "T.T. | Charge | Your EMC: {emc}"
+    buttons:
+      sell: "§aSell"
+      sell_lore: "Click to enter the sell interface"
+      buy: "§bBuy"
+      buy_lore: "Click to enter the buy interface"
+      learn: "§eLearn"
+      learn_lore: "Click to enter the learn interface"
+      charge: "§cCharge"
+      charge_lore: "Click to enter the charge interface"
+      confirm_sell: "§aConfirm"
+      confirm_sell_lore: "Click to confirm the transaction"
+      confirm_learn: "§aLearn"
+      confirm_learn_lore: "Click to learn the item"
+      confirm_charge: "§cCharge"
+      confirm_charge_lore: "Click to charge the item"
+      back: "§cBack"
+      back_lore: "Click to return to the main menu"
+      next_page: "§eNext Page"
+      prev_page: "§ePrevious Page"
+      confirm_transaction_lore: "&7Click to confirm transaction"
+      you_will_get: "&aYou will get: {emc} EMC"
+    item_lore:
+      emc_single: "§6EMC (Single): {emc}"
+      emc_stack: "§6EMC (Stack): {stack_emc}"
+      buy_one: "§7Left-click to buy 1"
+      buy_stack: "§7Right-click to buy {amount}"
+  alchemical_bag:
+    name: "§fAlchemical Bag"
+    default_name: "§fAlchemical Bag"
+    colored_name: "{color}{color_name} Alchemical Bag"
+  philosopher_stone_gui:
+    title: "Philosopher's Stone"
+    charge_levels:
+      level_0: "Charge: 0"
+      level_1: "Charge: 1"
+      level_2: "Charge: 2"
+      level_3: "Charge: 3"
+      level_4: "Charge: 4"
+    modes:
+      panel: "Panel Mode"
+      line: "Line Mode"
+      cube: "Cube Mode"
+      current_mode: "Current Mode: {mode}"
+    ranges:
+      panel_0: "1×1×1"
+      panel_1: "3×3×1"
+      panel_2: "5×5×1"
+      panel_3: "7×7×1"
+      panel_4: "9×9×1"
+      line_0: "1×1×1"
+      line_1: "1×3×1"
+      line_2: "1×5×1"
+      line_3: "1×7×1"
+      line_4: "1×9×1"
+      cube_0: "1×1×1"
+      cube_1: "3×3×3"
+      cube_2: "5×5×5"
+      cube_3: "7×7×7"
+      cube_4: "9×9×9"
+    lore:
+      charge_click: "Click to increase charge level"
+      mode_click: "Click to switch to this mode"
+      current_range: "Current range: {range}"
+      range: "Range: {range}"
+    crafting:
+      title: "Crafting"
+      lore: "Click to open the vanilla crafting table"
+    charge_progress: "Charge Progress {level}/{max_level}"
+  philosopher_stone:
+    mode_change: "Mode changed to: {mode}"
+    ranges:
+      panel_0: "1×1×1"
+      panel_1: "3×3×1"
+      panel_2: "5×5×1"
+      panel_3: "7×7×1"
+      panel_4: "9×9×1"
+      line_0: "1×1×1"
+      line_1: "1×3×1"
+      line_2: "1×5×1"
+      line_3: "1×7×1"
+      line_4: "1×9×1"
+      cube_0: "1×1×1"
+      cube_1: "3×3×3"
+      cube_2: "5×5×5"
+      cube_3: "7×7×7"
+      cube_4: "9×9×9"
+    lore:
+      charge_click: "Click to increase charge level"
+      mode_click: "Click to switch to this mode"
+      current_range: "Current range: {range}"
+      range: "Range: {range}"
+    crafting:
+      title: "Crafting"
+      lore: "Click to open the vanilla crafting table"
+  divining_rod:
+    mode_changed: "§aScan mode changed to: {mode}"
+    scan_results: "§bScan Results:"
+    total_blocks: "§6Total Blocks: {count}"
+    average_emc: "§6Average EMC: {emc}"
+    no_emc_blocks: "§cNo blocks with EMC found in the area."
+    max_emc: "§dMax EMC: {emc}"
+    gui:
+      title: "Divining Rod Mode Selection"
+      low:
+        name: "§f3x3x3"
+        lore: "§7Click to select"
+      medium:
+        name: "§e16x3x3"
+        lore: "§7Click to select"
+      high:
+        name: "§b64x3x3"
+        lore: "§7Click to select"
+  tool_charge_gui:
+    title: "tool mode"
+    standard:
+      name: "§fstandard"
+      lore: "§71x1"
+    '3x3':
+      name: "§a3x3 mode"
+      lore: "§73x3"
+    tall:
+      name: "§btall mode"
+      lore: "§71x3"
+    wide:
+      name: "§ewide mode"
+      lore: "§73x1"
+  dark_matter_tool:
+    charge: "§bcharge: {level}"
+  red_matter_sword:
+    mode_prefix: "§cMode:"
+    mode_hostile: "§4Hostile"
+    mode_all: "§fAll"
+
+# Server-side visible output
+serverside:
+  command:
+    no_permission: "§cYou do not have permission to use this command."
+    player_only: "§cOnly players can use this command."
+    reload_success: "§aProjectE plugin has been reloaded."
+    set_emc:
+      usage: "§cUsage: /projecte setemc <value>"
+      hold_item: "§cPlease hold an item in your hand."
+      must_be_positive: "§cEMC value must be a positive integer greater than 0."
+      success: "§aSet EMC for {item} to {emc}"
+      invalid_value: "§cInvalid EMC value: {value}"
+    give_emc:
+      usage: "§cUsage: /projecte pay <player> <amount>"
+      player_not_found: "§cPlayer {player} not found."
+      cant_pay_self: "§cYou cannot pay EMC to yourself."
+      must_be_positive: "§cTransfer amount must be positive."
+      invalid_amount: "§cInvalid amount: {amount}"
+      not_enough_emc: "§cYou do not have enough EMC for this transaction (requires {total} EMC, including a fee of {fee} EMC)."
+      pay_success: "§aSuccessfully sent {amount} EMC to {player}. (Fee: {fee} EMC)"
+      receive_success: "§aYou have received {amount} EMC from {player}."
+    item:
+      usage: "§cUsage: /projecte item <item_id> [amount]"
+      not_found: "§cItem not found: {item}"
+      invalid_amount: "§cInvalid amount."
+      success: "§aYou received {amount} of {item}."
+    give:
+      usage: "§cUsage: /projecte give <player> <item_id> [amount]"
+      player_not_found: "§cPlayer {player} not found."
+      item_not_found: "§cItem not found: {item}"
+      invalid_amount: "§cInvalid amount."
+      success: "§aGave {amount} of {item} to {player}."
+    table:
+      learn:
+        usage: "§cUsage: /projecte table learn"
+        success: "§aSuccessfully learned {count} new items."
+    gui:
+      opening_editor: "§aEdit gui"
+      saved: "§aSaved gui"
+    debug:
+      header: "§6--- EMC Debug: {item} ---"
+      emc_value: "§bEMC in database: §f{emc}"
+      is_learned: "§bIs learned: §f{learned}"
+      no_recipe: "§eNo crafting recipe found for this item."
+      recipe_found: "§bFound {count} crafting recipes:"
+      recipe_header: "§6  Recipe #{index}"
+      footer: "§6------------------------------"
+    no_emc_item:
+      all_have_emc: "§aAll items have an EMC value!"
+    bag:
+      usage: "§cUsage: /projecte bag list"
+      no_bags: "§eYou don't have any alchemical bags yet."
+      list_header: "§6Your Alchemical Bags:"
+    lang:
+      usage: "§cUsage: /projecte lang <list|set> [languages...]"
+      list_header: "§6Available language files:"
+      set_success: "§aLanguage has been set to: {languages}. Use /projecte reload to apply."
+      file_not_found: "§cLanguage file not found: {file}"
+    report:
+      message: "§aif you have any issues or suggestions, please report them on our GitHub page: https://github.com/Little-100/ProjectE-plugin"
+    open:
+      no_menu: "§cThe item in your hand does not have a menu."
+      geyser_only: "§cThis command is only for Bedrock players."
+    recalculate:
+      start: "Recalculating EMC values..."
+      success: "EMC values have been recalculated successfully."
+    help:
+      header: "§6ProjectE Plugin Command Help:"
+      reload: "§b/projecte reload§f - Reloads the plugin configuration"
+      setemc: "§b/projecte setemc <value>§f - Sets the EMC value for the item in hand"
+      pay: "§b/projecte pay <player> <amount>§f - Pays EMC to another player"
+      item: "§b/projecte item <item_id> [amount]§f - Gets a plugin item"
+      give: "§b/projecte give <player> <item_id> [amount]§f - Gives a plugin item to a player"
+      debug: "§b/projecte debug§f - Debugs EMC information for the item in hand"
+      table_learn: "§b/projecte table learn§f - Learns all items with EMC"
+      noemcitem: "§b/projecte noemcitem§f - Lists all items without an EMC value"
+      bag_list: "§b/projecte bag list§f - Lists all alchemical bags you own"
+      lang: "§b/projecte lang <list|set>§f - Manages language files"
+      report: "§b/projecte report§f - report a bug or suggest a feature"
+      open: "§b/projecte open§f - Opens the item menu for Bedrock players"
+    generic:
+      already_have_philosopher_stone: "§cYou already have a Philosopher's Stone!"
+      buy_success: "§aSuccessfully purchased {amount}x {item}"
+      not_enough_emc: "§cYou don't have enough EMC."
+      no_emc_value_trade: "§cItem {item} has no EMC value and cannot be traded."
+      no_emc_value_pdc_no_base: "§cItem ID {id} and this PDC item both have no EMC value, cannot be traded."
+      no_emc_value_pdc_has_base: "§cItem with ID: {id} has PDC: {pdc_id}, but no separate EMC value is set, so it cannot be traded. If you think this is an error, please contact an administrator."
+      partial_trade_fail: "§cSome items could not be traded and were returned."
+      sell_success: "§aSuccessfully sold items for {emc} EMC."
+      no_emc_value_learn: "§cItem {item} has no EMC value and cannot be learned."
+      learn_success: "§aSuccessfully learned new items!"
+      interact_with_map_art_fail: "§cBecause of Little_100's ability...he cannot resolve cross itemframe interaction...so please interact with edge positions qwp..."
+      shulker_box_no_emc: "{color}Shulker({item_id}) {item} has no EMC"
+      multiple_klein_stars: "When you have multiple Klein Stars, you can only use one at a time."
+      invalid_charge_item: "You can only place one Klein Stars"
+      no_klein_star: "Please place a Klein Star in there"
+      multiple_items_in_charge: "You can only place one Klein Star in there"
+      klein_star_full: "This Klein Star is already full"
+      not_enough_emc_to_charge: "You has no EMC to charge this Klein Star"
+      charge_success: "Successful charge {emc} EMC！"
+  message:
+    mind_stone:
+      absorbed_xp: "§aAbsorbed {xp} experience."
+      retrieved_xp: "§aRetrieved {xp} experience."
+    accessory:
+      activated: "§aYou used this accessory."
+    klein_star:
+      no_emc: "You don't have enough EMC!"
+      no_container: "You don't have a Klein Star!"
+  blockpack: {}
+  # Resource pack related messages
+  resourcepack:
+    prompt: "§6The server uses a custom resource pack for better visual experience."
+    download_start: "§aDownloading resource pack..."
+    download_success: "§aResource pack downloaded successfully!"
+    download_failed: "§cResource pack download failed. Please try again later or contact the server administrator."
+    command:
+      send_success: "§aResource pack sent to {player}."
+      no_url: "§cNo resource pack URL configured, cannot send."
+  datapack:
+    not_loaded_warning: "§c Warning,advancement datapack not loaded,please use /reload or contact the server administrator to load it."
+
+# item lore
+item:
+  philosopher_stone:
+    name: "§6Philosopher's Stone"
+    lore1: "§7A powerful alchemical tool"
+    lore2: "§eCan transmute minerals"
+    lore3: "§eSneak + Right-click to open workbench"
+  transmutation_table:
+    name: "§5Transmutation Table"
+    lore1: "§7Stores and transmutes matter"
+  alchemical_bag:
+    name: "§dAlchemical Bag"
+    lore1: "§7A portable storage device"
+  alchemical_coal:
+    name: "§cAlchemical Coal"
+    lore1: "§7Efficient fuel"
+    lore2: "§eBurn time: 320s"
+  mobius_fuel:
+    name: "§cMobius Fuel"
+    lore1: "§7Highly concentrated fuel"
+    lore2: "§eBurn time: 1280s"
+  aeternalis_fuel:
+    name: "§cAeternalis Fuel"
+    lore1: "§7Nearly eternal fuel"
+    lore2: "§eBurn time: 5120s"
+  alchemical_coal_block:
+    name: "§cAlchemical Coal Block"
+    lore1: "§7Efficient fuel block"
+    lore2: "§eBurn time: 2880s"
+  mobius_fuel_block:
+    name: "§cMobius Fuel Block"
+    lore1: "§7Highly concentrated fuel block"
+    lore2: "§eBurn time: 11520s"
+  aeternalis_fuel_block:
+    name: "§cAeternalis Fuel Block"
+    lore1: "§7Nearly eternal fuel block"
+    lore2: "§eBurn time: 46080s"
+  dark_matter:
+    name: "§4Dark Matter"
+    lore1: "§7A mysterious matter"
+    lore2: "§eThe source of all matter"
+  red_matter:
+    name: "§cRed Matter"
+    lore1: "§7A rare matter"
+    lore2: "§eIn the heart of the universe"
+  dark_matter_block:
+    name: "§4Dark Matter Block"
+    lore1: "§7The concentrated form of matter"
+    lore2: "§eVery powerful"
+  red_matter_block:
+    name: "§cRed Matter Block"
+    lore1: "§7The highest density form of matter"
+    lore2: "§eultimate alchemical material block"
+  low_covalence_dust:
+    name: "§fLow Covalence Dust"
+    lore1: "§7Can repair wooden/stone/chainmail equipment"
+    lore2: "§eCombine with damaged low-tier tools to repair durability"
+  medium_covalence_dust:
+    name: "§eMedium Covalence Dust"
+    lore1: "§7Can repair iron/gold equipment"
+    lore2: "§eCombine with damaged mid-tier tools to repair durability"
+  high_covalence_dust:
+    name: "§bHigh Covalence Dust"
+    lore1: "§7Can repair diamond/netherite equipment"
+    lore2: "§eCombine with damaged high-tier tools to repair durability"
+  low_divining_rod:
+    name: "§fLow Divining Rod"
+    lore1: "§7Used to detect the EMC of blocks"
+    lore2: "§eScan mode: 3x3x3"
+  medium_divining_rod:
+    name: "§eMedium Divining Rod"
+    lore1: "§7Used to detect the EMC of blocks"
+    lore2: "§eScan mode: 3x3x3, 16x3x3"
+  high_divining_rod:
+    name: "§bHigh Divining Rod"
+    lore1: "§7Used to detect the EMC of blocks"
+    lore2: "§eScan mode: 3x3x3, 16x3x3, 64x3x3"
+  repair_talisman:
+    name: "§aRepair Talisman"
+    lore1: "§7Automatically repairs the durability of all items on your body every second"
+  klein_star_ein:
+    name: "§6Klein Star Ein"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 50000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_zwei:
+    name: "§6Klein Star Zwei"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 200000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_drei:
+    name: "§6Klein Star Drei"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 800000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_vier:
+    name: "§6Klein Star Vier"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 3200000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_sphere:
+    name: "§6Klein Star Sphere"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 12800000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  klein_star_omega:
+    name: "§6Klein Star Omega"
+    lore: "§7EMC storage"
+    lore1: "§7Storage limit: 51200000 EMC"
+    lore2: "§eCurrent storage: {staremc} EMC"
+  transmutation_tablet_book:
+    name: "§6Transmutation Tablet"
+    lore: "§7Right-click to open the Transmutation Table"
+  body_stone:
+    name: "§5Body Stone"
+    lore1: "§7Restores hunger."
+    lore2: "§eRight-click to restore 2 hunger for 64 EMC."
+  soul_stone:
+    name: "§5Soul Stone"
+    lore1: "§7Restores health."
+    lore2: "§eRight-click to restore 1 health for 64 EMC."
+  life_stone:
+    name: "§5Life Stone"
+    lore1: "§7Restores hunger and health."
+    lore2: "§eRight-click to restore 2 hunger and 1 health for 64 EMC."
+  mind_stone:
+    name: "§5Mind Stone"
+    lore1: "§7Stores experience."
+    lore2: "§eSneak-Right-Click to absorb all EXP."
+    lore3: "§eRight-click to retrieve 50 EXP."
+    lore4: "§7Stored EXP: {xp}"
+  dark_matter_tool:
+    lore1: "§7A tool that contains dark energy"
+  red_matter_tool:
+    lore1: "§7The ultimate form of matter"
+  dark_matter_pickaxe:
+    name: "§dDark Matter Pickaxe"
+  dark_matter_axe:
+    name: "§dDark Matter Axe"
+  dark_matter_shovel:
+    name: "§dDark Matter Shovel"
+  dark_matter_hoe:
+    name: "§dDark Matter Hoe"
+  dark_matter_sword:
+    name: "§dDark Matter Sword"
+  dark_matter_shears:
+    name: "§dDark Matter Shears"
+  dark_matter_hammer:
+    name: "§dDark Matter Hammer"
+  red_matter_pickaxe:
+    name: "§cRed Matter Pickaxe"
+  red_matter_axe:
+    name: "§cRed Matter Axe"
+  red_matter_shovel:
+    name: "§cRed Matter Shovel"
+  red_matter_hoe:
+    name: "§cRed Matter Hoe"
+  red_matter_sword:
+    name: "§cRed Matter Sword"
+  red_matter_shears:
+    name: "§cRed Matter Shears"
+  red_matter_hammer:
+    name: "§cRed Matter Hammer"
+  projecte:
+    dark_matter_furnace:
+      name: "§dDark Matter Furnace"
+      lore1: "§7A furnace that smelts items at high speed."
+    red_matter_furnace:
+      name: "§cRed Matter Furnace"
+      lore1: "§7A furnace that smelts items at extreme speed."
+    alchemical_chest:
+      name: "§eAlchemical Chest"
+      lore1: "§6A chest that can store a large amount of items"
+    energy_condenser:
+      name: "§eEnergy Condenser"
+      lore1: "§6Can convert items into EMC"
+    energy_condenser_mk2:
+      name: "§cEnergy Condenser MK2"
+      lore1: "§6A more powerful energy condenser"
+
+# Plugin related
+plugin:
+  autofix_language_file: "Auto-releasing language file: {file}"
+
+# Debug messages
+debug:
+  emc:
+    item_emc_info: "Item: {item}, EMC: {emc}"
+  recipe:
+    loading_recipe: "Loading recipe: {recipe}"
+    recipe_emc_calculated: "EMC calculated for recipe {recipe}: {emc}"
+  anvil:
+    combining_items: "Anvil combining: {item1} + {item2} -> {result}"
+    item_not_plugin_item: "Item {item} is not a plugin item, skipping debug."
+  message:
+    klein_star:
+      no_emc: "§cNot enough EMC in Klein Stars."
+      no_container: "§cNo Klein Star found in your inventory."
+    accessory:
+      activated: "§aActivated {item}."
+    mind_stone:
+      absorbed_xp: "§aAbsorbed {amount} EXP."
+      retrieved_xp: "§aRetrieved {amount} EXP."
+
+# GUI
+gui:
+  furnace:
+    dark_matter_title: "§dDark Matter Furnace"
+    red_matter_title: "§cRed Matter Furnace"
+    fuel_time: "Fuel Time: {time}s"
+  condenser:
+    title: "§eEnergy Condenser"
+    emc_display: "§6EMC: {emc}"
+  condenser_mk2:
+    title: "§cEnergy Condenser MK2"
+
+no_lang_folder: "&cLanguage folder 'lang' not found."
+
+tool_charge_gui:
+    title: "Tool Charge"
+
+item.dark_matter_helmet.name: "Dark Matter Helmet"
+item.dark_matter_chestplate.name: "Dark Matter Chestplate"
+item.dark_matter_leggings.name: "Dark Matter Leggings"
+item.dark_matter_boots.name: "Dark Matter Boots"
+item.red_matter_helmet.name: "Red Matter Helmet"
+item.red_matter_chestplate.name: "Red Matter Chestplate"
+item.red_matter_leggings.name: "Red Matter Leggings"
+item.red_matter_boots.name: "Red Matter Boots"
+
+item.dark_matter_armor.lore1: "§7The pinnacle of defensive alchemy"
+item.red_matter_armor.lore1: "§7Absolute protection, transcending dimensions"

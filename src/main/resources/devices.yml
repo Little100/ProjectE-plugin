@@ -1,0 +1,77 @@
+# this file can control projectE's device
+# 这个文件控制等价交换器的设备
+
+devices:
+  Dark_Matter_Furnace:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "DDD"
+      - "DFD"
+      - "DDD"
+    ingredients:
+      D: "projecte:dark_matter_block"
+      F: "minecraft:furnace"
+    result:
+      projecte_id: "projecte:dark_matter_furnace"
+      custom_model_data: 1
+
+  Red_Matter_Furnace:
+    enabled: true
+    type: "shaped"
+    shape:
+      - " R "
+      - "RFR"
+      - "   "
+    ingredients:
+      R: "projecte:red_matter_block"
+      F: "projecte:dark_matter_furnace"
+    result:
+      projecte_id: "projecte:red_matter_furnace"
+      custom_model_data: 2
+  Alchemical_Chest:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "LMH"
+      - "SDS"
+      - "ICI"
+    ingredients:
+      H: "projecte:high_covalence_dust"
+      M: "projecte:medium_covalence_dust"
+      L: "projecte:low_covalence_dust"
+      S: "minecraft:stone"
+      D: "minecraft:diamond"
+      I: "minecraft:iron_ingot"
+      C: "minecraft:barrel"
+    result:
+      projecte_id: "projecte:alchemical_chest"
+      custom_model_data: 1
+  Energy_Condenser:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "ODO"
+      - "OAO"
+      - "ODO"
+    ingredients:
+      O: "minecraft:obsidian"
+      D: "minecraft:diamond"
+      A: "projecte:alchemical_chest"
+    result:
+      projecte_id: "projecte:energy_condenser"
+      custom_model_data: 2
+  Energy_Condenser_MK2:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "RDR"
+      - "DED"
+      - "RDR"
+    ingredients:
+      D: "projecte:dark_matter_block"
+      R: "projecte:red_matter_block"
+      E: "projecte:energy_condenser"
+    result:
+      projecte_id: "projecte:energy_condenser_mk2"
+      custom_model_data: 3

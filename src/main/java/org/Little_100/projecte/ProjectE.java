@@ -1,12 +1,19 @@
 package org.Little_100.projecte;
 
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
+import org.Little_100.projecte.Armor.ArmorListener;
+import org.Little_100.projecte.Armor.ArmorManager;
+import org.Little_100.projecte.accessories.AccessoryRecipeManager;
+import org.Little_100.projecte.devices.*;
 import org.Little_100.projecte.Tome.TransmutationTabletBookListener;
 import org.Little_100.projecte.util.CustomBlockArtUtil;
 import org.Little_100.projecte.Tools.DiviningRodGUI;
 import org.Little_100.projecte.Tools.Divining_Rod;
 import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
 import org.Little_100.projecte.Tools.Repair_Talisman;
+import org.Little_100.projecte.Tools.ToolListener;
+import org.Little_100.projecte.Tools.ToolChargeGUIListener;
+import org.Little_100.projecte.Tools.ToolManager;
 import org.Little_100.projecte.compatibility.GeyserAdapter;
 import org.Little_100.projecte.compatibility.SchedulerAdapter;
 import org.Little_100.projecte.compatibility.SchedulerMatcher;
@@ -40,6 +47,7 @@ public final class ProjectE extends JavaPlugin {
     private NamespacedKey philosopherStoneKey;
     private RecipeManager recipeManager;
     private DatabaseManager databaseManager;
+    private AccessoryRecipeManager accessoryRecipeManager;
     private EmcManager emcManager;
     private VersionAdapter versionAdapter;
     private AlchemicalBagManager alchemicalBagManager;
@@ -55,11 +63,28 @@ public final class ProjectE extends JavaPlugin {
     private Repair_Talisman repairTalisman;
     private DiviningRodGUI diviningRodGUI;
     private KleinStarManager kleinStarManager;
+    private ToolManager toolManager;
+    private ArmorManager armorManager;
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
     private boolean excludePDC;
     private GeyserAdapter geyserAdapter;
+    private FileConfiguration devicesConfig;
+    private FurnaceManager furnaceManager;
+    private DeviceManager deviceManager;
+    private CondenserManager condenserManager;
  
+     public FileConfiguration getDevicesConfig() {
+        if (devicesConfig == null) {
+            File devicesFile = new File(getDataFolder(), "devices.yml");
+            if (!devicesFile.exists()) {
+                saveResource("devices.yml", false);
+            }
+            devicesConfig = YamlConfiguration.loadConfiguration(devicesFile);
+        }
+        return devicesConfig;
+    }
+
      @Override
      public void onEnable() {
          instance = this;
@@ -78,14 +103,18 @@ public final class ProjectE extends JavaPlugin {
 
         // 自动将jar中的所有yml文件释放到数据文件夹中
         try {
+            File langFolder = new File(getDataFolder(), "lang");
+            if (!langFolder.exists()) {
+                langFolder.mkdirs();
+            }
+
             java.util.zip.ZipInputStream zip = new java.util.zip.ZipInputStream(
                     getClass().getProtectionDomain().getCodeSource().getLocation().openStream());
             java.util.zip.ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 String name = entry.getName();
-                // 跳过plugin.yml，只释放其他yml文件
-                // 只释放符合 xx_xx.yml 格式的语言文件
-                if (name.matches("[a-z]{2}_[a-z]{2}\\.yml") && !entry.isDirectory()) {
+                // 只释放 lang/ 目录下的 yml 文件
+                if (name.startsWith("lang/") && name.endsWith(".yml") && !entry.isDirectory()) {
                     java.io.File outFile = new java.io.File(getDataFolder(), name);
                     if (!outFile.exists()) {
                         saveResource(name, false);
@@ -128,6 +157,9 @@ public final class ProjectE extends JavaPlugin {
                     "An error occurred during EMC calculation. Some items may not have EMC values. Please check your config.yml for formatting errors.");
             e.printStackTrace();
         }
+        if (deviceManager != null) {
+            deviceManager.reloadDeviceItems();
+        }
 
         // 加载自定义EMC值
         loadCustomEmcValues();
@@ -165,11 +197,34 @@ public final class ProjectE extends JavaPlugin {
        // 初始化克莱因之星
        kleinStarManager = new KleinStarManager(this);
 
-        // AlchemicalBagManager is now initialized below, based on config
-
+       // 初始化物质工具
+       toolManager = new ToolManager(this);
+ 
+       // 初始化物质盔甲
+       armorManager = new ArmorManager(this);
+ 
         // 初始化配方管理器
         recipeManager = new RecipeManager(this);
+ 
+         // 初始化熔炉管理器
+         furnaceManager = new FurnaceManager(this);
+ 
+         // 初始化设备管理器
+         deviceManager = new DeviceManager(this);
+         deviceManager.registerDevices();
+ 
+        // 在所有物品管理器都初始化之后再注册配方
         recipeManager.registerAllRecipes();
+ 
+         // 初始化能量凝聚器管理器
+         condenserManager = new CondenserManager(this);
+ 
+        // 注册事件监听器
+        getServer().getPluginManager().registerEvents(new ToolListener(this), this);
+
+        // 初始化饰品配方管理器
+        accessoryRecipeManager = new AccessoryRecipeManager(this);
+        accessoryRecipeManager.registerRecipes();
 
         // 删除原版爆裂紫颂果配方
         removeVanillaRecipe();
@@ -183,6 +238,8 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PhilosopherStoneGUIListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ItemStackLimitListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
+        Bukkit.getPluginManager().registerEvents(new ToolChargeGUIListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.ToolAbilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new CovalenceDustListener(this), this);
         // AlchemicalBagManager's listeners are now registered within its own register() method
@@ -192,8 +249,13 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CraftingListener(this), this);
         Bukkit.getPluginManager().registerEvents(new TransmutationTabletBookListener(), this);
+        Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.accessories.AccessoryListener(), this);
+        Bukkit.getPluginManager().registerEvents(new ArmorListener(this), this);
  
-        // 初始化共价粉
+        getServer().getPluginManager().registerEvents(new FurnaceListener(this, furnaceManager), this);
+        getServer().getPluginManager().registerEvents(new CondenserListener(this), this);
+
+         // 初始化共价粉
         covalenceDust = new CovalenceDust(this);
 
 
@@ -201,6 +263,7 @@ public final class ProjectE extends JavaPlugin {
         CommandManager commandManager = new CommandManager(this);
         getCommand("projecte").setExecutor(commandManager);
         getCommand("projecte").setTabCompleter(commandManager);
+        getServer().getPluginManager().registerEvents(new GUIEditorListener(this, commandManager), this);
 
         registerCustomCommands(commandManager);
 
@@ -233,6 +296,9 @@ public final class ProjectE extends JavaPlugin {
         if (geyserAdapter.isGeyserApiAvailable()) {
            getServer().getPluginManager().registerEvents(new GeyserPlayerJoinListener(this), this);
         }
+
+
+       getServer().getPluginManager().registerEvents(new DeviceListener(this), this);
     }
 
     @Override
@@ -240,6 +306,9 @@ public final class ProjectE extends JavaPlugin {
         // 注销所有自定义配方
         if (recipeManager != null) {
             recipeManager.unregisterAllRecipes();
+        }
+        if (accessoryRecipeManager != null) {
+            accessoryRecipeManager.unregisterAllRecipes();
         }
 
         if (alchemicalBagManager != null) {
@@ -384,14 +453,35 @@ public final class ProjectE extends JavaPlugin {
         if (recipeManager != null) {
             recipeManager.unregisterAllRecipes();
             recipeManager.registerAllRecipes();
-            getLogger().info("All recipes have been reloaded from recipe.yml.");
         }
+        if (accessoryRecipeManager != null) {
+            accessoryRecipeManager.unregisterAllRecipes();
+            accessoryRecipeManager.registerRecipes();
+        }
+        getLogger().info("All recipes have been reloaded.");
 
         emcManager = new EmcManager(this);
         emcManager.calculateAndStoreEmcValues(true);
+        if (deviceManager != null) {
+            deviceManager.reloadDeviceItems();
+        }
 
         // 重新加载所有自定义EMC值
         loadCustomEmcValues();
+
+        // 重新设置程序化定义的EMC值，因为它们在重载时被清除了
+        if (fuelManager != null) {
+            fuelManager.setFuelEmcValues();
+        }
+        if (covalenceDust != null) {
+            covalenceDust.setCovalenceDustEmcValues();
+        }
+        if (diviningRod != null) {
+            diviningRod.setDiviningRodEmcValues();
+        }
+        if (repairTalisman != null) {
+            repairTalisman.setEmcValue();
+        }
 
         getLogger().info("ProjectE plugin has been reloaded!");
     }
@@ -448,7 +538,14 @@ public final class ProjectE extends JavaPlugin {
         return diviningRodGUI;
     }
 
- 
+    public ToolManager getToolManager() {
+        return toolManager;
+    }
+
+    public ArmorManager getArmorManager() {
+        return armorManager;
+    }
+
     public boolean isPdcExcluded() {
         return excludePDC;
     }
@@ -457,7 +554,19 @@ public final class ProjectE extends JavaPlugin {
         return blockDataManager;
     }
  
-    private void loadConfigOptions() {
+    public FurnaceManager getFurnaceManager() {
+        return furnaceManager;
+    }
+
+    public DeviceManager getDeviceManager() {
+        return deviceManager;
+    }
+
+    public CondenserManager getCondenserManager() {
+        return condenserManager;
+    }
+
+     private void loadConfigOptions() {
         excludePDC = getConfig().getBoolean("Exclude_PDC", true);
     }
  
@@ -528,6 +637,36 @@ public final class ProjectE extends JavaPlugin {
             // Talismans
             case "repair_talisman": return repairTalisman.getRepairTalisman();
 
+            // Dark Matter Tools
+            case "dark_matter_pickaxe": return toolManager.getDarkMatterPickaxe();
+            case "dark_matter_axe": return toolManager.getDarkMatterAxe();
+            case "dark_matter_shovel": return toolManager.getDarkMatterShovel();
+            case "dark_matter_hoe": return toolManager.getDarkMatterHoe();
+            case "dark_matter_sword": return toolManager.getDarkMatterSword();
+           case "dark_matter_shears": return toolManager.getDarkMatterShears();
+           case "dark_matter_hammer": return toolManager.getDarkMatterHammer();
+
+           // Red Matter Tools
+           case "red_matter_pickaxe": return toolManager.getRedMatterPickaxe();
+           case "red_matter_axe": return toolManager.getRedMatterAxe();
+           case "red_matter_shovel": return toolManager.getRedMatterShovel();
+           case "red_matter_hoe": return toolManager.getRedMatterHoe();
+           case "red_matter_sword": return toolManager.getRedMatterSword();
+           case "red_matter_shears": return toolManager.getRedMatterShears();
+           case "red_matter_hammer": return toolManager.getRedMatterHammer();
+
+            // Dark Matter Armor
+            case "dark_matter_helmet": return armorManager.getDarkMatterHelmet();
+            case "dark_matter_chestplate": return armorManager.getDarkMatterChestplate();
+            case "dark_matter_leggings": return armorManager.getDarkMatterLeggings();
+            case "dark_matter_boots": return armorManager.getDarkMatterBoots();
+
+            // Red Matter Armor
+            case "red_matter_helmet": return armorManager.getRedMatterHelmet();
+            case "red_matter_chestplate": return armorManager.getRedMatterChestplate();
+            case "red_matter_leggings": return armorManager.getRedMatterLeggings();
+            case "red_matter_boots": return armorManager.getRedMatterBoots();
+ 
             // Klein Stars (Corrected Keys)
             case "klein_star_ein": return kleinStarManager.getKleinStar(1);
             case "klein_star_zwei": return kleinStarManager.getKleinStar(2);
@@ -536,9 +675,22 @@ public final class ProjectE extends JavaPlugin {
             case "klein_star_sphere": return kleinStarManager.getKleinStar(5);
             case "klein_star_omega": return kleinStarManager.getKleinStar(6);
 
-            default:
-                // 尝试将剩余的键解析为原生Minecraft材料
-                Material material = versionAdapter.getMaterial(key.toUpperCase());
+            // Accessories
+            case "body_stone": return org.Little_100.projecte.accessories.BodyStone.createBodyStone();
+            case "soul_stone": return org.Little_100.projecte.accessories.SoulStone.createSoulStone();
+            case "life_stone": return org.Little_100.projecte.accessories.LifeStone.createLifeStone();
+            case "mind_stone": return org.Little_100.projecte.accessories.MindStone.createMindStone();
+
+            // Devices
+            case "dark_matter_furnace": return deviceManager.getDarkMatterFurnaceItem();
+            case "red_matter_furnace": return deviceManager.getRedMatterFurnaceItem();
+            case "alchemical_chest": return deviceManager.getAlchemicalChestItem();
+            case "energy_condenser": return deviceManager.getEnergyCondenserItem();
+            case "energy_condenser_mk2": return deviceManager.getEnergyCondenserMK2Item();
+ 
+             default:
+                 // 尝试将剩余的键解析为原生Minecraft材料
+                 Material material = versionAdapter.getMaterial(key.toUpperCase());
                 if (material != null) {
                     return new ItemStack(material);
                 }

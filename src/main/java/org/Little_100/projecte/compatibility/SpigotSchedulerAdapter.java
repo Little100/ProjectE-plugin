@@ -31,7 +31,7 @@ public class SpigotSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public void runTaskAtLocation(Location location, Runnable task) {
+    public void runTaskAt(Location location, Runnable task) {
         runTask(task);
     }
 

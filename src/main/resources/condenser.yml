@@ -1,0 +1,29 @@
+title: 'GUI Editor: condenser.yml'
+size: 54
+items:
+  '0':
+    material: BARRIER
+    name: targetitem
+  '1':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '2':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '3':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '4':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '5':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '6':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '7':
+    material: BLACK_STAINED_GLASS_PANE
+    name: 'progressbar'
+  '8':
+    material: ARROW
