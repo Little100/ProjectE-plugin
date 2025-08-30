@@ -531,8 +531,8 @@ recipes:
     type: "shaped"
     shape:
       - " R "
+      - " R "
       - " T "
-      - " S "
     ingredients:
       R: "projecte:red_matter"
       T: "projecte:dark_matter_sword"

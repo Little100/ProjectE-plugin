@@ -230,11 +230,6 @@ public class RecipeManager {
                     plugin.getLogger().info("[Debug] Matched custom item: " + customItemId);
                 }
 
-                if (customItemId.contains("_pickaxe") || customItemId.contains("_axe") || customItemId.contains("_shovel") ||
-                    customItemId.contains("_hoe") || customItemId.contains("_sword") || customItemId.contains("_shears") ||
-                    customItemId.contains("_hammer")) {
-                    return new RecipeChoice.MaterialChoice(customItem.getType());
-                }
                 return new RecipeChoice.ExactChoice(customItem);
             } else {
                 if (plugin.getConfig().getBoolean("debug")) {
