@@ -6,14 +6,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 import java.io.InputStreamReader;
 import java.util.*;

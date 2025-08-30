@@ -3,7 +3,6 @@ package org.Little_100.projecte.TransmutationTable;
 import org.Little_100.projecte.EmcManager;
 import org.Little_100.projecte.LanguageManager;
 import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
 import org.Little_100.projecte.compatibility.VersionAdapter;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;

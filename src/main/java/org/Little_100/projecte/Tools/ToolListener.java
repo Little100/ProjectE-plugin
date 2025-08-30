@@ -2,30 +2,27 @@ package org.Little_100.projecte.Tools;
 
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.devices.DeviceManager;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.NamespacedKey;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.enchantment.EnchantItemEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class ToolListener implements Listener {
 
@@ -82,10 +79,16 @@ public class ToolListener implements Listener {
             if (meta == null) return;
 
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            NamespacedKey key = new NamespacedKey(plugin, "projecte_mode");
-            String mode = container.getOrDefault(key, PersistentDataType.STRING, "standard");
+            String mode = "standard";
+            if (toolManager.isRedMatterMorningstar(tool)) {
+                NamespacedKey key = new NamespacedKey(plugin, "projecte_morningstar_mode");
+                mode = container.getOrDefault(key, PersistentDataType.STRING, "normal");
+            } else if (toolManager.isDarkMatterTool(tool)) {
+                NamespacedKey key = new NamespacedKey(plugin, "projecte_mode");
+                mode = container.getOrDefault(key, PersistentDataType.STRING, "standard");
+            }
 
-            if (!mode.equals("standard") && !plugin.getConfig().getBoolean("Tools.area_of_effect_mining_enabled", true)) {
+            if ((!mode.equals("standard") && !mode.equals("normal")) && !plugin.getConfig().getBoolean("Tools.area_of_effect_mining_enabled", true)) {
                 return;
             }
 
@@ -104,7 +107,12 @@ public class ToolListener implements Listener {
                     affectedBlocks = AreaOfEffectManager.getBlocksInWideArea(player, event.getBlock());
                     handleBlockBreaking(player, tool, affectedBlocks);
                     break;
+                case "long":
+                    affectedBlocks = AreaOfEffectManager.getBlocksInLongArea(player, event.getBlock());
+                    handleBlockBreaking(player, tool, affectedBlocks);
+                    break;
                 case "standard":
+                case "normal":
                 default:
                     break;
             }
@@ -132,7 +140,10 @@ public class ToolListener implements Listener {
                     java.util.Collection<ItemStack> drops = block.getDrops(tool, player);
                     block.setType(org.bukkit.Material.AIR);
                     for (ItemStack drop : drops) {
-                        player.getWorld().dropItemNaturally(block.getLocation(), drop);
+                        java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(drop);
+                        if (!leftover.isEmpty()) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(0));
+                        }
                     }
                 }
             }

@@ -3,6 +3,7 @@
   - ## Idea
     - Command idea for ProjectE by [527953120](https://github.com/527953120)
     - item in shulker box emc calculation by [AconHol](https://github.com/AconHol)
+    - "文言" lang idea by insehuj_uic
 
   - ## Bug
     - Error recipe bug discovered by [AconHol](https://github.com/AconHol)
@@ -23,6 +24,7 @@
   - ## 创意
     - ProjectE的命令想法由[527953120](https://github.com/527953120)提供
     - 潜影盒里的物品的EMC计算由[AconHol](https://github.com/AconHol)提供
+    - "文言"语言想法insehuj_uic提供
 
   - ## 错误
     - [AconHol](https://github.com/AconHol)发现的配方错误

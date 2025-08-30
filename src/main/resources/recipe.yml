@@ -70,7 +70,8 @@ recipes:
       S: "STONE"
       P: "projecte:philosopher_stone"
     result:
-      projecte_id: "transmutation_table"
+      material: "PETRIFIED_OAK_SLAB"
+      display_name: "item.transmutation_table.name"
 
   transmutation_table_alt:
     enabled: true
@@ -84,7 +85,9 @@ recipes:
       S: "STONE"
       P: "projecte:philosopher_stone"
     result:
-      projecte_id: "transmutation_table"
+      material: "ENCHANTED_BOOK"
+      custom_model_data: 1
+      display_name: "item.transmutation_table.name"
 
   alchemical_bag:
     enabled: true
@@ -98,7 +101,8 @@ recipes:
       C: "CHEST"
       D: "DIAMOND_BLOCK"
     result:
-      projecte_id: "alchemical_bag"
+      material: "LEATHER_HORSE_ARMOR"
+      display_name: "item.alchemical_bag.name"
 
   dark_matter:
     enabled: true
@@ -536,7 +540,6 @@ recipes:
     ingredients:
       R: "projecte:red_matter"
       T: "projecte:dark_matter_sword"
-      S: "projecte:dark_matter"
     result:
       projecte_id: "red_matter_sword"
 

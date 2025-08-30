@@ -5,15 +5,10 @@ import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.*;
 
-import org.bukkit.NamespacedKey;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LegacyAdapter implements VersionAdapter {
 

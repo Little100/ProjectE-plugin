@@ -4,15 +4,11 @@ import org.Little_100.projecte.LanguageManager;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collections;
-
-import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TransmutationTabletBook {
 

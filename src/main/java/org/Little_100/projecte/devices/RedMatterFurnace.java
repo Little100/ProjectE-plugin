@@ -1,16 +1,9 @@
 package org.Little_100.projecte.devices;
 
 import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.util.CustomBlockArtUtil;
 import org.Little_100.projecte.util.CustomModelDataUtil;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.Furnace;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

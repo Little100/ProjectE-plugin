@@ -139,6 +139,19 @@ clientside:
     mode_prefix: "§cMode:"
     mode_hostile: "§4Hostile"
     mode_all: "§fAll"
+  red_matter_katar:
+    mode_prefix: "§cMode:"
+    mode_hostile: "§4Hostile"
+    mode_all: "§fAll"
+  red_matter_morningstar:
+    mode_prefix: "§cMode:"
+    mode_normal: "§fNormal"
+    mode_tall: "§b3* Tall"
+    mode_wide: "§e3* Wide"
+    mode_long: "§a3* Long"
+    mode_area: "§6Area"
+    mode_shovel: "§dLayer"
+    mode_hammer: "§5Hammer"
 
 # Server-side visible output
 serverside:
@@ -146,13 +159,15 @@ serverside:
     no_permission: "§cYou do not have permission to use this command."
     player_only: "§cOnly players can use this command."
     reload_success: "§aProjectE plugin has been reloaded."
+    gem_boots:
+      disabled_for_folia: "§cFolia server does not support auto-step feature currently."
     set_emc:
       usage: "§cUsage: /projecte setemc <value>"
       hold_item: "§cPlease hold an item in your hand."
       must_be_positive: "§cEMC value must be a positive integer greater than 0."
       success: "§aSet EMC for {item} to {emc}"
       invalid_value: "§cInvalid EMC value: {value}"
-    give_emc:
+    pay_emc:
       usage: "§cUsage: /projecte pay <player> <amount>"
       player_not_found: "§cPlayer {player} not found."
       cant_pay_self: "§cYou cannot pay EMC to yourself."
@@ -261,6 +276,11 @@ serverside:
       no_url: "§cNo resource pack URL configured, cannot send."
   datapack:
     not_loaded_warning: "§c Warning,advancement datapack not loaded,please use /reload or contact the server administrator to load it."
+  
+  gem_boots:
+    not_wearing: "&cYou need to be wearing Gem Boots to use this command."
+    disabled_for_folia: "&cDue to technical limitations, the auto-step feature is currently unavailable on this server software (Folia)."
+
 
 # item lore
 item:
@@ -425,22 +445,26 @@ item:
     name: "§cRed Matter Shears"
   red_matter_hammer:
     name: "§cRed Matter Hammer"
-  projecte:
-    dark_matter_furnace:
-      name: "§dDark Matter Furnace"
-      lore1: "§7A furnace that smelts items at high speed."
-    red_matter_furnace:
-      name: "§cRed Matter Furnace"
-      lore1: "§7A furnace that smelts items at extreme speed."
-    alchemical_chest:
-      name: "§eAlchemical Chest"
-      lore1: "§6A chest that can store a large amount of items"
-    energy_condenser:
-      name: "§eEnergy Condenser"
-      lore1: "§6Can convert items into EMC"
-    energy_condenser_mk2:
-      name: "§cEnergy Condenser MK2"
-      lore1: "§6A more powerful energy condenser"
+  red_matter_katar:
+    name: "§cRed Matter Katar"
+  red_matter_morningstar:
+    name: "§cRed Morningstar"
+
+  projecte.dark_matter_furnace:
+    name: "§dDark Matter Furnace"
+    lore1: "§7A furnace that smelts items at high speed."
+  projecte.red_matter_furnace:
+    name: "§cRed Matter Furnace"
+    lore1: "§7A furnace that smelts items at extreme speed."
+  projecte.alchemical_chest:
+    name: "§eAlchemical Chest"
+    lore1: "§6A chest that can store a large amount of items"
+  projecte.energy_condenser:
+    name: "§eEnergy Condenser"
+    lore1: "§6Can convert items into EMC"
+  projecte.energy_condenser_mk2:
+    name: "§cEnergy Condenser MK2"
+    lore1: "§6A more powerful energy condenser"
 
 # Plugin related
 plugin:
@@ -494,3 +518,41 @@ item.red_matter_boots.name: "Red Matter Boots"
 
 item.dark_matter_armor.lore1: "§7The pinnacle of defensive alchemy"
 item.red_matter_armor.lore1: "§7Absolute protection, transcending dimensions"
+
+
+item.gem_helmet.name: "§3Gem Helmet"
+item.gem_helmet.lore1: "§6§oIndestructible"
+item.gem_helmet.lore2: "§7Use /pe gemhelmet to open settings"
+item.gem_helmet.lore3: "§7Provides Oxygen underwater"
+
+item.gem_chestplate.name: "§3Gem Chestplate"
+item.gem_chestplate.lore1: "§6§oIndestructible"
+item.gem_chestplate.lore2: "§7Immunity to fire and restores hunger"
+
+item.gem_helmet.night_vision_on: "§7[§eProjectE§7] §aNight Vision enabled"
+item.gem_helmet.night_vision_off: "§7[§eProjectE§7] §cNight Vision disabled"
+
+serverside.command.gem_helmet.not_wearing: "§cYou are not wearing the Gem Helmet."
+item.gem_helmet.gui.title: "Gem Helmet Settings"
+item.gem_helmet.gui.night_vision: "Night Vision"
+item.gem_helmet.gui.night_vision_lore_on: "§aEnabled"
+item.gem_helmet.gui.night_vision_lore_off: "§cDisabled"
+item.gem_helmet.gui.close: "§cClose"
+item.gem_helmet.gui.night_vision_on: "§aNight Vision: ON"
+item.gem_helmet.gui.night_vision_off: "§cNight Vision: OFF"
+item.gem_helmet.gui.toggle_lore: "§7Click to toggle"
+
+item.gem_leggings.name: "§3Gem Leggings"
+item.gem_leggings.lore1: "§6§oIndestructible"
+item.gem_leggings.lore2: "§7Creates a repulsion field while sneaking"
+item.gem_leggings.lore3: "§7Immunity to knockback while sneaking"
+
+item.gem_boots.name: "§3Gem Boots"
+item.gem_boots.lore1: "§6§oIndestructible"
+item.gem_boots.lore2: "§7Grants slow falling and immunity to fall damage"
+item.gem_boots.lore3: "§7Double-tap space to fly, hold space to ascend"
+item.gem_boots.lore4: "§7Use /pe gemboots to toggle Step-Assist"
+item.gem_boots.autostep_on: "§7[§eProjectE§7] §aStep-Assist enabled"
+item.gem_boots.autostep_off: "§7[§eProjectE§7] §cStep-Assist disabled"
+
+serverside.command.gem_boots.not_wearing: "§cYou are not wearing the Gem Boots."

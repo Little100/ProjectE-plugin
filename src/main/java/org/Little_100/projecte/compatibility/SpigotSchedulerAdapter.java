@@ -56,4 +56,9 @@ public class SpigotSchedulerAdapter implements SchedulerAdapter {
     public void runTaskLaterAtLocation(Location location, Runnable task, long delay) {
         Bukkit.getScheduler().runTaskLater(plugin, task, delay);
     }
+
+    @Override
+    public void runTaskLaterOnEntity(Entity entity, Runnable task, long delay) {
+        Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+    }
 }

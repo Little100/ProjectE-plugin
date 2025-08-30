@@ -5,8 +5,8 @@ import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.inventory.*;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.*;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

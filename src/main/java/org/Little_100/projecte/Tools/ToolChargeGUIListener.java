@@ -75,6 +75,10 @@ public class ToolChargeGUIListener implements Listener {
                 if (toolManager.isDarkMatterSword(tool) || toolManager.isRedMatterSword(tool)) {
                     toolManager.updateSwordAttackDamage(tool);
                 }
+
+                if (toolManager.isRedMatterKatar(tool)) {
+                    toolManager.updateKatarAttackDamage(tool);
+                }
                 
                 if (newCharge > oldCharge) {
                     player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
@@ -87,27 +91,20 @@ public class ToolChargeGUIListener implements Listener {
             }
         }
 
-        NamespacedKey modeKey = new NamespacedKey(plugin, "tool_mode");
-        if (clickedContainer.has(modeKey, PersistentDataType.STRING)) {
-            String newMode = clickedContainer.get(modeKey, PersistentDataType.STRING);
-            toolContainer.set(new NamespacedKey(plugin, "projecte_mode"), PersistentDataType.STRING, newMode);
-            tool.setItemMeta(toolMeta);
-            player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, 1.0f);
-            new ToolChargeGUI(plugin, player, tool).open();
-            player.getInventory().setItemInMainHand(tool);
-        }
-        
-        NamespacedKey swordModeKey = new NamespacedKey(plugin, "sword_mode_toggle");
-        if (clickedContainer.has(swordModeKey, PersistentDataType.INTEGER)) {
-            if (toolManager.isRedMatterSword(tool)) {
-                int currentMode = toolManager.getSwordMode(tool);
-                int newMode = (currentMode == 0) ? 1 : 0;
-                toolContainer.set(new NamespacedKey(plugin, "projecte_sword_mode"), PersistentDataType.INTEGER, newMode);
+        NamespacedKey katarModeKey = new NamespacedKey(plugin, "katar_mode");
+        if (clickedContainer.has(katarModeKey, PersistentDataType.INTEGER)) {
+            int newMode = clickedContainer.get(katarModeKey, PersistentDataType.INTEGER);
+            int oldMode = toolContainer.getOrDefault(new NamespacedKey(plugin, "projecte_katar_mode"), PersistentDataType.INTEGER, 0);
+
+            if (newMode != oldMode) {
+                toolContainer.set(new NamespacedKey(plugin, "projecte_katar_mode"), PersistentDataType.INTEGER, newMode);
                 tool.setItemMeta(toolMeta);
                 toolManager.updateLore(tool);
-                player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, 1.5f);
-                new ToolChargeGUI(plugin, player, tool).open();
+                
                 player.getInventory().setItemInMainHand(tool);
+                player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, 1.5f);
+                
+                new ToolChargeGUI(plugin, player, player.getInventory().getItemInMainHand()).open();
             }
         }
     }
@@ -126,7 +123,8 @@ public class ToolChargeGUIListener implements Listener {
                 case 0: newDamage = maxDurability - 2; break;
                 case 1: newDamage = maxDurability * 2 / 3; break;
                 case 2: newDamage = maxDurability / 3; break;
-                case 3: newDamage = 1; break;
+                case 3: newDamage = maxDurability / 4; break;
+                case 4: newDamage = 1; break;
             }
         } else {
             switch (newCharge) {

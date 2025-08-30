@@ -22,11 +22,11 @@ public class ToolChargeGUI {
     private final ItemStack tool;
     private Inventory inventory;
 
-    private static final int INVENTORY_SIZE = 27;
+    private static final int INVENTORY_SIZE = 36;
 
     private static final int[] CHARGE_SLOTS_DM = {11, 12, 13};
-    private static final int[] CHARGE_SLOTS_RM = {10, 11, 12, 13};
-    private static final int[] MODE_SLOTS = {20, 22, 24};
+    private static final int[] CHARGE_SLOTS_RM = {10, 11, 12, 13, 14};
+    private static final int KATAR_MODE_SLOT = 22;
 
     public ToolChargeGUI(ProjectE plugin, Player player, ItemStack tool) {
         this.plugin = plugin;
@@ -66,7 +66,7 @@ public class ToolChargeGUI {
         boolean isRedMatter = plugin.getToolManager().isRedMatterTool(tool);
 
         int[] chargeSlots = isRedMatter ? CHARGE_SLOTS_RM : CHARGE_SLOTS_DM;
-        int maxCharge = isRedMatter ? 3 : 2;
+        int maxCharge = isRedMatter ? 4 : 2;
 
         for (int i = 0; i <= maxCharge; i++) {
             Material material = (i <= currentCharge) ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK;
@@ -83,36 +83,40 @@ public class ToolChargeGUI {
         ItemMeta toolMeta = tool.getItemMeta();
         if (toolMeta == null) return;
 
-       ToolManager toolManager = plugin.getToolManager();
+        ToolManager toolManager = plugin.getToolManager();
+        PersistentDataContainer container = toolMeta.getPersistentDataContainer();
 
-       if (!toolManager.isDarkMatterSword(tool) && !toolManager.isRedMatterSword(tool) &&
-           !toolManager.isDarkMatterShears(tool) && !toolManager.isRedMatterShears(tool)) {
-           PersistentDataContainer container = toolMeta.getPersistentDataContainer();
-           String currentMode = container.getOrDefault(new NamespacedKey(plugin, "projecte_mode"), PersistentDataType.STRING, "tall");
+        if (toolManager.isRedMatterKatar(tool)) {
+            int currentMode = container.getOrDefault(new NamespacedKey(plugin, "projecte_katar_mode"), PersistentDataType.INTEGER, 0);
 
-           ItemStack tall = createGuiItem(Material.IRON_BARS, plugin.getLanguageManager().get("clientside.tool_charge_gui.tall.name"), null, "tool_mode", "tall");
-           if (currentMode.equals("tall")) addGlow(tall);
-           inventory.setItem(MODE_SLOTS[0], tall);
+            Material material;
+            String name;
+            int nextMode;
 
-           ItemStack wide = createGuiItem(Material.CHAIN, plugin.getLanguageManager().get("clientside.tool_charge_gui.wide.name"), null, "tool_mode", "wide");
-           if (currentMode.equals("wide")) addGlow(wide);
-           inventory.setItem(MODE_SLOTS[1], wide);
-
-           ItemStack threeByThree = createGuiItem(Material.IRON_BLOCK, plugin.getLanguageManager().get("clientside.tool_charge_gui.3x3.name"), null, "tool_mode", "3x3");
-           if (currentMode.equals("3x3")) addGlow(threeByThree);
-           inventory.setItem(MODE_SLOTS[2], threeByThree);
-       }
-
-        if (toolManager.isRedMatterSword(tool)) {
-            int currentSwordMode = toolManager.getSwordMode(tool);
-            ItemStack modeItem;
-            if (currentSwordMode == 0) {
-                modeItem = createGuiItem(Material.ZOMBIE_HEAD, plugin.getLanguageManager().get("clientside.red_matter_sword.mode_hostile"), null, "sword_mode_toggle", 1);
+            if (currentMode == 0) {
+                material = Material.ZOMBIE_HEAD;
+                name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_hostile");
+                nextMode = 1;
             } else {
-                modeItem = createGuiItem(Material.PLAYER_HEAD, plugin.getLanguageManager().get("clientside.red_matter_sword.mode_all"), null, "sword_mode_toggle", 1);
+                material = Material.PLAYER_HEAD;
+                name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_all");
+                nextMode = 0;
             }
-            addGlow(modeItem);
-            inventory.setItem(4, modeItem);
+
+            if (currentMode == 0) {
+                 material = Material.PLAYER_HEAD;
+                 name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_all");
+                 nextMode = 1;
+            } else {
+                 material = Material.ZOMBIE_HEAD;
+                 name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_hostile");
+                 nextMode = 0;
+            }
+
+
+            ItemStack modeToggleItem = createGuiItem(material, name, null, "katar_mode", nextMode);
+            addGlow(modeToggleItem);
+            inventory.setItem(KATAR_MODE_SLOT, modeToggleItem);
         }
     }
 

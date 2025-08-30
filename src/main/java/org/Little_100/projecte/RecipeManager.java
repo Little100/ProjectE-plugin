@@ -1,12 +1,10 @@
 package org.Little_100.projecte;
 
+import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
 import org.Little_100.projecte.Tome.TransmutationTabletBook;
 import org.Little_100.projecte.Tools.ToolManager;
-import org.Little_100.projecte.devices.DeviceManager;
 import org.bukkit.Bukkit;
-import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
 import org.bukkit.Material;
-import org.Little_100.projecte.util.ReflectionUtil;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,13 +13,11 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RecipeManager {
 
@@ -36,6 +32,7 @@ public class RecipeManager {
 
     public void registerAllRecipes() {
         loadRecipesFromYaml();
+        loadOpItemRecipes();
         registerUpgradeRecipes();
         registerDowngradeRecipes();
         registerOreTransmutationRecipes();
@@ -97,6 +94,24 @@ public class RecipeManager {
         plugin.getLogger().info("recipe.yml loaded");
     }
 
+    private void loadOpItemRecipes() {
+        File opItemFile = new File(plugin.getDataFolder(), "op_item.yml");
+        if (!opItemFile.exists()) {
+            plugin.saveResource("op_item.yml", false);
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(opItemFile);
+        for (String id : config.getKeys(false)) {
+            if (config.isConfigurationSection(id)) {
+                ConfigurationSection recipeConfig = config.getConfigurationSection(id);
+                // Check if it's a recipe by looking for a 'type' key
+                if (recipeConfig != null && recipeConfig.isSet("type") && recipeConfig.getBoolean("enabled", true)) {
+                    parseRecipe(id, recipeConfig);
+                }
+            }
+        }
+        plugin.getLogger().info("op_item.yml recipes loaded");
+    }
+
     // 解析单个配方
     private void parseRecipe(String id, ConfigurationSection config) {
         if (id.contains("_pickaxe") || id.contains("_axe") || id.contains("_shovel") || id.contains("_hoe") || id.contains("_sword") || id.contains("_shears") || id.contains("_hammer")) {
@@ -107,7 +122,7 @@ public class RecipeManager {
                 return;
             }
         }
-
+ 
         java.util.Map<String, String> placeholders = new java.util.HashMap<>();
         placeholders.put("recipe", id);
         DebugManager.log("debug.recipe.loading_recipe", placeholders);
@@ -412,12 +427,12 @@ public class RecipeManager {
             if (config.contains("display_name")) {
                 meta.setDisplayName(plugin.getLanguageManager().get(config.getString("display_name")));
             }
-            if (config.contains("lore")) {
-                List<String> loreKeys = config.getStringList("lore");
-                List<String> translatedLore = loreKeys.stream()
-                        .map(key -> plugin.getLanguageManager().get(key))
-                        .collect(Collectors.toList());
-                meta.setLore(translatedLore);
+            if (config.contains("lore1")) {
+                java.util.List<String> lore = new java.util.ArrayList<>();
+                for (int i = 1; config.contains("lore" + i); i++) {
+                    lore.add(plugin.getLanguageManager().get(config.getString("lore" + i)));
+                }
+                meta.setLore(lore);
             }
             if (config.contains("custom_model_data")) {
                 item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(item,
@@ -426,12 +441,12 @@ public class RecipeManager {
                 if (config.contains("display_name")) {
                     meta.setDisplayName(plugin.getLanguageManager().get(config.getString("display_name")));
                 }
-                if (config.contains("lore")) {
-                    List<String> loreKeys2 = config.getStringList("lore");
-                    List<String> translatedLore2 = loreKeys2.stream()
-                            .map(key -> plugin.getLanguageManager().get(key))
-                            .collect(Collectors.toList());
-                    meta.setLore(translatedLore2);
+                if (config.contains("lore1")) {
+                    java.util.List<String> lore = new java.util.ArrayList<>();
+                    for (int i = 1; config.contains("lore" + i); i++) {
+                        lore.add(plugin.getLanguageManager().get(config.getString("lore" + i)));
+                    }
+                    meta.setLore(lore);
                 }
             }
             if (config.getBoolean("unbreakable")) {

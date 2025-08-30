@@ -7,23 +7,18 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ToolAbilityListener implements Listener {
@@ -58,23 +53,316 @@ public class ToolAbilityListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        
+        if (toolManager.isRedMatterKatar(itemInHand)) {
+            if (player.isSneaking()) {
+                handleKatarShear(player, itemInHand);
+                event.setCancelled(true);
+                return;
+            }
+            handleKatarAbility(player, itemInHand, event);
+            return;
+        }
 
         if (action == Action.RIGHT_CLICK_BLOCK) {
-            if (toolManager.isDarkMatterHoe(itemInHand) || toolManager.isRedMatterHoe(itemInHand)) {
-                handleHoeAbility(player, itemInHand, event.getClickedBlock());
+            Block clickedBlock = event.getClickedBlock();
+            if (toolManager.isRedMatterMorningstar(itemInHand)) {
+                handleMorningstarAbility(player, itemInHand, clickedBlock);
+            } else if (toolManager.isDarkMatterHoe(itemInHand) || toolManager.isRedMatterHoe(itemInHand)) {
+                handleHoeAbility(player, itemInHand, clickedBlock);
             } else if (toolManager.isDarkMatterShovel(itemInHand) || toolManager.isRedMatterShovel(itemInHand)) {
-                handleShovelAbility(player, itemInHand, event.getClickedBlock());
+                handleShovelAbility(player, itemInHand, clickedBlock);
             } else if (toolManager.isDarkMatterPickaxe(itemInHand) || toolManager.isRedMatterPickaxe(itemInHand)) {
-                handlePickaxeAbility(player, itemInHand, event.getClickedBlock());
+                handlePickaxeAbility(player, itemInHand, clickedBlock);
             } else if (toolManager.isDarkMatterHammer(itemInHand) || toolManager.isRedMatterHammer(itemInHand)) {
-                handleHammerAbility(player, itemInHand, event.getClickedBlock());
+                handleHammerAbility(player, itemInHand, clickedBlock);
+            }
+        }
+    }
+
+    // @EventHandler
+    // public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+    //     Player player = event.getPlayer();
+    //     ItemStack itemInHand = player.getInventory().getItemInMainHand();
+    //
+    //     if (toolManager.isRedMatterKatar(itemInHand) && event.getRightClicked() instanceof LivingEntity) {
+    //         handleKatarRightClickEntity(player, itemInHand, (LivingEntity) event.getRightClicked());
+    //         event.setCancelled(true);
+    //     }
+    // }
+
+
+    private void handleKatarShear(Player player, ItemStack katar) {
+        int range = 50;
+
+        List<org.bukkit.entity.Sheep> sheepList = player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
+            .filter(sheep -> !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
+            .collect(java.util.stream.Collectors.toList());
+
+        if (!sheepList.isEmpty()) {
+            player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_SHEEP_SHEAR, 1.0f, 1.0f);
+        }
+
+        for (org.bukkit.entity.Sheep sheep : sheepList) {
+            sheep.setSheared(true);
+            int woolAmount = 1 + new java.util.Random().nextInt(3);
+            Material woolType = getWoolMaterial(sheep.getColor());
+            ItemStack woolStack = new ItemStack(woolType, woolAmount);
+            
+            java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(woolStack);
+            if (!leftover.isEmpty()) {
+                player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(0));
+            }
+        }
+    }
+
+    private void handleKatarRightClickAir(Player player, ItemStack katar) {
+        long now = System.currentTimeMillis();
+        long lastUsed = swordCooldowns.getOrDefault(player.getUniqueId(), 0L);
+
+        if (now - lastUsed < SWORD_ABILITY_COOLDOWN) {
+            return;
+        }
+
+        if (!katar.hasItemMeta()) return;
+        org.bukkit.inventory.meta.ItemMeta meta = katar.getItemMeta();
+        org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
+        int currentMode = container.getOrDefault(new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"), org.bukkit.persistence.PersistentDataType.INTEGER, 0);
+
+        double damage = 1000.0;
+        int range = 10; // 20x20 area
+
+        Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), range, range, range);
+
+        List<LivingEntity> targets = nearbyEntities.stream()
+            .filter(e -> e instanceof LivingEntity && !e.equals(player) && !(e instanceof org.bukkit.entity.ArmorStand))
+            .filter(e -> {
+                if (currentMode == 1) { // Hostile-only mode
+                    return e instanceof Monster;
+                } else { // All mobs mode
+                    return true;
+                }
+            })
+            .map(e -> (LivingEntity) e)
+            .collect(Collectors.toList());
+
+        if (targets.isEmpty()) {
+            return;
+        }
+
+        player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
+        for (LivingEntity target : targets) {
+            target.setHealth(Math.max(0, target.getHealth() - damage));
+        }
+        swordCooldowns.put(player.getUniqueId(), now);
+    }
+
+    private void handleMorningstarAbility(Player player, ItemStack morningstar, Block clickedBlock) {
+        if (clickedBlock == null) return;
+
+        int charge = toolManager.getCharge(morningstar);
+        if (charge == 0) return;
+
+        int radius;
+        switch (charge) {
+            case 1: radius = 1; break;
+            case 2: radius = 2; break;
+            case 3: radius = 3; break;
+            case 4: radius = 4; break;
+            default: return;
+        }
+
+        List<Block> affectedBlocks;
+        Material blockType = clickedBlock.getType();
+
+        if (isRock(blockType) || isShovelable(blockType) || Tag.LOGS.isTagged(blockType) ||
+            toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_PICKAXE)) ||
+            toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_SHOVEL)) ||
+            toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_AXE))) {
+            affectedBlocks = getBlocksInCube(clickedBlock, radius);
+        } else {
+            affectedBlocks = getBlocksInCube(clickedBlock, radius).stream()
+                .filter(b -> b.getType() == blockType)
+                .collect(Collectors.toList());
+        }
+
+        if (!affectedBlocks.isEmpty()) {
+            player.playSound(player.getLocation(), "projecte:custom.pedestruct", 1.0f, 1.0f);
+            breakBlocksAndDropAtCenter(player, morningstar, affectedBlocks, clickedBlock.getLocation().add(0.5, 0.5, 0.5));
+        }
+    }
+
+    private boolean isShovelable(Material material) {
+        return Tag.DIRT.isTagged(material) || Tag.SAND.isTagged(material) || material == Material.GRAVEL || material == Material.CLAY;
+    }
+
+    private void breakBlocksAndGiveToPlayer(Player player, ItemStack tool, List<Block> blocks) {
+        for (Block block : blocks) {
+            if (!block.isPassable() && !block.isLiquid()) {
+                Collection<ItemStack> drops = block.getDrops(tool);
+                block.setType(Material.AIR);
+                for (ItemStack drop : drops) {
+                    java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(drop);
+                    if (!leftover.isEmpty()) {
+                        player.getWorld().dropItemNaturally(block.getLocation(), leftover.get(0));
+                    }
+                }
+            }
+        }
+    }
+
+    private void breakBlocksAndDropAtCenter(Player player, ItemStack tool, List<Block> blocks, Location dropLocation) {
+        for (Block block : blocks) {
+            if (block.getType() == Material.AIR || block.getType() == Material.BEDROCK || block.isLiquid() || block.isPassable()) {
+                continue;
+            }
+            Collection<ItemStack> drops = block.getDrops(tool);
+            block.setType(Material.AIR);
+            for (ItemStack drop : drops) {
+                player.getWorld().dropItemNaturally(dropLocation, drop);
+            }
+        }
+    }
+
+    private List<Block> getBlocksInCube(Block centerBlock, int radius) {
+        List<Block> blocks = new ArrayList<>();
+        Location centerLoc = centerBlock.getLocation();
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Block block = centerLoc.clone().add(x, y, z).getBlock();
+                    blocks.add(block);
+                }
+            }
+        }
+        return blocks;
+    }
+
+    private void handleKatarAbility(Player player, ItemStack katar, PlayerInteractEvent event) {
+        Action action = event.getAction();
+        Block clickedBlock = event.getClickedBlock();
+
+        if (action == Action.RIGHT_CLICK_AIR) {
+            handleKatarRightClickAir(player, katar);
+        } else if (action == Action.RIGHT_CLICK_BLOCK && clickedBlock != null) {
+            Material type = clickedBlock.getType();
+            if (Tag.LEAVES.isTagged(type) || Tag.LOGS.isTagged(type)) {
+                handleKatarChop(player, katar, clickedBlock);
+                return;
+            }
+            
+            Material blockType = clickedBlock.getType();
+            if (blockType == Material.DIRT || blockType == Material.GRASS_BLOCK || blockType == Material.DIRT_PATH) {
+                handleKatarTill(player, katar, clickedBlock);
+            }
+        }
+    }
+
+    private void handleKatarTill(Player player, ItemStack katar, Block clickedBlock) {
+        int charge = toolManager.getCharge(katar);
+        if (charge == 0) return;
+        
+        int range = 4; // 9x9 Area
+        List<Block> affectedBlocks = new ArrayList<>();
+        for (int x = -range; x <= range; x++) {
+            for (int z = -range; z <= range; z++) {
+                Block block = clickedBlock.getRelative(x, 0, z);
+                Material type = block.getType();
+                if (type == Material.DIRT || type == Material.GRASS_BLOCK || type == Material.DIRT_PATH) {
+                    affectedBlocks.add(block);
+                }
+            }
+        }
+        
+        if (!affectedBlocks.isEmpty()) {
+            player.playSound(player.getLocation(), org.bukkit.Sound.ITEM_HOE_TILL, 1.0f, 1.0f);
+        }
+
+        for (Block block : affectedBlocks) {
+            block.setType(Material.FARMLAND);
+        }
+    }
+
+    private List<Block> findTree(Block startBlock) {
+        List<Block> treeBlocks = new ArrayList<>();
+        List<Block> toCheck = new ArrayList<>();
+        List<Block> checked = new ArrayList<>();
+
+        toCheck.add(startBlock);
+        checked.add(startBlock);
+
+        int limit = 5000;
+        int count = 0;
+
+        while (!toCheck.isEmpty() && count < limit) {
+            Block current = toCheck.remove(0);
+            treeBlocks.add(current);
+            count++;
+
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int z = -1; z <= 1; z++) {
+                        if (x == 0 && y == 0 && z == 0) continue;
+
+                        Block neighbor = current.getRelative(x, y, z);
+                        Material type = neighbor.getType();
+                        if ((Tag.LOGS.isTagged(type) || Tag.LEAVES.isTagged(type)) && !checked.contains(neighbor)) {
+                            toCheck.add(neighbor);
+                            checked.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+        return treeBlocks;
+    }
+
+
+    private void handleKatarChop(Player player, ItemStack katar, Block clickedBlock) {
+        List<Block> blocksToBreak = findTree(clickedBlock);
+
+        if (!blocksToBreak.isEmpty()) {
+            player.playSound(player.getLocation(), "projecte:custom.pedestruct", 1.0f, 1.0f);
+        }
+
+        breakBlocksAndGiveToPlayer(player, katar, blocksToBreak);
+    }
+
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof org.bukkit.entity.ArmorStand) {
+            if (event.getDamager() instanceof Player) {
+                Player player = (Player) event.getDamager();
+                if (toolManager.isRedMatterKatar(player.getInventory().getItemInMainHand())) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+        
+        if (!(event.getDamager() instanceof Player)) return;
+
+        Player player = (Player) event.getDamager();
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+
+        if (!toolManager.isRedMatterKatar(itemInHand)) return;
+
+        if (!itemInHand.hasItemMeta()) return;
+        org.bukkit.inventory.meta.ItemMeta meta = itemInHand.getItemMeta();
+        org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
+        int currentMode = container.getOrDefault(new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"), org.bukkit.persistence.PersistentDataType.INTEGER, 0);
+
+        if (currentMode == 1) {
+            if (!(event.getEntity() instanceof Monster)) {
+                event.setCancelled(true);
             }
         }
     }
 
     private void handleShearsAbility(Player player, ItemStack shears) {
         int charge = toolManager.getCharge(shears);
-        if (charge == 0) return;
+        if (charge == 0 && !toolManager.isRedMatterKatar(shears)) return;
 
         int range;
         boolean isRedMatter = toolManager.isRedMatterShears(shears);

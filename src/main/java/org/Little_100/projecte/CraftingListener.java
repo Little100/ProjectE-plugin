@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 
 public class CraftingListener implements Listener {
 

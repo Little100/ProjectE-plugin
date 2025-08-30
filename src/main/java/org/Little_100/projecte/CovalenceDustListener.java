@@ -9,9 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class CovalenceDustListener implements Listener {
 
     private final ProjectE plugin;

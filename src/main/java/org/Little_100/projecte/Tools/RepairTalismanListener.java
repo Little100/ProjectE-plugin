@@ -1,11 +1,11 @@
 package org.Little_100.projecte.Tools;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.compatibility.SchedulerAdapter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.Little_100.projecte.compatibility.SchedulerAdapter;
  
 public class RepairTalismanListener {
  

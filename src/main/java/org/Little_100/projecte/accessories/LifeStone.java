@@ -6,7 +6,6 @@ import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

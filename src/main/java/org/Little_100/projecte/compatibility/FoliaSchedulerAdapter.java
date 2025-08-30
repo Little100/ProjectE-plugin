@@ -111,4 +111,16 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
             throw new RuntimeException("Folia scheduler reflection failed for runTaskLaterAtLocation", e);
         }
     }
+
+    @Override
+    public void runTaskLaterOnEntity(Entity entity, Runnable task, long delay) {
+        try {
+            Method getScheduler = Entity.class.getMethod("getScheduler");
+            Object scheduler = getScheduler.invoke(entity);
+            Method runDelayed = scheduler.getClass().getMethod("runDelayed", org.bukkit.plugin.Plugin.class, java.util.function.Consumer.class, Runnable.class, long.class);
+            runDelayed.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), null, delay);
+        } catch (Exception e) {
+            throw new RuntimeException("Folia scheduler reflection failed for runTaskLaterOnEntity", e);
+        }
+    }
 }

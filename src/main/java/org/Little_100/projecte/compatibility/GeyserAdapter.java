@@ -5,11 +5,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import java.io.File;
 import org.geysermc.geyser.api.GeyserApi;
 import org.geysermc.geyser.api.connection.GeyserConnection;
-import org.bukkit.persistence.PersistentDataType;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

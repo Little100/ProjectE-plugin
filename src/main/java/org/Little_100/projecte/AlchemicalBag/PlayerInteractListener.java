@@ -1,5 +1,6 @@
 package org.Little_100.projecte.AlchemicalBag;
 
+import net.md_5.bungee.api.ChatColor;
 import org.Little_100.projecte.LanguageManager;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
@@ -10,13 +11,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import net.md_5.bungee.api.ChatColor;
 
 import java.util.HashMap;
 import java.util.Map;

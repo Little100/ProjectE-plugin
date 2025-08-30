@@ -9,10 +9,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.io.File;
 
 public class EmcManager {
 
@@ -83,6 +83,24 @@ public class EmcManager {
             return false;
         }
 
+        if (plugin.isPdcExcluded() && isPdcItem(result)) {
+            return false;
+        }
+
+        if (plugin.isOnlyMcItems()) {
+            if (recipe instanceof ShapedRecipe) {
+                for (ItemStack ingredient : ((ShapedRecipe) recipe).getIngredientMap().values()) {
+                    if (isPdcItem(ingredient)) return false;
+                }
+            } else if (recipe instanceof ShapelessRecipe) {
+                for (ItemStack ingredient : ((ShapelessRecipe) recipe).getIngredientList()) {
+                    if (isPdcItem(ingredient)) return false;
+                }
+            } else if (recipe instanceof CookingRecipe) {
+                if (isPdcItem(((CookingRecipe<?>) recipe).getInput())) return false;
+            }
+        }
+
         NamespacedKey key = null;
         if (recipe instanceof ShapedRecipe) {
             key = ((ShapedRecipe) recipe).getKey();
@@ -133,13 +151,18 @@ public class EmcManager {
     }
 
     public long getEmc(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return 0;
+        }
+
+        if (plugin.isOnlyMcItems() && item.hasItemMeta() && item.getItemMeta().hasCustomModelData()) {
+             return databaseManager.getEmc(getItemKey(item));
+        }
+
         if (plugin.isPdcExcluded() && isPdcItem(item)) {
-            // 如果排除了PDC物品，并且这个物品是PDC物品，
-            // 只返回数据库中可能由 setemc 命令手动设置的值。
-            // 如果没有手动设置，getEmc(String) 会返回 0。
             return databaseManager.getEmc(getItemKey(item));
         }
-        // 否则，使用标准逻辑
+
         return getEmc(getItemKey(item));
     }
 

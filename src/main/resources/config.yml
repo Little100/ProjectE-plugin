@@ -1,15 +1,11 @@
 # sorry about my poor English, I'm not a native speaker.
 language:
-  # 设置插件语言, 第一个为主要语言, 后续为备用语言.
-  # set the first language as the main language, and the rest as the backup language.
+  # 设置插件语言, 第一个为主要语言
+  # set the first language as the main language
   - "zh_cn"
-  - "en_us"
 
-debug: false # 是否开启调试模式? true/false
+debug: true # 是否开启调试模式? true/false
 # enable debug mode? true/false
-
-Exclude_PDC: true # 是否排除PDC物品? true/false
-# exclude PDC items? true/false
 
 Advancement_Datapack: true # 是否开启进度数据包? true/false
 # enable advancement datapack? true/false
@@ -32,7 +28,6 @@ philosopher_stone:
 AlchemicalBag:
   enabled: true # 是否启用炼金术袋功能? true/false
   # allow using alchemical bag? true/false
-
 
 Tools:
   dark_matter_tools_enabled: true # 启用暗物质工具合成? true/false
@@ -63,6 +58,13 @@ TransmutationTable:
     # the following items are defined as basic items that cannot be calculated by the recipe
     # 插件在加载时会自动检查物品是否存在于当前游戏版本，如果不存在则会跳过。
     # the plugin will automatically check if the item exists in the current game version, and skip it if it doesn't.
+    Exclude_PDC:
+      enabled: true
+      # 是否排除PDC物品? true/false
+      # exclude PDC items? true/false
+      only_mc_items: true
+      # 仅计算原版物品? true/false
+      # only calculate MC items? true/false
     ImportantItems:
       # 此片段由gemini2.5pro提供 后续补充由Little100新增
       # this part is provided by gemini2.5pro, and will be continued to be added by Little100.

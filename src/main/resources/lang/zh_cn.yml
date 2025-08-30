@@ -137,6 +137,19 @@ clientside:
     mode_prefix: "§c模式:"
     mode_hostile: "§4仅敌对"
     mode_all: "§f所有"
+  red_matter_katar:
+    mode_prefix: "§c模式:"
+    mode_hostile: "§4仅敌对"
+    mode_all: "§f所有"
+  red_matter_morningstar:
+    mode_prefix: "§c模式:"
+    mode_normal: "§f普通采集"
+    mode_tall: "§b3*竖直采集"
+    mode_wide: "§e3*横向采集"
+    mode_long: "§a3*直线采集"
+    mode_area: "§6范围采集"
+    mode_shovel: "§d层化挖掘"
+    mode_hammer: "§5锤击"
 
 # 服务端可见的输出
 serverside:
@@ -144,13 +157,15 @@ serverside:
     no_permission: "§c你没有权限使用此命令。"
     player_only: "§c只有玩家才能使用此命令。"
     reload_success: "§aProjectE插件已重载。"
+    gem_boots:
+      disabled_for_folia: "§cFolia服务端暂时不支持自动跳跃功能。"
     set_emc:
       usage: "§c用法: /projecte setemc <value>"
       hold_item: "§c请手持一个物品。"
       must_be_positive: "§cEMC值必须是大于0的正整数。"
       success: "§a已将 {item} 的EMC值设置为 {emc}"
       invalid_value: "§c无效的EMC值: {value}"
-    give_emc:
+    pay_emc:
       usage: "§c用法: /projecte pay <player> <amount>"
       player_not_found: "§c玩家 {player} 不在线。"
       cant_pay_self: "§c你不能给自己转账。"
@@ -259,6 +274,10 @@ serverside:
         no_url: "§c未配置资源包URL，无法发送。"
   datapack:
     not_loaded_warning: "§c警告: 进度数据包可能未正确加载。请联系服务器管理员执行'/reload'或重启服务器来解决此问题。"
+  gem_boots:
+    not_wearing: "§c你没有穿着飓风长靴。"
+    disabled_for_folia: "§c由于技术限制，自动跳跃功能当前在此服务器核心 (Folia) 上不可用。"
+
   
 # 物品显示的信息
 item:
@@ -391,21 +410,6 @@ item:
     lore2: "§e潜行右键吸收所有经验。"
     lore3: "§e右键取出50经验。"
     lore4: "§7储存经验: {xp}"
-  dark_matter_furnace:
-    name: "§d暗物质熔炉"
-    lore1: "§7一个能高速熔炼物品的熔炉。"
-  red_matter_furnace:
-    name: "§c红物质熔炉"
-    lore1: "§7一个能极速熔炼物品的熔炉。"
-  alchemical_chest:
-    name: "§e炼金术箱子"
-    lore1: "§6一个可以储存大量物品的箱子"
-  energy_condenser:
-    name: "§e能量凝聚器"
-    lore1: "§6可以将物品转化为EMC"
-  energy_condenser_mk2:
-    name: "§c能量凝聚器 MK2"
-    lore1: "§6一个更强大的能量凝聚器"
   dark_matter_pickaxe:
     name: "§d暗物质镐"
   dark_matter_axe:
@@ -436,8 +440,27 @@ item:
     name: "§c红物质剪"
   red_matter_hammer:
     name: "§c红物质锤"
+  red_matter_katar:
+    name: "§c红物质拳剑"
+  red_matter_morningstar:
+    name: "§c红物质钉头锤"
   red_matter_tool:
     lore1: "§7物质的终极形态"
+  projecte.dark_matter_furnace:
+    name: "§d暗物质熔炉"
+    lore1: "§7一个能高速熔炼物品的熔炉。"
+  projecte.red_matter_furnace:
+    name: "§c红物质熔炉"
+    lore1: "§7一个能极速熔炼物品的熔炉。"
+  projecte.alchemical_chest:
+    name: "§e炼金术箱子"
+    lore1: "§6一个可以储存大量物品的箱子"
+  projecte.energy_condenser:
+    name: "§e能量凝聚器"
+    lore1: "§6可以将物品转化为EMC"
+  projecte.energy_condenser_mk2:
+    name: "§c能量凝聚器 MK2"
+    lore1: "§6一个更强大的能量凝聚器"
 
 # 插件相关
 plugin:
@@ -492,3 +515,39 @@ item.red_matter_boots.name: "红物质靴子"
 
 item.dark_matter_armor.lore1: "§7炼金术防御的巅峰之作"
 item.red_matter_armor.lore1: "§7绝对的守护，超越维度"
+
+item.gem_helmet.name: "§3深渊头盔"
+item.gem_helmet.lore1: "§6§o坚不可摧"
+item.gem_helmet.lore2: "§7使用/pe gemhelmet打开设置菜单"
+item.gem_helmet.lore3: "§7在水下时提供氧气"
+
+item.gem_chestplate.name: "§3炼狱胸甲"
+item.gem_chestplate.lore1: "§6§o坚不可摧"
+item.gem_chestplate.lore2: "§7免疫火焰伤害并恢复饥饿"
+
+item.gem_helmet.night_vision_on: "§7[§eProjectE§7] §a夜视已开启"
+item.gem_helmet.night_vision_off: "§7[§eProjectE§7] §c夜视已关闭"
+
+serverside.command.gem_helmet.not_wearing: "§c你没有佩戴深渊头盔。"
+item.gem_helmet.gui.title: "深渊头盔设置"
+item.gem_helmet.gui.night_vision: "夜视"
+item.gem_helmet.gui.night_vision_lore_on: "§a已开启"
+item.gem_helmet.gui.night_vision_lore_off: "§c已关闭"
+item.gem_helmet.gui.close: "§c关闭"
+item.gem_helmet.gui.night_vision_on: "§a夜视已开启"
+item.gem_helmet.gui.night_vision_off: "§c夜视已关闭"
+item.gem_helmet.gui.toggle_lore: "§7点击切换"
+
+
+item.gem_leggings.name: "§3重力护腿"
+item.gem_leggings.lore1: "§6§o坚不可摧"
+item.gem_leggings.lore2: "§7潜行时产生斥力场"
+item.gem_leggings.lore3: "§7潜行时免疫击退"
+
+item.gem_boots.name: "§3飓风长靴"
+item.gem_boots.lore1: "§6§o坚不可摧"
+item.gem_boots.lore2: "§7自带缓降和免疫摔落伤害"
+item.gem_boots.lore3: "§7双击空格起飞，长按空格爬升"
+item.gem_boots.lore4: "§7使用 /pe gemboots 切换自动跳跃"
+item.gem_boots.autostep_on: "§7[§eProjectE§7] §a自动跳跃已开启"
+item.gem_boots.autostep_off: "§7[§eProjectE§7] §c自动跳跃已关闭"

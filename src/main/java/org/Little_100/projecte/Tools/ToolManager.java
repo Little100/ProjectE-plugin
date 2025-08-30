@@ -37,6 +37,8 @@ public class ToolManager {
     private ItemStack redMatterSword;
     private ItemStack redMatterShears;
     private ItemStack redMatterHammer;
+    private ItemStack redMatterKatar;
+    private ItemStack redMatterMorningstar;
 
     public ToolManager(ProjectE plugin) {
         this.plugin = plugin;
@@ -61,6 +63,8 @@ public class ToolManager {
         plugin.getEmcManager().setEmcValue(redMatterSword, 892928);
         plugin.getEmcManager().setEmcValue(redMatterShears, 614400);
         plugin.getEmcManager().setEmcValue(redMatterHammer, 1515520);
+        plugin.getEmcManager().setEmcValue(redMatterKatar, 7512064);
+        plugin.getEmcManager().setEmcValue(redMatterMorningstar, 7055312);
     }
 
     private void createDarkMatterTools() {
@@ -81,6 +85,8 @@ public class ToolManager {
         redMatterSword = createToolItem(Material.DIAMOND_SWORD, "red_matter_sword", 2, "item.red_matter_sword.name", 14, 1.6);
         redMatterShears = createToolItem(Material.SHEARS, "red_matter_shears", 2, "item.red_matter_shears.name", 1, 1.0);
         redMatterHammer = createToolItem(Material.DIAMOND_PICKAXE, "red_matter_hammer", 4, "item.red_matter_hammer.name", 15, 1.2);
+        redMatterKatar = createToolItem(Material.DIAMOND_AXE, "red_matter_katar", 10, "item.red_matter_katar.name", 24, 1.6);
+        redMatterMorningstar = createToolItem(Material.DIAMOND_PICKAXE, "red_matter_morningstar", 11, "item.red_matter_morningstar.name", 24, 1.2);
     }
 
     private ItemStack createToolItem(Material baseMaterial, String id, int customModelData, String displayNameKey, double attackDamage, double attackSpeed) {
@@ -100,6 +106,10 @@ public class ToolManager {
 
             if(id.equals("red_matter_sword")) {
                 container.set(new NamespacedKey(plugin, "projecte_sword_mode"), PersistentDataType.INTEGER, 0);
+            } else if (id.equals("red_matter_katar")) {
+                container.set(new NamespacedKey(plugin, "projecte_katar_mode"), PersistentDataType.INTEGER, 0);
+            } else if (id.equals("red_matter_morningstar")) {
+                container.set(new NamespacedKey(plugin, "projecte_morningstar_mode"), PersistentDataType.STRING, "normal");
             }
 
             if (attackDamage > 0) {
@@ -150,6 +160,18 @@ public class ToolManager {
                 String modeKey = (mode == 0) ? "clientside.red_matter_sword.mode_hostile" : "clientside.red_matter_sword.mode_all";
                 newLore.add(plugin.getLanguageManager().get("clientside.red_matter_sword.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
             }
+        } else if (isRedMatterKatar(item)) {
+            Integer mode = container.get(new NamespacedKey(plugin, "projecte_katar_mode"), PersistentDataType.INTEGER);
+            if (mode != null) {
+                String modeKey = (mode == 0) ? "clientside.red_matter_katar.mode_hostile" : "clientside.red_matter_katar.mode_all";
+                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_katar.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
+            }
+        } else if (isRedMatterMorningstar(item)) {
+            String mode = container.get(new NamespacedKey(plugin, "projecte_morningstar_mode"), PersistentDataType.STRING);
+            if (mode != null) {
+                String modeKey = "clientside.red_matter_morningstar.mode_" + mode;
+                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_morningstar.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
+            }
         }
 
         meta.setLore(newLore);
@@ -171,6 +193,8 @@ public class ToolManager {
     public ItemStack getRedMatterSword() { ItemStack item = redMatterSword.clone(); updateLore(item); return item; }
     public ItemStack getRedMatterShears() { return redMatterShears.clone(); }
     public ItemStack getRedMatterHammer() { return redMatterHammer.clone(); }
+    public ItemStack getRedMatterKatar() { ItemStack item = redMatterKatar.clone(); updateLore(item); return item; }
+    public ItemStack getRedMatterMorningstar() { ItemStack item = redMatterMorningstar.clone(); updateLore(item); return item; }
 
     public boolean isDarkMatterPickaxe(ItemStack item) { return isTool(item, "dark_matter_pickaxe"); }
     public boolean isDarkMatterAxe(ItemStack item) { return isTool(item, "dark_matter_axe"); }
@@ -192,6 +216,8 @@ public class ToolManager {
     public boolean isRedMatterSword(ItemStack item) { return isTool(item, "red_matter_sword"); }
     public boolean isRedMatterShears(ItemStack item) { return isTool(item, "red_matter_shears"); }
     public boolean isRedMatterHammer(ItemStack item) { return isTool(item, "red_matter_hammer"); }
+    public boolean isRedMatterKatar(ItemStack item) { return isTool(item, "red_matter_katar"); }
+    public boolean isRedMatterMorningstar(ItemStack item) { return isTool(item, "red_matter_morningstar"); }
 
     public boolean isRedMatterTool(ItemStack item) {
         String id = getToolId(item);
@@ -349,6 +375,25 @@ public class ToolManager {
 
         sword.setItemMeta(meta);
     }
+
+    public void updateKatarAttackDamage(ItemStack katar) {
+        if (!isRedMatterKatar(katar)) return;
+
+        ItemMeta meta = katar.getItemMeta();
+        if (meta == null) return;
+
+        meta.removeAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"));
+
+        int charge = getCharge(katar);
+        double baseDamage = 24;
+        double newDamage = baseDamage + charge;
+
+        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attack_damage", newDamage - 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
+
+        katar.setItemMeta(meta);
+    }
+
     public boolean isTool(String id) {
         if (id == null) return false;
         switch (id) {
@@ -366,6 +411,8 @@ public class ToolManager {
             case "red_matter_sword":
             case "red_matter_shears":
             case "red_matter_hammer":
+            case "red_matter_katar":
+            case "red_matter_morningstar":
                 return true;
             default:
                 return false;
@@ -389,7 +436,18 @@ public class ToolManager {
             case "red_matter_sword": return getRedMatterSword();
             case "red_matter_shears": return getRedMatterShears();
             case "red_matter_hammer": return getRedMatterHammer();
+            case "red_matter_katar": return getRedMatterKatar();
+            case "red_matter_morningstar": return getRedMatterMorningstar();
             default: return null;
         }
+    }
+    public List<String> getToolIds() {
+        return new ArrayList<>(List.of(
+                "dark_matter_pickaxe", "dark_matter_axe", "dark_matter_shovel", "dark_matter_hoe",
+                "dark_matter_sword", "dark_matter_shears", "dark_matter_hammer",
+                "red_matter_pickaxe", "red_matter_axe", "red_matter_shovel", "red_matter_hoe",
+                "red_matter_sword", "red_matter_shears", "red_matter_hammer",
+                "red_matter_katar", "red_matter_morningstar"
+        ));
     }
 }

@@ -9,7 +9,10 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.HashMap;

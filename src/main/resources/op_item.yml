@@ -1,0 +1,85 @@
+# This file is used to control whether some OP items are enabled in the game.
+# If an item is disabled, its crafting recipe will be removed.
+# 这个文件控制比较op的物品和盔甲开关闭
+# 如果关闭了那么对应的合成表就没了
+gem_helmet:
+  enabled: true
+  type: "shapeless"
+  result:
+    projecte_id: "projecte:gem_helmet"
+    amount: 1
+  ingredients:
+    - "projecte:red_matter_helmet"
+    - "projecte:klein_star_omega"
+    - "projecte:klein_star_sphere"
+    - "projecte:soul_stone"
+
+gem_chestplate:
+  enabled: true
+  type: "shapeless"
+  result:
+    projecte_id: "projecte:gem_chestplate"
+    amount: 1
+  ingredients:
+    - "projecte:red_matter_chestplate"
+    - "projecte:klein_star_omega"
+    - "projecte:klein_star_sphere"
+    - "projecte:body_stone"
+
+gem_leggings:
+  enabled: true
+  type: "shapeless"
+  result:
+    projecte_id: "projecte:gem_leggings"
+    amount: 1
+  ingredients:
+    - "projecte:red_matter_leggings"
+    - "projecte:klein_star_omega"
+    - "projecte:klein_star_omega"
+    - "projecte:klein_star_sphere"
+
+gem_boots:
+  enabled: true
+  type: "shapeless"
+  result:
+    projecte_id: "projecte:gem_boots"
+    amount: 1
+  ingredients:
+    - "projecte:red_matter_boots"
+    - "projecte:klein_star_omega"
+    - "projecte:klein_star_omega"
+    - "projecte:klein_star_sphere"
+
+red_matter_katar:
+ enabled: true
+ type: "shaped"
+ shape:
+   - "RSR"
+   - "AHC"
+   - "RRR"
+ ingredients:
+   R: "projecte:red_matter"
+   S: "projecte:red_matter_sword"
+   A: "projecte:red_matter_axe"
+   H: "projecte:red_matter_hoe"
+   C: "projecte:red_matter_shears"
+ result:
+   projecte_id: "projecte:red_matter_katar"
+   amount: 1
+
+red_matter_morningstar:
+ enabled: true
+ type: "shapeless"
+ result:
+   projecte_id: "projecte:red_matter_morningstar"
+   amount: 1
+ ingredients:
+   - "projecte:red_matter_hammer"
+   - "projecte:red_matter_pickaxe"
+   - "projecte:red_matter_shovel"
+   - "projecte:red_matter"
+   - "projecte:red_matter"
+   - "projecte:red_matter"
+   - "projecte:red_matter"
+   - "projecte:red_matter"
+   - "projecte:red_matter"

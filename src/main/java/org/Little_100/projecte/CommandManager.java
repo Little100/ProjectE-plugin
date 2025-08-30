@@ -1,6 +1,9 @@
 package org.Little_100.projecte;
 
+import org.Little_100.projecte.Armor.GemHelmetGUI;
+import org.Little_100.projecte.Tools.Divining_Rod;
 import org.Little_100.projecte.TransmutationTable.NoEmcItemGUI;
+import org.Little_100.projecte.TransmutationTable.TransmutationGUI;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,6 +13,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -17,20 +22,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
+import org.geysermc.geyser.api.GeyserApi;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.Little_100.projecte.TransmutationTable.TransmutationGUI;
-import org.geysermc.geyser.api.GeyserApi;
-import org.Little_100.projecte.Tools.Divining_Rod;
- 
+import java.util.*;
+  
 public class CommandManager implements CommandExecutor, TabCompleter {
  
     private final ProjectE plugin;
@@ -124,8 +120,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                    return handleGui(sender, args);
                case "table":
                    return handleTableCommand(sender, args);
-                default:
-                    sendHelp(sender);
+               case "gemhelmet":
+                   return handleGemHelmet(sender);
+               case "gemboots":
+                   return handleGemBoots(sender);
+               default:
+                   sendHelp(sender);
                     return true;
             }
         }
@@ -772,11 +772,39 @@ private boolean handleRecalculate(CommandSender sender) {
         return true;
     }
 
+    private boolean handleGemHelmet(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return true;
+        }
+        Player player = (Player) sender;
+        if (plugin.getArmorManager().isGemHelmet(player.getInventory().getHelmet())) {
+            GemHelmetGUI.open(player);
+        } else {
+            player.sendMessage(languageManager.get("serverside.command.gem_helmet.not_wearing"));
+        }
+        return true;
+    }
+
+    private boolean handleGemBoots(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return true;
+        }
+        Player player = (Player) sender;
+        if (plugin.getArmorManager().isGemBoots(player.getInventory().getBoots())) {
+            player.sendMessage(languageManager.get("serverside.command.gem_boots.disabled_for_folia"));
+        } else {
+            player.sendMessage(languageManager.get("serverside.command.gem_boots.not_wearing"));
+        }
+        return true;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 1) {
-                List<String> subCommands = new ArrayList<>(Arrays.asList("recalculate", "reload", "setemc", "debug", "pay", "item", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "open", "o", "gui", "table"));
+                List<String> subCommands = new ArrayList<>(Arrays.asList("recalculate", "reload", "setemc", "debug", "pay", "item", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "open", "o", "gui", "table", "gemhelmet", "gemboots"));
                 for (String cmd : openTableCommands.keySet()) {
                     if (cmd.startsWith("projecte ")) {
                         subCommands.add(cmd.split(" ")[1]);
@@ -824,6 +852,7 @@ private boolean handleRecalculate(CommandSender sender) {
         if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
             List<String> itemIds = new ArrayList<>(plugin.getRecipeManager().getRegisteredItemIds());
             itemIds.addAll(Arrays.asList("dark_matter_helmet", "dark_matter_chestplate", "dark_matter_leggings", "dark_matter_boots", "red_matter_helmet", "red_matter_chestplate", "red_matter_leggings", "red_matter_boots"));
+            itemIds.addAll(plugin.getToolManager().getToolIds());
             return StringUtil.copyPartialMatches(args[2], itemIds, new ArrayList<>());
         }
 

@@ -1,5 +1,5 @@
 name: ProjectE
-version: '0.2.2'
+version: '1.0.0'
 main: org.Little_100.projecte.ProjectE
 api-version: '1.14'
 folia-supported: true
@@ -10,7 +10,7 @@ commands:
   projecte:
     description: "ProjectE插件主命令"
     usage: "/projecte <sub-command>"
-    aliases: [ po ]
+    aliases: [ pe ]
 permissions:
   projecte.command.setemc:
     description: "允许设置物品的EMC值"

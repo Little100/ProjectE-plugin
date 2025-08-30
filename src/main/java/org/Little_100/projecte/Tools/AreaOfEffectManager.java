@@ -76,4 +76,17 @@ public class AreaOfEffectManager {
         }
         return affectedBlocks;
     }
+
+    public static List<Block> getBlocksInLongArea(Player player, Block origin) {
+        List<Block> affectedBlocks = new ArrayList<>();
+        BlockFace facing = player.getFacing();
+
+        BlockFace forward = facing;
+        BlockFace backward = facing.getOppositeFace();
+
+        affectedBlocks.add(origin.getRelative(forward));
+        affectedBlocks.add(origin.getRelative(backward));
+
+        return affectedBlocks;
+    }
 }

@@ -3,39 +3,31 @@ package org.Little_100.projecte;
 import org.Little_100.projecte.AlchemicalBag.AlchemicalBagManager;
 import org.Little_100.projecte.Armor.ArmorListener;
 import org.Little_100.projecte.Armor.ArmorManager;
-import org.Little_100.projecte.accessories.AccessoryRecipeManager;
-import org.Little_100.projecte.devices.*;
+import org.Little_100.projecte.Armor.GemHelmetGUIListener;
 import org.Little_100.projecte.Tome.TransmutationTabletBookListener;
-import org.Little_100.projecte.util.CustomBlockArtUtil;
-import org.Little_100.projecte.Tools.DiviningRodGUI;
-import org.Little_100.projecte.Tools.Divining_Rod;
+import org.Little_100.projecte.Tools.*;
 import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
-import org.Little_100.projecte.Tools.Repair_Talisman;
-import org.Little_100.projecte.Tools.ToolListener;
-import org.Little_100.projecte.Tools.ToolChargeGUIListener;
-import org.Little_100.projecte.Tools.ToolManager;
-import org.Little_100.projecte.compatibility.GeyserAdapter;
-import org.Little_100.projecte.compatibility.SchedulerAdapter;
-import org.Little_100.projecte.compatibility.SchedulerMatcher;
-import org.Little_100.projecte.compatibility.VersionAdapter;
-import org.Little_100.projecte.compatibility.VersionMatcher;
-import org.bukkit.Bukkit;
 import org.Little_100.projecte.TransmutationTable.GUIListener;
+import org.Little_100.projecte.accessories.AccessoryRecipeManager;
+import org.Little_100.projecte.compatibility.*;
+import org.Little_100.projecte.devices.*;
+import org.Little_100.projecte.storage.DatabaseManager;
+import org.Little_100.projecte.util.CustomBlockArtUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.block.Block;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.Little_100.projecte.storage.DatabaseManager;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.lang.reflect.Field;
+
 import java.io.File;
- 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,11 +57,14 @@ public final class ProjectE extends JavaPlugin {
     private KleinStarManager kleinStarManager;
     private ToolManager toolManager;
     private ArmorManager armorManager;
+    private ArmorListener armorListener;
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
     private boolean excludePDC;
+    private boolean onlyMcItems;
     private GeyserAdapter geyserAdapter;
     private FileConfiguration devicesConfig;
+    private FileConfiguration opItemConfig;
     private FurnaceManager furnaceManager;
     private DeviceManager deviceManager;
     private CondenserManager condenserManager;
@@ -85,6 +80,17 @@ public final class ProjectE extends JavaPlugin {
         return devicesConfig;
     }
 
+    public FileConfiguration getOpItemConfig() {
+        if (opItemConfig == null) {
+            File opItemFile = new File(getDataFolder(), "op_item.yml");
+            if (!opItemFile.exists()) {
+                saveResource("op_item.yml", false);
+            }
+            opItemConfig = YamlConfiguration.loadConfiguration(opItemFile);
+        }
+        return opItemConfig;
+    }
+ 
      @Override
      public void onEnable() {
          instance = this;
@@ -94,6 +100,7 @@ public final class ProjectE extends JavaPlugin {
          
         // 加载配置
         loadConfigOptions();
+        getOpItemConfig();
  
          // 初始化语言管理器
          languageManager = new LanguageManager(this);
@@ -202,23 +209,26 @@ public final class ProjectE extends JavaPlugin {
  
        // 初始化物质盔甲
        armorManager = new ArmorManager(this);
- 
-        // 初始化配方管理器
-        recipeManager = new RecipeManager(this);
- 
-         // 初始化熔炉管理器
+
+       // 初始化炼金袋管理器
+       if (getConfig().getBoolean("AlchemicalBag.enabled", true)) {
+           alchemicalBagManager = new AlchemicalBagManager(this);
+           alchemicalBagManager.register();
+           getLogger().info("Alchemical Bag feature is enabled.");
+       } else {
+           getLogger().info("Alchemical Bag feature is disabled in the config.");
+       }
+
+        // 初始化熔炉管理器
          furnaceManager = new FurnaceManager(this);
- 
+
          // 初始化设备管理器
          deviceManager = new DeviceManager(this);
          deviceManager.registerDevices();
- 
-        // 在所有物品管理器都初始化之后再注册配方
-        recipeManager.registerAllRecipes();
- 
+
          // 初始化能量凝聚器管理器
          condenserManager = new CondenserManager(this);
- 
+
         // 注册事件监听器
         getServer().getPluginManager().registerEvents(new ToolListener(this), this);
 
@@ -242,7 +252,6 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.ToolAbilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new CovalenceDustListener(this), this);
-        // AlchemicalBagManager's listeners are now registered within its own register() method
         Bukkit.getPluginManager().registerEvents(new CovalenceDustCraftListener(), this);
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.DiviningRodListener(this), this);
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.Tools.KleinStar.KleinStarListener(this), this);
@@ -250,7 +259,9 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CraftingListener(this), this);
         Bukkit.getPluginManager().registerEvents(new TransmutationTabletBookListener(), this);
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.accessories.AccessoryListener(), this);
-        Bukkit.getPluginManager().registerEvents(new ArmorListener(this), this);
+        armorListener = new ArmorListener(this);
+        Bukkit.getPluginManager().registerEvents(armorListener, this);
+        Bukkit.getPluginManager().registerEvents(new GemHelmetGUIListener(this), this);
  
         getServer().getPluginManager().registerEvents(new FurnaceListener(this, furnaceManager), this);
         getServer().getPluginManager().registerEvents(new CondenserListener(this), this);
@@ -267,16 +278,10 @@ public final class ProjectE extends JavaPlugin {
 
         registerCustomCommands(commandManager);
 
-        // The setblock logic is now inside CommandManager
- 
-        // 初始化炼金袋管理器
-        if (getConfig().getBoolean("AlchemicalBag.enabled", true)) {
-            alchemicalBagManager = new AlchemicalBagManager(this);
-            alchemicalBagManager.register();
-            getLogger().info("Alchemical Bag feature is enabled.");
-        } else {
-            getLogger().info("Alchemical Bag feature is disabled in the config.");
-        }
+
+        // 在所有物品管理器都初始化之后再注册配方
+       recipeManager = new RecipeManager(this);
+        recipeManager.registerAllRecipes();
 
         // 初始化资源包管理器
         resourcePackManager = new ResourcePackManager(this);
@@ -546,12 +551,20 @@ public final class ProjectE extends JavaPlugin {
         return armorManager;
     }
 
+    public ArmorListener getArmorListener() {
+        return armorListener;
+    }
+
     public boolean isPdcExcluded() {
         return excludePDC;
     }
 
     public BlockDataManager getBlockDataManager() {
         return blockDataManager;
+    }
+
+    public boolean isOnlyMcItems() {
+        return onlyMcItems;
     }
  
     public FurnaceManager getFurnaceManager() {
@@ -567,7 +580,8 @@ public final class ProjectE extends JavaPlugin {
     }
 
      private void loadConfigOptions() {
-        excludePDC = getConfig().getBoolean("Exclude_PDC", true);
+        excludePDC = getConfig().getBoolean("TransmutationTable.EMC.Exclude_PDC.enabled", true);
+        onlyMcItems = getConfig().getBoolean("TransmutationTable.EMC.Exclude_PDC.only_mc_items", true);
     }
  
     private void startContinuousParticleTask() {
@@ -610,6 +624,7 @@ public final class ProjectE extends JavaPlugin {
         }
 
         switch (key) {
+            case "philosopher_stone": return getPhilosopherStone();
             // Fuels
             case "alchemical_coal": return fuelManager.getAlchemicalCoal();
             case "mobius_fuel": return fuelManager.getMobiusFuel();
@@ -654,8 +669,10 @@ public final class ProjectE extends JavaPlugin {
            case "red_matter_sword": return toolManager.getRedMatterSword();
            case "red_matter_shears": return toolManager.getRedMatterShears();
            case "red_matter_hammer": return toolManager.getRedMatterHammer();
-
-            // Dark Matter Armor
+           case "red_matter_katar": return toolManager.getRedMatterKatar();
+           case "red_matter_morningstar": return toolManager.getRedMatterMorningstar();
+ 
+             // Dark Matter Armor
             case "dark_matter_helmet": return armorManager.getDarkMatterHelmet();
             case "dark_matter_chestplate": return armorManager.getDarkMatterChestplate();
             case "dark_matter_leggings": return armorManager.getDarkMatterLeggings();
@@ -666,6 +683,12 @@ public final class ProjectE extends JavaPlugin {
             case "red_matter_chestplate": return armorManager.getRedMatterChestplate();
             case "red_matter_leggings": return armorManager.getRedMatterLeggings();
             case "red_matter_boots": return armorManager.getRedMatterBoots();
+
+            // Gem Armor
+            case "gem_helmet": return armorManager.getGemHelmet();
+            case "gem_chestplate": return armorManager.getGemChestplate();
+            case "gem_leggings": return armorManager.getGemLeggings();
+            case "gem_boots": return armorManager.getGemBoots();
  
             // Klein Stars (Corrected Keys)
             case "klein_star_ein": return kleinStarManager.getKleinStar(1);
@@ -687,7 +710,9 @@ public final class ProjectE extends JavaPlugin {
             case "alchemical_chest": return deviceManager.getAlchemicalChestItem();
             case "energy_condenser": return deviceManager.getEnergyCondenserItem();
             case "energy_condenser_mk2": return deviceManager.getEnergyCondenserMK2Item();
- 
+            case "transmutation_table": return getPhilosopherStone();
+            case "alchemical_bag": return AlchemicalBagManager.getAlchemicalBag();
+
              default:
                  // 尝试将剩余的键解析为原生Minecraft材料
                  Material material = versionAdapter.getMaterial(key.toUpperCase());
@@ -751,7 +776,5 @@ public final class ProjectE extends JavaPlugin {
     }
 
     private void setKleinStarEmcValues() {
-        // This method is now obsolete and replaced by loadCustomEmcValues()
-        // It is kept to prevent compilation errors from old calls.
     }
 }
