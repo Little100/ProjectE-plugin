@@ -4,7 +4,7 @@ language:
   # set the first language as the main language
   - "zh_cn"
 
-debug: true # 是否开启调试模式? true/false
+debug: false # 是否开启调试模式? true/false
 # enable debug mode? true/false
 
 Advancement_Datapack: true # 是否开启进度数据包? true/false

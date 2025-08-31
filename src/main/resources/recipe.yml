@@ -68,7 +68,7 @@ recipes:
     ingredients:
       O: "OBSIDIAN"
       S: "STONE"
-      P: "projecte:philosopher_stone"
+      P: "POPPED_CHORUS_FRUIT"
     result:
       material: "PETRIFIED_OAK_SLAB"
       display_name: "item.transmutation_table.name"
@@ -83,7 +83,7 @@ recipes:
     ingredients:
       O: "OBSIDIAN"
       S: "STONE"
-      P: "projecte:philosopher_stone"
+      P: "PETRIFIED_OAK_SLAB"
     result:
       material: "ENCHANTED_BOOK"
       custom_model_data: 1
@@ -666,3 +666,69 @@ recipes:
       T: "projecte:dark_matter_boots"
     result:
       projecte_id: "red_matter_boots"
+
+  alchemical_coal:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "COAL"
+      - "COAL"
+      - "COAL"
+      - "COAL"
+      - "POPPED_CHORUS_FRUIT"
+    result:
+      projecte_id: "alchemical_coal"
+
+  mobius_fuel:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:alchemical_coal"
+      - "projecte:alchemical_coal"
+      - "projecte:alchemical_coal"
+      - "projecte:alchemical_coal"
+      - "POPPED_CHORUS_FRUIT"
+    result:
+      projecte_id: "mobius_fuel"
+
+  aeternalis_fuel:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:mobius_fuel"
+      - "projecte:mobius_fuel"
+      - "projecte:mobius_fuel"
+      - "projecte:mobius_fuel"
+      - "POPPED_CHORUS_FRUIT"
+    result:
+      projecte_id: "aeternalis_fuel"
+
+  aeternalis_to_mobius:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:aeternalis_fuel"
+      - "POPPED_CHORUS_FRUIT"
+    result:
+      projecte_id: "mobius_fuel"
+      amount: 4
+
+  mobius_to_alchemical:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:mobius_fuel"
+      - "POPPED_CHORUS_FRUIT"
+    result:
+      projecte_id: "alchemical_coal"
+      amount: 4
+
+  alchemical_to_coal:
+    enabled: true
+    type: "shapeless"
+    ingredients:
+      - "projecte:alchemical_coal"
+      - "POPPED_CHORUS_FRUIT"
+    result:
+      material: "COAL"
+      amount: 4

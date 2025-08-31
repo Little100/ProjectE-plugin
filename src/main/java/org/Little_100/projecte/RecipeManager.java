@@ -37,6 +37,7 @@ public class RecipeManager {
         registerDowngradeRecipes();
         registerOreTransmutationRecipes();
         loadDeviceRecipes();
+        registerSpecialFuelRecipes();
     }
 
     private void loadDeviceRecipes() {
@@ -294,6 +295,91 @@ public class RecipeManager {
     }
 
     private void registerSpecialFuelRecipes() {
+        FuelManager fuelManager = plugin.getFuelManager();
+        ItemStack philosopherStone = plugin.getPhilosopherStone();
+
+        // 检查recipe.yml中的配方是否已经注册成功
+        boolean alchemicalCoalExists = recipeKeys.containsKey("alchemical_coal");
+        boolean mobiusFuelExists = recipeKeys.containsKey("mobius_fuel");
+        boolean aeternalisFuelExists = recipeKeys.containsKey("aeternalis_fuel");
+        boolean aeternalisToMobiusExists = recipeKeys.containsKey("aeternalis_to_mobius");
+        boolean mobiusToAlchemicalExists = recipeKeys.containsKey("mobius_to_alchemical");
+        boolean alchemicalToCoalExists = recipeKeys.containsKey("alchemical_to_coal");
+
+        // 只有在recipe.yml中对应的配方未成功注册时才使用硬编码的方式注册
+        if (!alchemicalCoalExists) {
+            registerFuelUpgradeRecipe("code_alchemical_coal", new ItemStack(Material.COAL, 4), fuelManager.getAlchemicalCoal(), philosopherStone);
+            plugin.getLogger().info("Registered alchemical coal recipe from code");
+        }
+        
+        if (!mobiusFuelExists) {
+            registerFuelUpgradeRecipe("code_mobius_fuel", fuelManager.getAlchemicalCoal(), 4, fuelManager.getMobiusFuel(), 1, philosopherStone);
+            plugin.getLogger().info("Registered mobius fuel recipe from code");
+        }
+        
+        if (!aeternalisFuelExists) {
+            registerFuelUpgradeRecipe("code_aeternalis_fuel", fuelManager.getMobiusFuel(), 4, fuelManager.getAeternalisFuel(), 1, philosopherStone);
+            plugin.getLogger().info("Registered aeternalis fuel recipe from code");
+        }
+
+        if (!aeternalisToMobiusExists) {
+            registerFuelDowngradeRecipe("code_aeternalis_to_mobius", fuelManager.getAeternalisFuel(), fuelManager.getMobiusFuel(), 4, philosopherStone);
+            plugin.getLogger().info("Registered aeternalis to mobius recipe from code");
+        }
+        
+        if (!mobiusToAlchemicalExists) {
+            registerFuelDowngradeRecipe("code_mobius_to_alchemical", fuelManager.getMobiusFuel(), fuelManager.getAlchemicalCoal(), 4, philosopherStone);
+            plugin.getLogger().info("Registered mobius to alchemical recipe from code");
+        }
+        
+        if (!alchemicalToCoalExists) {
+            registerFuelDowngradeRecipe("code_alchemical_to_coal", fuelManager.getAlchemicalCoal(), new ItemStack(Material.COAL, 4), philosopherStone);
+            plugin.getLogger().info("Registered alchemical to coal recipe from code");
+        }
+    }
+
+    private void registerFuelUpgradeRecipe(String id, ItemStack input, int inputAmount, ItemStack output, int outputAmount, ItemStack catalyst) {
+        NamespacedKey key = new NamespacedKey(plugin, "upgrade_" + id);
+        ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output.getType(), outputAmount));
+        ItemMeta meta = output.getItemMeta();
+        if (meta != null) {
+            recipe.getResult().setItemMeta(meta);
+        }
+        recipe.addIngredient(new RecipeChoice.ExactChoice(input));
+        recipe.addIngredient(new RecipeChoice.ExactChoice(catalyst));
+        Bukkit.addRecipe(recipe);
+        recipeKeys.put("upgrade_" + id, key);
+    }
+
+    private void registerFuelUpgradeRecipe(String id, ItemStack input, ItemStack output, ItemStack catalyst) {
+        NamespacedKey key = new NamespacedKey(plugin, "upgrade_" + id);
+        ShapelessRecipe recipe = new ShapelessRecipe(key, output);
+        recipe.addIngredient(new RecipeChoice.ExactChoice(input));
+        recipe.addIngredient(new RecipeChoice.ExactChoice(catalyst));
+        Bukkit.addRecipe(recipe);
+        recipeKeys.put("upgrade_" + id, key);
+    }
+
+    private void registerFuelDowngradeRecipe(String id, ItemStack input, ItemStack output, int outputAmount, ItemStack catalyst) {
+        NamespacedKey key = new NamespacedKey(plugin, "downgrade_" + id);
+        ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output.getType(), outputAmount));
+        ItemMeta meta = output.getItemMeta();
+        if (meta != null) {
+            recipe.getResult().setItemMeta(meta);
+        }
+        recipe.addIngredient(new RecipeChoice.ExactChoice(input));
+        recipe.addIngredient(new RecipeChoice.ExactChoice(catalyst));
+        Bukkit.addRecipe(recipe);
+        recipeKeys.put("downgrade_" + id, key);
+    }
+
+    private void registerFuelDowngradeRecipe(String id, ItemStack input, ItemStack output, ItemStack catalyst) {
+        NamespacedKey key = new NamespacedKey(plugin, "downgrade_" + id);
+        ShapelessRecipe recipe = new ShapelessRecipe(key, output);
+        recipe.addIngredient(new RecipeChoice.ExactChoice(input));
+        recipe.addIngredient(new RecipeChoice.ExactChoice(catalyst));
+        Bukkit.addRecipe(recipe);
+        recipeKeys.put("downgrade_" + id, key);
     }
 
     private ItemStack createResultStack(ConfigurationSection config) {
@@ -306,22 +392,41 @@ public class RecipeManager {
                 projecteId = projecteId.substring(9);
             }
             ItemStack item = null;
+            
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[Debug] Creating result with projecte_id: " + projecteId);
+            }
+            
+            item = plugin.getItemStackFromKey(projecteId);
+            if (item != null && plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[Debug] Found item from getItemStackFromKey: " + projecteId);
+            }
 
             if (plugin.getToolManager().isTool(projecteId)) {
                 item = plugin.getToolManager().getTool(projecteId);
             } else if (plugin.getArmorManager().isArmor(projecteId)) {
                 item = plugin.getArmorManager().getArmor(projecteId);
             } else {
-                switch (projecteId) {
-                    case "low_covalence_dust":
-                        item = plugin.getCovalenceDust().getLowCovalenceDust();
-                        break;
-                    case "medium_covalence_dust":
-                        item = plugin.getCovalenceDust().getMediumCovalenceDust();
-                        break;
-                    case "high_covalence_dust":
-                        item = plugin.getCovalenceDust().getHighCovalenceDust();
-                        break;
+                if (item == null) {
+                    switch (projecteId) {
+                        case "alchemical_coal":
+                            item = plugin.getFuelManager().getAlchemicalCoal();
+                            break;
+                        case "mobius_fuel":
+                            item = plugin.getFuelManager().getMobiusFuel();
+                            break;
+                        case "aeternalis_fuel":
+                            item = plugin.getFuelManager().getAeternalisFuel();
+                            break;
+                        case "low_covalence_dust":
+                            item = plugin.getCovalenceDust().getLowCovalenceDust();
+                            break;
+                        case "medium_covalence_dust":
+                            item = plugin.getCovalenceDust().getMediumCovalenceDust();
+                            break;
+                        case "high_covalence_dust":
+                            item = plugin.getCovalenceDust().getHighCovalenceDust();
+                            break;
                     case "low_divining_rod":
                         item = plugin.getDiviningRod().getLowDiviningRod();
                         break;
@@ -395,7 +500,6 @@ public class RecipeManager {
                         item = org.Little_100.projecte.accessories.MindStone.createMindStone();
                         break;
                     default:
-                        // This case should ideally not be hit if all items are handled
                         break;
                 }
             }
@@ -410,9 +514,17 @@ public class RecipeManager {
                         plugin.getEmcManager().setEmcValue(item, emc);
                     }
                 }
+                if (plugin.getConfig().getBoolean("debug")) {
+                    plugin.getLogger().info("[Debug] Successfully created item for projecte_id: " + projecteId);
+                }
                 return item;
+            } else {
+                if (plugin.getConfig().getBoolean("debug")) {
+                    plugin.getLogger().warning("[Debug] Failed to create item for projecte_id: " + projecteId);
+                }
             }
-        } else {
+        }
+    } else {
             String materialName = config.getString("material");
             Material material = plugin.getVersionAdapter().getMaterial(materialName);
             if (material == null) {
