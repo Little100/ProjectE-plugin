@@ -306,7 +306,7 @@ public class RecipeManager {
         boolean mobiusToAlchemicalExists = recipeKeys.containsKey("mobius_to_alchemical");
         boolean alchemicalToCoalExists = recipeKeys.containsKey("alchemical_to_coal");
 
-        // 只有在recipe.yml中对应的配方未成功注册时才使用硬编码的方式注册
+        // 只有在recipe.yml中对应的配方未成功注册时才使用代码注册
         if (!alchemicalCoalExists) {
             registerFuelUpgradeRecipe("code_alchemical_coal", new ItemStack(Material.COAL, 4), fuelManager.getAlchemicalCoal(), philosopherStone);
             plugin.getLogger().info("Registered alchemical coal recipe from code");
@@ -402,107 +402,6 @@ public class RecipeManager {
                 plugin.getLogger().info("[Debug] Found item from getItemStackFromKey: " + projecteId);
             }
 
-            if (plugin.getToolManager().isTool(projecteId)) {
-                item = plugin.getToolManager().getTool(projecteId);
-            } else if (plugin.getArmorManager().isArmor(projecteId)) {
-                item = plugin.getArmorManager().getArmor(projecteId);
-            } else {
-                if (item == null) {
-                    switch (projecteId) {
-                        case "alchemical_coal":
-                            item = plugin.getFuelManager().getAlchemicalCoal();
-                            break;
-                        case "mobius_fuel":
-                            item = plugin.getFuelManager().getMobiusFuel();
-                            break;
-                        case "aeternalis_fuel":
-                            item = plugin.getFuelManager().getAeternalisFuel();
-                            break;
-                        case "low_covalence_dust":
-                            item = plugin.getCovalenceDust().getLowCovalenceDust();
-                            break;
-                        case "medium_covalence_dust":
-                            item = plugin.getCovalenceDust().getMediumCovalenceDust();
-                            break;
-                        case "high_covalence_dust":
-                            item = plugin.getCovalenceDust().getHighCovalenceDust();
-                            break;
-                    case "low_divining_rod":
-                        item = plugin.getDiviningRod().getLowDiviningRod();
-                        break;
-                    case "medium_divining_rod":
-                        item = plugin.getDiviningRod().getMediumDiviningRod();
-                        break;
-                    case "high_divining_rod":
-                        item = plugin.getDiviningRod().getHighDiviningRod();
-                        break;
-                    case "repair_talisman":
-                        item = plugin.getRepairTalisman().getRepairTalisman();
-                        break;
-                    case "dark_matter":
-                        item = plugin.getFuelManager().getDarkMatter();
-                        break;
-                    case "red_matter":
-                        item = plugin.getFuelManager().getRedMatter();
-                        break;
-                    case "dark_matter_furnace":
-                        item = plugin.getDeviceManager().getDarkMatterFurnaceItem();
-                        break;
-                    case "red_matter_furnace":
-                        item = plugin.getDeviceManager().getRedMatterFurnaceItem();
-                        break;
-                    case "alchemical_chest":
-                        item = plugin.getDeviceManager().getAlchemicalChestItem();
-                        break;
-                    case "energy_condenser":
-                        item = plugin.getDeviceManager().getEnergyCondenserItem();
-                        break;
-                    case "energy_condenser_mk2":
-                        item = plugin.getDeviceManager().getEnergyCondenserMK2Item();
-                        break;
-                    case "dark_matter_block":
-                        item = plugin.getFuelManager().getDarkMatterBlock();
-                        break;
-                    case "red_matter_block":
-                        item = plugin.getFuelManager().getRedMatterBlock();
-                        break;
-                    case "klein_star_ein":
-                        item = plugin.getKleinStarManager().getKleinStar(1);
-                        break;
-                    case "klein_star_zwei":
-                        item = plugin.getKleinStarManager().getKleinStar(2);
-                        break;
-                    case "klein_star_drei":
-                        item = plugin.getKleinStarManager().getKleinStar(3);
-                        break;
-                    case "klein_star_vier":
-                        item = plugin.getKleinStarManager().getKleinStar(4);
-                        break;
-                    case "klein_star_sphere":
-                        item = plugin.getKleinStarManager().getKleinStar(5);
-                        break;
-                    case "klein_star_omega":
-                        item = plugin.getKleinStarManager().getKleinStar(6);
-                        break;
-                    case "transmutation_tablet_book":
-                        item = TransmutationTabletBook.createTransmutationTabletBook();
-                        break;
-                    case "body_stone":
-                        item = org.Little_100.projecte.accessories.BodyStone.createBodyStone();
-                        break;
-                    case "soul_stone":
-                        item = org.Little_100.projecte.accessories.SoulStone.createSoulStone();
-                        break;
-                    case "life_stone":
-                        item = org.Little_100.projecte.accessories.LifeStone.createLifeStone();
-                        break;
-                    case "mind_stone":
-                        item = org.Little_100.projecte.accessories.MindStone.createMindStone();
-                        break;
-                    default:
-                        break;
-                }
-            }
 
             if (item != null) {
                 item.setAmount(config.getInt("amount", 1));
@@ -523,8 +422,7 @@ public class RecipeManager {
                     plugin.getLogger().warning("[Debug] Failed to create item for projecte_id: " + projecteId);
                 }
             }
-        }
-    } else {
+        } else {
             String materialName = config.getString("material");
             Material material = plugin.getVersionAdapter().getMaterial(materialName);
             if (material == null) {

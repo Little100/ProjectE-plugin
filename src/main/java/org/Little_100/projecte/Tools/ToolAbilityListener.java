@@ -129,17 +129,21 @@ public class ToolAbilityListener implements Listener {
         org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
         int currentMode = container.getOrDefault(new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"), org.bukkit.persistence.PersistentDataType.INTEGER, 0);
 
+        // 检查配置是否允许全部模式伤害
+        boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
+        
         double damage = 1000.0;
-        int range = 10; // 20x20 area
+        int range = 10; // 20x20
 
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), range, range, range);
 
         List<LivingEntity> targets = nearbyEntities.stream()
             .filter(e -> e instanceof LivingEntity && !e.equals(player) && !(e instanceof org.bukkit.entity.ArmorStand))
             .filter(e -> {
-                if (currentMode == 1) { // Hostile-only mode
+                // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
+                if (!attackAllModeEnabled || currentMode == 1) {
                     return e instanceof Monster;
-                } else { // All mobs mode
+                } else { // 全部模式且配置允许
                     return true;
                 }
             })
@@ -248,12 +252,13 @@ public class ToolAbilityListener implements Listener {
             Material type = clickedBlock.getType();
             if (Tag.LEAVES.isTagged(type) || Tag.LOGS.isTagged(type)) {
                 handleKatarChop(player, katar, clickedBlock);
+                event.setCancelled(true);
                 return;
             }
-            
-            Material blockType = clickedBlock.getType();
-            if (blockType == Material.DIRT || blockType == Material.GRASS_BLOCK || blockType == Material.DIRT_PATH) {
+
+            if (type == Material.DIRT || type == Material.GRASS_BLOCK || type == Material.DIRT_PATH) {
                 handleKatarTill(player, katar, clickedBlock);
+                event.setCancelled(true);
             }
         }
     }
@@ -353,7 +358,12 @@ public class ToolAbilityListener implements Listener {
         org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
         int currentMode = container.getOrDefault(new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"), org.bukkit.persistence.PersistentDataType.INTEGER, 0);
 
-        if (currentMode == 1) {
+        // 检查配置是否允许全部模式伤害
+        boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
+        
+        // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
+        if (!attackAllModeEnabled || currentMode == 1) {
+            // 如果不是怪物，取消伤害
             if (!(event.getEntity() instanceof Monster)) {
                 event.setCancelled(true);
             }

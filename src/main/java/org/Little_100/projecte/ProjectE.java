@@ -333,18 +333,14 @@ public final class ProjectE extends JavaPlugin {
     }
 
     public ItemStack getPhilosopherStone() {
-        return philosopherStone.clone();
+        return new ItemStack(Material.POPPED_CHORUS_FRUIT);
     }
 
     public boolean isPhilosopherStone(ItemStack item) {
         if (item == null) {
             return false;
         }
-        Material stoneMaterial = versionAdapter.getMaterial("POPPED_CHORUS_FRUIT");
-        if (stoneMaterial == null) { // 与旧版本兼容
-            stoneMaterial = Material.NETHER_STAR;
-        }
-        return item.getType() == stoneMaterial;
+        return item.getType() == Material.POPPED_CHORUS_FRUIT;
     }
 
     public NamespacedKey getPhilosopherStoneKey() {
@@ -352,21 +348,7 @@ public final class ProjectE extends JavaPlugin {
     }
 
     private void createPhilosopherStone() {
-        Material stoneMaterial = versionAdapter.getMaterial("POPPED_CHORUS_FRUIT");
-        if (stoneMaterial == null) { // 与旧版本兼容
-            stoneMaterial = Material.NETHER_STAR;
-        }
-        philosopherStone = new ItemStack(stoneMaterial, 1);
-        ItemMeta meta = philosopherStone.getItemMeta();
-        meta.setDisplayName(ChatColor.GOLD + "Philosopher's Stone");
-        meta.setLore(Arrays.asList(
-                ChatColor.GRAY + "A powerful alchemical tool",
-                ChatColor.YELLOW + "Can transmute minerals",
-                ChatColor.YELLOW + "Sneak + Right-click to open workbench"));
-        meta.setUnbreakable(true);
-        philosopherStoneKey = new NamespacedKey(this, "philosopher_stone");
-        philosopherStone.setItemMeta(meta);
-        philosopherStone.setAmount(1); // 确保堆叠大小为1
+        philosopherStone = new ItemStack(Material.POPPED_CHORUS_FRUIT);
     }
 
     private void removeVanillaRecipe() {
@@ -712,6 +694,7 @@ public final class ProjectE extends JavaPlugin {
             case "energy_condenser_mk2": return deviceManager.getEnergyCondenserMK2Item();
             case "transmutation_table": return getPhilosopherStone();
             case "alchemical_bag": return AlchemicalBagManager.getAlchemicalBag();
+            case "transmutation_tablet_book": return org.Little_100.projecte.Tome.TransmutationTabletBook.createTransmutationTabletBook();
 
              default:
                  // 尝试将剩余的键解析为原生Minecraft材料

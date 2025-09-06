@@ -36,6 +36,8 @@ Tools:
   # enable red matter tools crafting? true/false
   area_of_effect_mining_enabled: true # 启用范围效果挖掘? true/false
   # enable area of effect mining? true/false
+  katar_attack_all_mode_enabled: true # 是否启用拳剑的"攻击所有"模式? true/false
+  # enable Red Matter Katar's "Attack All" mode? true/false
 
 TransmutationTable:
   enabled: true # 允许使用转换桌? true/false

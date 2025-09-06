@@ -31,12 +31,6 @@ recipes:
       D: "DIAMOND"
     result:
       material: "POPPED_CHORUS_FRUIT"
-      display_name: "item.philosopher_stone.name"
-      lore:
-        - "item.philosopher_stone.lore1"
-        - "item.philosopher_stone.lore2"
-        - "item.philosopher_stone.lore3"
-      unbreakable: true
 
   philosopher_stone_alt:
     enabled: true
@@ -51,42 +45,35 @@ recipes:
       D: "DIAMOND"
     result:
       material: "POPPED_CHORUS_FRUIT"
-      display_name: "item.philosopher_stone.name"
-      lore:
-        - "item.philosopher_stone.lore1"
-        - "item.philosopher_stone.lore2"
-        - "item.philosopher_stone.lore3"
-      unbreakable: true
 
   transmutation_table:
     enabled: true
     type: "shaped"
     shape:
-      - "OSO"
-      - "SPS"
-      - "OSO"
+      - "SDS"
+      - "DPD"
+      - "SDS"
     ingredients:
-      O: "OBSIDIAN"
       S: "STONE"
+      D: "projecte:dark_matter_block"
       P: "POPPED_CHORUS_FRUIT"
     result:
       material: "PETRIFIED_OAK_SLAB"
       display_name: "item.transmutation_table.name"
 
   transmutation_table_alt:
-    enabled: true
+    enabled: false
     type: "shaped"
     shape:
-      - "SOS"
-      - "OPO"
-      - "SOS"
+      - "SDS"
+      - "DPD"
+      - "SDS"
     ingredients:
-      O: "OBSIDIAN"
       S: "STONE"
-      P: "PETRIFIED_OAK_SLAB"
+      D: "projecte:dark_matter_block"
+      P: "POPPED_CHORUS_FRUIT"
     result:
-      material: "ENCHANTED_BOOK"
-      custom_model_data: 1
+      material: "PETRIFIED_OAK_SLAB"
       display_name: "item.transmutation_table.name"
 
   alchemical_bag:
@@ -378,9 +365,12 @@ recipes:
     ingredients:
       D: "projecte:dark_matter_block"
       S: "STONE"
-      P: "projecte:transmutation_table"
+      P: "PETRIFIED_OAK_SLAB" # 使用石化橡木台阶作为中心材料
     result:
+      material: "ENCHANTED_BOOK"
+      custom_model_data: 1
       projecte_id: "transmutation_tablet_book"
+      display_name: "item.transmutation_tablet_book.name"
 
   # Dark Matter Tools
   dark_matter_pickaxe:
@@ -732,3 +722,4 @@ recipes:
     result:
       material: "COAL"
       amount: 4
+      # 不使用projecte_id是因为普通煤炭是原版物品

@@ -163,7 +163,7 @@ public class ToolManager {
         } else if (isRedMatterKatar(item)) {
             Integer mode = container.get(new NamespacedKey(plugin, "projecte_katar_mode"), PersistentDataType.INTEGER);
             if (mode != null) {
-                String modeKey = (mode == 0) ? "clientside.red_matter_katar.mode_hostile" : "clientside.red_matter_katar.mode_all";
+                String modeKey = (mode == 0) ? "clientside.red_matter_katar.mode_all" : "clientside.red_matter_katar.mode_hostile";
                 newLore.add(plugin.getLanguageManager().get("clientside.red_matter_katar.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
             }
         } else if (isRedMatterMorningstar(item)) {
