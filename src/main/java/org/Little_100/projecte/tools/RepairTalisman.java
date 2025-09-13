@@ -1,5 +1,6 @@
 package org.Little_100.projecte.tools;
 
+import java.util.List;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -7,8 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.List;
 
 public class RepairTalisman {
     private final ProjectE plugin;
@@ -24,7 +23,8 @@ public class RepairTalisman {
     private void createRepairTalisman() {
         repairTalisman = new ItemStack(Material.PAPER);
         // 使用setCustomModelDataBoth方法同时设置字符串和整数值
-        repairTalisman = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(repairTalisman, "repair_talisman", 1);
+        repairTalisman = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(
+                repairTalisman, "repair_talisman", 1);
 
         ItemMeta meta = repairTalisman.getItemMeta();
         if (meta != null) {
@@ -59,7 +59,8 @@ public class RepairTalisman {
             plugin.getLogger().warning("custommoditememc.yml not found, repair talisman EMC value will not be loaded.");
             return;
         }
-        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+        org.bukkit.configuration.file.YamlConfiguration config =
+                org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
 
         String itemKey = emcManager.getItemKey(getRepairTalisman());
         long emc = config.getLong("repair_talisman", 490);

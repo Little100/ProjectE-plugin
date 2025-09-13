@@ -1,5 +1,8 @@
 package org.Little_100.projecte.alchemicalbag;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,10 +14,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class InventoryManager implements Listener {
 
@@ -45,11 +44,13 @@ public class InventoryManager implements Listener {
 
             if (closedBagColor != null) {
                 plugin.getDatabaseManager().saveBagInventory(playerUUID, closedBagColor, closedInventory.getContents());
-                plugin.getLogger().info("Player " + player.getName() + " closed Alchemical Bag with color "
-                        + closedBagColor + ", contents saved.");
+                plugin.getLogger()
+                        .info("Player " + player.getName() + " closed Alchemical Bag with color " + closedBagColor
+                                + ", contents saved.");
             } else {
-                plugin.getLogger().warning(
-                        "Player " + player.getName() + " closed an Alchemical Bag, but its color could not be found!");
+                plugin.getLogger()
+                        .warning("Player " + player.getName()
+                                + " closed an Alchemical Bag, but its color could not be found!");
             }
         }
     }
@@ -64,8 +65,9 @@ public class InventoryManager implements Listener {
             String currentBagColor = openBagColors.get(playerUUID);
             if (currentBagColor == null) {
                 event.setCancelled(true);
-                plugin.getLogger().warning("Player " + player.getName()
-                        + " clicked in an Alchemical Bag, but its color could not be found!");
+                plugin.getLogger()
+                        .warning("Player " + player.getName()
+                                + " clicked in an Alchemical Bag, but its color could not be found!");
                 return;
             }
 
@@ -85,8 +87,7 @@ public class InventoryManager implements Listener {
             return false;
         }
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         return true;
     }
 }

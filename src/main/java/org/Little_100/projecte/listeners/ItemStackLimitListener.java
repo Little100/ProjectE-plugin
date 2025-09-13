@@ -48,8 +48,8 @@ public class ItemStackLimitListener implements Listener {
         }
 
         // 防止POPPED_CHORUS_FRUIT物品堆叠数量超过1
-        if ((isCursorChorusFruit && cursorItem.getAmount() > 1) ||
-                (isCurrentChorusFruit && currentItem.getAmount() > 1)) {
+        if ((isCursorChorusFruit && cursorItem.getAmount() > 1)
+                || (isCurrentChorusFruit && currentItem.getAmount() > 1)) {
             event.setCancelled(true);
         }
     }

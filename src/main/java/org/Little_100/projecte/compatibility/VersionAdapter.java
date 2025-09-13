@@ -1,12 +1,13 @@
 package org.Little_100.projecte.compatibility;
 
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-
 import java.util.List;
 import java.util.Map;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 
 public interface VersionAdapter {
     Material getMaterial(String name);
@@ -19,7 +20,7 @@ public interface VersionAdapter {
 
     List<String> getRecipeDebugInfo(Recipe recipe, String divisionStrategy);
 
-    Map<String, org.bukkit.NamespacedKey> registerTransmutationTableRecipes();
+    Map<String, NamespacedKey> registerTransmutationTableRecipes();
 
-    void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign);
+    void openSign(Player player, Sign sign);
 }

@@ -1,5 +1,6 @@
 package org.Little_100.projecte.listeners;
 
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.armor.ArmorManager;
 import org.Little_100.projecte.armor.GemHelmet;
@@ -22,10 +23,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-
 public class ArmorListener implements Listener {
- 
+
     private final Map<Location, Material> temporaryBlocks = new HashMap<>();
     private final Map<UUID, Boolean> autoStepEnabled = new HashMap<>();
     private final NamespacedKey gravitySlamKey;
@@ -43,8 +42,7 @@ public class ArmorListener implements Listener {
             EntityDamageEvent.DamageCause.SUFFOCATION,
             EntityDamageEvent.DamageCause.DROWNING,
             EntityDamageEvent.DamageCause.VOID,
-            EntityDamageEvent.DamageCause.FREEZE
-    );
+            EntityDamageEvent.DamageCause.FREEZE);
 
     public ArmorListener(ProjectE plugin) {
         this.plugin = plugin;
@@ -55,16 +53,20 @@ public class ArmorListener implements Listener {
     }
 
     private void startArmorEffectTask() {
-        plugin.getSchedulerAdapter().runTimer(() -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                plugin.getSchedulerAdapter().runTaskOnEntity(player, () -> {
-                    checkGemHelmetEffects(player);
-                    checkGemChestplateEffects(player);
-                    checkGemLeggingsEffects(player);
-                    checkGemBootsEffects(player);
-                });
-            }
-        }, 0L, 1L);
+        plugin.getSchedulerAdapter()
+                .runTimer(
+                        () -> {
+                            for (Player player : Bukkit.getOnlinePlayers()) {
+                                plugin.getSchedulerAdapter().runTaskOnEntity(player, () -> {
+                                    checkGemHelmetEffects(player);
+                                    checkGemChestplateEffects(player);
+                                    checkGemLeggingsEffects(player);
+                                    checkGemBootsEffects(player);
+                                });
+                            }
+                        },
+                        0L,
+                        1L);
     }
 
     private void checkGemChestplateEffects(Player player) {
@@ -102,7 +104,9 @@ public class ArmorListener implements Listener {
         if (player.isSneaking()) {
             for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
                 if (entity instanceof LivingEntity && !entity.equals(player)) {
-                    Vector direction = entity.getLocation().toVector().subtract(player.getLocation().toVector());
+                    Vector direction = entity.getLocation()
+                            .toVector()
+                            .subtract(player.getLocation().toVector());
                     if (direction.lengthSquared() > 0) {
                         direction.normalize();
                         entity.setVelocity(direction.multiply(1.2));
@@ -110,7 +114,8 @@ public class ArmorListener implements Listener {
                 }
             }
 
-            boolean isAirborne = player.getLocation().subtract(0, 1, 0).getBlock().getType().isAir();
+            boolean isAirborne =
+                    player.getLocation().subtract(0, 1, 0).getBlock().getType().isAir();
             if (isAirborne) {
                 if (player.hasPotionEffect(PotionEffectType.SLOW_FALLING)) {
                     player.removePotionEffect(PotionEffectType.SLOW_FALLING);
@@ -122,12 +127,12 @@ public class ArmorListener implements Listener {
                 player.getPersistentDataContainer().set(gravitySlamKey, PersistentDataType.BYTE, (byte) 1);
             }
         } else {
-             if (player.getPersistentDataContainer().has(gravitySlamKey, PersistentDataType.BYTE)) {
+            if (player.getPersistentDataContainer().has(gravitySlamKey, PersistentDataType.BYTE)) {
                 player.getPersistentDataContainer().remove(gravitySlamKey);
             }
         }
     }
- 
+
     private void checkGemBootsEffects(Player player) {
         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
             return;
@@ -140,7 +145,9 @@ public class ArmorListener implements Listener {
             player.setAllowFlight(true);
             player.setFlySpeed(0.2f);
         } else {
-            if(player.getAllowFlight() && !player.getGameMode().equals(GameMode.CREATIVE) && !player.getGameMode().equals(GameMode.SPECTATOR)) {
+            if (player.getAllowFlight()
+                    && !player.getGameMode().equals(GameMode.CREATIVE)
+                    && !player.getGameMode().equals(GameMode.SPECTATOR)) {
                 player.setAllowFlight(false);
                 player.setFlying(false);
                 player.setFlySpeed(0.1f);
@@ -193,11 +200,11 @@ public class ArmorListener implements Listener {
                 player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.0f);
             }
         }
-        
+
         if (armorManager.isGemChestplate(player.getInventory().getChestplate())) {
-            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE ||
-                event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK ||
-                event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE
+                    || event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK
+                    || event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
                 event.setCancelled(true);
                 player.setFireTicks(0);
             }
@@ -221,10 +228,16 @@ public class ArmorListener implements Listener {
                     player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.0f);
 
                     for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-                        if (entity instanceof LivingEntity && !entity.equals(player) && !(entity instanceof org.bukkit.entity.ArmorStand)) {
+                        if (entity instanceof LivingEntity
+                                && !entity.equals(player)
+                                && !(entity instanceof org.bukkit.entity.ArmorStand)) {
                             LivingEntity livingEntity = (LivingEntity) entity;
                             livingEntity.damage(damage, player);
-                            Vector knockback = livingEntity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
+                            Vector knockback = livingEntity
+                                    .getLocation()
+                                    .toVector()
+                                    .subtract(player.getLocation().toVector())
+                                    .normalize();
                             knockback.setY(0.8).multiply(Math.min(fallDistance / 15.0, 3.0));
                             livingEntity.setVelocity(knockback);
                         }
@@ -233,7 +246,7 @@ public class ArmorListener implements Listener {
             }
         }
     }
- 
+
     private boolean isWearingFullSet(Player player, String armorPrefix) {
         PlayerInventory inventory = player.getInventory();
         ItemStack helmet = inventory.getHelmet();
@@ -241,10 +254,10 @@ public class ArmorListener implements Listener {
         ItemStack leggings = inventory.getLeggings();
         ItemStack boots = inventory.getBoots();
 
-        return isArmorPiece(helmet, armorPrefix + "helmet") &&
-               isArmorPiece(chestplate, armorPrefix + "chestplate") &&
-               isArmorPiece(leggings, armorPrefix + "leggings") &&
-               isArmorPiece(boots, armorPrefix + "boots");
+        return isArmorPiece(helmet, armorPrefix + "helmet")
+                && isArmorPiece(chestplate, armorPrefix + "chestplate")
+                && isArmorPiece(leggings, armorPrefix + "leggings")
+                && isArmorPiece(boots, armorPrefix + "boots");
     }
 
     private boolean isArmorPiece(ItemStack item, String expectedId) {
@@ -257,7 +270,12 @@ public class ArmorListener implements Listener {
 
     @EventHandler
     public void onEnchantItem(EnchantItemEvent event) {
-        if (armorManager.isDarkMatterArmor(event.getItem()) || armorManager.isRedMatterArmor(event.getItem()) || armorManager.isGemHelmet(event.getItem()) || armorManager.isGemChestplate(event.getItem()) || armorManager.isGemLeggings(event.getItem()) || armorManager.isGemBoots(event.getItem())) {
+        if (armorManager.isDarkMatterArmor(event.getItem())
+                || armorManager.isRedMatterArmor(event.getItem())
+                || armorManager.isGemHelmet(event.getItem())
+                || armorManager.isGemChestplate(event.getItem())
+                || armorManager.isGemLeggings(event.getItem())
+                || armorManager.isGemBoots(event.getItem())) {
             event.setCancelled(true);
         }
     }
@@ -265,10 +283,10 @@ public class ArmorListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (event.getFrom().getX() == event.getTo().getX() && event.getFrom().getZ() == event.getTo().getZ()) {
-           // return;
+        if (event.getFrom().getX() == event.getTo().getX()
+                && event.getFrom().getZ() == event.getTo().getZ()) {
+            // return;
         }
-
 
         // 技术有限...
         /*
@@ -300,11 +318,12 @@ public class ArmorListener implements Listener {
         }
         */
 
-
-        if (player.isSneaking() && player.getLocation().getY() < 100 && armorManager.isGemLeggings(player.getInventory().getLeggings())) {
+        if (player.isSneaking()
+                && player.getLocation().getY() < 100
+                && armorManager.isGemLeggings(player.getInventory().getLeggings())) {
             return;
         }
- 
+
         if (armorManager.isGemChestplate(player.getInventory().getChestplate()) && !player.isSneaking()) {
             Location loc = player.getLocation();
             for (int x = -1; x <= 1; x++) {
@@ -315,11 +334,15 @@ public class ArmorListener implements Listener {
                         if (!temporaryBlocks.containsKey(blockLoc)) {
                             temporaryBlocks.put(blockLoc, block.getType());
                             block.setType(Material.OBSIDIAN);
-                            plugin.getSchedulerAdapter().runTaskLaterAtLocation(blockLoc, () -> {
-                                if (temporaryBlocks.containsKey(blockLoc)) {
-                                    block.setType(temporaryBlocks.remove(blockLoc));
-                                }
-                            }, 20L);
+                            plugin.getSchedulerAdapter()
+                                    .runTaskLaterAtLocation(
+                                            blockLoc,
+                                            () -> {
+                                                if (temporaryBlocks.containsKey(blockLoc)) {
+                                                    block.setType(temporaryBlocks.remove(blockLoc));
+                                                }
+                                            },
+                                            20L);
                         }
                     }
                 }
@@ -337,32 +360,39 @@ public class ArmorListener implements Listener {
         }
     }
 
-
     @EventHandler
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         ItemStack first = event.getInventory().getItem(0);
         ItemStack second = event.getInventory().getItem(1);
-        
-        boolean isFirstItemArmor = armorManager.isDarkMatterArmor(first) || armorManager.isRedMatterArmor(first) || armorManager.isGemHelmet(first) || armorManager.isGemChestplate(first) || armorManager.isGemLeggings(first) || armorManager.isGemBoots(first);
-        
+
+        boolean isFirstItemArmor = armorManager.isDarkMatterArmor(first)
+                || armorManager.isRedMatterArmor(first)
+                || armorManager.isGemHelmet(first)
+                || armorManager.isGemChestplate(first)
+                || armorManager.isGemLeggings(first)
+                || armorManager.isGemBoots(first);
+
         if (isFirstItemArmor) {
-            if (event.getInventory().getRenameText() != null && !event.getInventory().getRenameText().isEmpty()) {
-                 event.setResult(null);
-                 return;
+            if (event.getInventory().getRenameText() != null
+                    && !event.getInventory().getRenameText().isEmpty()) {
+                event.setResult(null);
+                return;
             }
             if (second != null && second.getType() == org.bukkit.Material.ENCHANTED_BOOK) {
-                 event.setResult(null);
-                 return;
-            }
-             if (second != null) {
                 event.setResult(null);
-             }
+                return;
+            }
+            if (second != null) {
+                event.setResult(null);
+            }
         }
     }
+
     @EventHandler
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        if (player.isSneaking() && armorManager.isGemHelmet(player.getInventory().getHelmet())) {
+        if (player.isSneaking()
+                && armorManager.isGemHelmet(player.getInventory().getHelmet())) {
             if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
                 event.setCancelled(true);
                 GemHelmetGUI.open(player);
@@ -378,7 +408,8 @@ public class ArmorListener implements Listener {
             return;
         }
 
-        if (player.isSneaking() && armorManager.isGemLeggings(player.getInventory().getLeggings())) {
+        if (player.isSneaking()
+                && armorManager.isGemLeggings(player.getInventory().getLeggings())) {
             event.setCancelled(true);
         }
     }

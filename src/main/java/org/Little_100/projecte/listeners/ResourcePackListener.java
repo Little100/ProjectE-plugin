@@ -1,9 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import org.Little_100.projecte.ProjectE;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +8,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.Little_100.projecte.ProjectE;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 public class ResourcePackListener implements Listener {
 
@@ -97,8 +96,11 @@ public class ResourcePackListener implements Listener {
                 Files.walkFileTree(resourcePackSourceDir.toPath(), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        String entryPath = resourcePackSourceDir.toPath().relativize(file).toString().replace('\\',
-                                '/');
+                        String entryPath = resourcePackSourceDir
+                                .toPath()
+                                .relativize(file)
+                                .toString()
+                                .replace('\\', '/');
                         ZipEntry zipEntry = new ZipEntry(entryPath);
                         zipOut.putNextEntry(zipEntry);
                         Files.copy(file, zipOut);

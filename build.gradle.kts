@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.Little_100"
-version = "1.0.2-SNAPSHOT"
+version = "1.0.3-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -32,6 +32,15 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 }
 
+spotless {
+    java {
+        palantirJavaFormat()
+        removeUnusedImports()
+    }
+
+    isEnforceCheck = false
+}
+
 tasks {
     runServer {
         minecraftVersion("1.21")
@@ -50,8 +59,8 @@ tasks {
 
         from(sourceSets.main.get().resources.srcDirs) {
             include("**/*.yml")
-            filter<org.apache.tools.ant.filters.ReplaceTokens>(
-                "tokens" to mapOf("version" to version)
+            expand(
+                "version" to version
             )
         }
         from(sourceSets.main.get().resources.srcDirs) {

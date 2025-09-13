@@ -1,10 +1,15 @@
 package org.Little_100.projecte.gui;
 
-import org.Little_100.projecte.managers.EmcManager;
-import org.Little_100.projecte.managers.LanguageManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.SearchLanguageManager;
-import org.Little_100.projecte.compatibility.VersionAdapter;
+import org.Little_100.projecte.managers.EmcManager;
+import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,18 +19,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class TransmutationGUI implements InventoryHolder {
 
     private final Inventory inventory;
     private final Player player;
     private final DatabaseManager databaseManager;
-    private final VersionAdapter versionAdapter;
     private final EmcManager emcManager;
     private final LanguageManager languageManager;
     private final SearchLanguageManager searchLanguageManager;
@@ -45,7 +43,6 @@ public class TransmutationGUI implements InventoryHolder {
     public TransmutationGUI(Player player) {
         this.player = player;
         this.databaseManager = ProjectE.getInstance().getDatabaseManager();
-        this.versionAdapter = ProjectE.getInstance().getVersionAdapter();
         this.emcManager = ProjectE.getInstance().getEmcManager();
         this.languageManager = ProjectE.getInstance().getLanguageManager();
         this.searchLanguageManager = ProjectE.getInstance().getSearchLanguageManager();
@@ -73,8 +70,8 @@ public class TransmutationGUI implements InventoryHolder {
                 return languageManager.get("clientside.transmutation_table.sell_title", placeholders);
             case BUY:
                 return languageManager.get("clientside.transmutation_table.buy_title", placeholders);
-           case CHARGE:
-               return languageManager.get("clientside.transmutation_table.charge_title", placeholders);
+            case CHARGE:
+                return languageManager.get("clientside.transmutation_table.charge_title", placeholders);
             default:
                 return languageManager.get("clientside.transmutation_table.title", placeholders);
         }
@@ -95,25 +92,29 @@ public class TransmutationGUI implements InventoryHolder {
             case LEARN:
                 setupLearnScreen();
                 break;
-           case CHARGE:
-               setupChargeScreen();
-               break;
+            case CHARGE:
+                setupChargeScreen();
+                break;
         }
     }
 
     private void setupMainScreen() {
-        ItemStack sellButton = createGuiItem(Material.ANVIL,
+        ItemStack sellButton = createGuiItem(
+                Material.ANVIL,
                 languageManager.get("clientside.transmutation_table.buttons.sell"),
                 languageManager.get("clientside.transmutation_table.buttons.sell_lore"));
-        ItemStack buyButton = createGuiItem(Material.EMERALD,
+        ItemStack buyButton = createGuiItem(
+                Material.EMERALD,
                 languageManager.get("clientside.transmutation_table.buttons.buy"),
                 languageManager.get("clientside.transmutation_table.buttons.buy_lore"));
-       ItemStack learnButton = createGuiItem(Material.BOOK,
-               languageManager.get("clientside.transmutation_table.buttons.learn"),
-               languageManager.get("clientside.transmutation_table.buttons.learn_lore"));
-       ItemStack chargeButton = createGuiItem(Material.REDSTONE_TORCH,
-               languageManager.get("clientside.transmutation_table.buttons.charge"),
-               languageManager.get("clientside.transmutation_table.buttons.charge_lore"));
+        ItemStack learnButton = createGuiItem(
+                Material.BOOK,
+                languageManager.get("clientside.transmutation_table.buttons.learn"),
+                languageManager.get("clientside.transmutation_table.buttons.learn_lore"));
+        ItemStack chargeButton = createGuiItem(
+                Material.REDSTONE_TORCH,
+                languageManager.get("clientside.transmutation_table.buttons.charge"),
+                languageManager.get("clientside.transmutation_table.buttons.charge_lore"));
         inventory.setItem(20, sellButton);
         inventory.setItem(21, chargeButton);
         inventory.setItem(22, buyButton);
@@ -130,10 +131,12 @@ public class TransmutationGUI implements InventoryHolder {
                 inventory.setItem(i * 9 + j, null);
             }
         }
-        ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK,
+        ItemStack confirmButton = createGuiItem(
+                Material.EMERALD_BLOCK,
                 languageManager.get("clientside.transmutation_table.buttons.confirm_sell"),
                 languageManager.get("clientside.transmutation_table.buttons.confirm_sell_lore"));
-        ItemStack backButton = createGuiItem(Material.BARRIER,
+        ItemStack backButton = createGuiItem(
+                Material.BARRIER,
                 languageManager.get("clientside.transmutation_table.buttons.back"),
                 languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(49, confirmButton);
@@ -150,7 +153,10 @@ public class TransmutationGUI implements InventoryHolder {
             }
         }
 
-        ItemStack searchButton = createGuiItem(Material.SNOWBALL, languageManager.get("clientside.transmutation_table.buttons.search"), languageManager.get("clientside.transmutation_table.buttons.search_lore"));
+        ItemStack searchButton = createGuiItem(
+                Material.SNOWBALL,
+                languageManager.get("clientside.transmutation_table.buttons.search"),
+                languageManager.get("clientside.transmutation_table.buttons.search_lore"));
         if (searchQuery != null && !searchQuery.isEmpty()) {
             ItemMeta meta = searchButton.getItemMeta();
             Map<String, String> placeholders = new HashMap<>();
@@ -172,7 +178,7 @@ public class TransmutationGUI implements InventoryHolder {
             long searchTime = System.currentTimeMillis() - startTime;
 
             if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
-                DebugManager.log("搜索 '" + searchQuery + "' 找到 " + matchingIds.size() + " 个潜在匹配项，耗时: " + searchTime + "ms");
+                Debug.log("搜索 '" + searchQuery + "' 找到 " + matchingIds.size() + " 个潜在匹配项，耗时: " + searchTime + "ms");
             }
 
             List<String> filteredItems = new ArrayList<>();
@@ -185,20 +191,22 @@ public class TransmutationGUI implements InventoryHolder {
                         String minecraftId = "item.minecraft." + itemType;
                         String blockMinecraftId = "block.minecraft." + itemType;
 
-                        String displayName = item.getItemMeta() != null && item.getItemMeta().hasDisplayName() ?
-                            item.getItemMeta().getDisplayName().toLowerCase() : itemType;
+                        String displayName =
+                                item.getItemMeta() != null && item.getItemMeta().hasDisplayName()
+                                        ? item.getItemMeta().getDisplayName().toLowerCase()
+                                        : itemType;
 
-                        boolean matches = matchingIds.containsKey(minecraftId) ||
-                                         matchingIds.containsKey(blockMinecraftId) ||
-                                         displayName.contains(searchLower) ||
-                                         itemType.contains(searchLower) ||
-                                         itemType.replace("_", " ").contains(searchLower);
+                        boolean matches = matchingIds.containsKey(minecraftId)
+                                || matchingIds.containsKey(blockMinecraftId)
+                                || displayName.contains(searchLower)
+                                || itemType.contains(searchLower)
+                                || itemType.replace("_", " ").contains(searchLower);
 
                         if (matches) {
                             filteredItems.add(itemKey);
 
                             if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
-                                DebugManager.log("匹配成功: " + itemKey);
+                                Debug.log("匹配成功: " + itemKey);
                             }
                         }
                     }
@@ -207,18 +215,20 @@ public class TransmutationGUI implements InventoryHolder {
                 for (String itemKey : learnedItems) {
                     ItemStack item = ProjectE.getInstance().getItemStackFromKey(itemKey);
                     if (item != null) {
-                        String displayName = item.getItemMeta() != null && item.getItemMeta().hasDisplayName() ?
-                            item.getItemMeta().getDisplayName().toLowerCase() : "";
+                        String displayName =
+                                item.getItemMeta() != null && item.getItemMeta().hasDisplayName()
+                                        ? item.getItemMeta().getDisplayName().toLowerCase()
+                                        : "";
                         String typeName = item.getType().name().toLowerCase();
 
-                        if (displayName.contains(searchLower) ||
-                            typeName.contains(searchLower) ||
-                            typeName.replace("_", " ").contains(searchLower)) {
+                        if (displayName.contains(searchLower)
+                                || typeName.contains(searchLower)
+                                || typeName.replace("_", " ").contains(searchLower)) {
 
                             filteredItems.add(itemKey);
 
                             if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
-                                DebugManager.log("简单匹配: " + itemKey);
+                                Debug.log("简单匹配: " + itemKey);
                             }
                         }
                     }
@@ -226,7 +236,7 @@ public class TransmutationGUI implements InventoryHolder {
             }
 
             if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
-                DebugManager.log("最终匹配到 " + filteredItems.size() + " 个已学习的物品");
+                Debug.log("最终匹配到 " + filteredItems.size() + " 个已学习的物品");
             }
 
             learnedItems = filteredItems;
@@ -251,12 +261,12 @@ public class TransmutationGUI implements InventoryHolder {
                     lorePlaceholders.put("amount", String.valueOf(item.getMaxStackSize()));
 
                     meta.setLore(Arrays.asList(
-                            languageManager.get("clientside.transmutation_table.item_lore.emc_single",
-                                    lorePlaceholders),
+                            languageManager.get(
+                                    "clientside.transmutation_table.item_lore.emc_single", lorePlaceholders),
                             languageManager.get("clientside.transmutation_table.item_lore.emc_stack", lorePlaceholders),
                             languageManager.get("clientside.transmutation_table.item_lore.buy_one", lorePlaceholders),
-                            languageManager.get("clientside.transmutation_table.item_lore.buy_stack",
-                                    lorePlaceholders)));
+                            languageManager.get(
+                                    "clientside.transmutation_table.item_lore.buy_stack", lorePlaceholders)));
                     item.setItemMeta(meta);
                     // 计算槽位
                     int row = slotIndex / 7;
@@ -268,20 +278,21 @@ public class TransmutationGUI implements InventoryHolder {
         }
 
         // 控制按钮
-        ItemStack backButton = createGuiItem(Material.BARRIER,
+        ItemStack backButton = createGuiItem(
+                Material.BARRIER,
                 languageManager.get("clientside.transmutation_table.buttons.back"),
                 languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(0, backButton);
 
         if (page > 0) {
-            ItemStack prevButton = createGuiItem(Material.ARROW,
-                    languageManager.get("clientside.transmutation_table.buttons.prev_page"));
+            ItemStack prevButton = createGuiItem(
+                    Material.ARROW, languageManager.get("clientside.transmutation_table.buttons.prev_page"));
             inventory.setItem(48, prevButton);
         }
 
         if (endIndex < learnedItems.size()) {
-            ItemStack nextButton = createGuiItem(Material.ARROW,
-                    languageManager.get("clientside.transmutation_table.buttons.next_page"));
+            ItemStack nextButton = createGuiItem(
+                    Material.ARROW, languageManager.get("clientside.transmutation_table.buttons.next_page"));
             inventory.setItem(50, nextButton);
         }
     }
@@ -296,35 +307,39 @@ public class TransmutationGUI implements InventoryHolder {
                 inventory.setItem(i * 9 + j, null);
             }
         }
-        ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK,
+        ItemStack confirmButton = createGuiItem(
+                Material.EMERALD_BLOCK,
                 languageManager.get("clientside.transmutation_table.buttons.confirm_learn"),
                 languageManager.get("clientside.transmutation_table.buttons.confirm_learn_lore"));
-        ItemStack backButton = createGuiItem(Material.BARRIER,
+        ItemStack backButton = createGuiItem(
+                Material.BARRIER,
                 languageManager.get("clientside.transmutation_table.buttons.back"),
                 languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(49, confirmButton);
         inventory.setItem(0, backButton);
     }
 
-   private void setupChargeScreen() {
-       ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
-       for (int i = 0; i < 54; i++) {
-           inventory.setItem(i, grayPane);
-       }
-       for (int i = 1; i < 5; i++) {
-           for (int j = 1; j < 8; j++) {
-               inventory.setItem(i * 9 + j, null);
-           }
-       }
-       ItemStack confirmButton = createGuiItem(Material.EMERALD_BLOCK,
-               languageManager.get("clientside.transmutation_table.buttons.confirm_charge"),
-               languageManager.get("clientside.transmutation_table.buttons.confirm_charge_lore"));
-       ItemStack backButton = createGuiItem(Material.BARRIER,
-               languageManager.get("clientside.transmutation_table.buttons.back"),
-               languageManager.get("clientside.transmutation_table.buttons.back_lore"));
-       inventory.setItem(49, confirmButton);
-       inventory.setItem(0, backButton);
-   }
+    private void setupChargeScreen() {
+        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
+        for (int i = 0; i < 54; i++) {
+            inventory.setItem(i, grayPane);
+        }
+        for (int i = 1; i < 5; i++) {
+            for (int j = 1; j < 8; j++) {
+                inventory.setItem(i * 9 + j, null);
+            }
+        }
+        ItemStack confirmButton = createGuiItem(
+                Material.EMERALD_BLOCK,
+                languageManager.get("clientside.transmutation_table.buttons.confirm_charge"),
+                languageManager.get("clientside.transmutation_table.buttons.confirm_charge_lore"));
+        ItemStack backButton = createGuiItem(
+                Material.BARRIER,
+                languageManager.get("clientside.transmutation_table.buttons.back"),
+                languageManager.get("clientside.transmutation_table.buttons.back_lore"));
+        inventory.setItem(49, confirmButton);
+        inventory.setItem(0, backButton);
+    }
 
     public GuiState getCurrentState() {
         return currentState;

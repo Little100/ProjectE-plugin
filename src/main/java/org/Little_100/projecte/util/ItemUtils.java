@@ -15,7 +15,8 @@ public class ItemUtils {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        String foundId = container.get(new NamespacedKey(ProjectE.getInstance(), "projecte_id"), PersistentDataType.STRING);
+        String foundId =
+                container.get(new NamespacedKey(ProjectE.getInstance(), "projecte_id"), PersistentDataType.STRING);
         return id.equals(foundId);
     }
 }

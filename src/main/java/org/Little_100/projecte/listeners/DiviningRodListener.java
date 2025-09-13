@@ -1,5 +1,8 @@
 package org.Little_100.projecte.listeners;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.tools.DiviningRod;
 import org.bukkit.Location;
@@ -13,10 +16,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class DiviningRodListener implements Listener {
 
@@ -39,7 +38,9 @@ public class DiviningRodListener implements Listener {
         Action action = event.getAction();
 
         if (action == Action.RIGHT_CLICK_BLOCK && !player.isSneaking()) {
-            if (diviningRod.isLowDiviningRod(item) || diviningRod.isMediumDiviningRod(item) || diviningRod.isHighDiviningRod(item)) {
+            if (diviningRod.isLowDiviningRod(item)
+                    || diviningRod.isMediumDiviningRod(item)
+                    || diviningRod.isHighDiviningRod(item)) {
                 event.setCancelled(true);
                 if (checkCooldown(player)) {
                     scanBlocks(player, item, event.getClickedBlock().getLocation());
@@ -54,7 +55,10 @@ public class DiviningRodListener implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (player.isSneaking() && (diviningRod.isLowDiviningRod(item) || diviningRod.isMediumDiviningRod(item) || diviningRod.isHighDiviningRod(item))) {
+        if (player.isSneaking()
+                && (diviningRod.isLowDiviningRod(item)
+                        || diviningRod.isMediumDiviningRod(item)
+                        || diviningRod.isHighDiviningRod(item))) {
             event.setCancelled(true);
             if (diviningRod.isMediumDiviningRod(item) || diviningRod.isHighDiviningRod(item)) {
                 plugin.getDiviningRodGUI().openGUI(player);
@@ -88,7 +92,8 @@ public class DiviningRodListener implements Listener {
         if (mode != -1) {
             playerModes.put(player.getUniqueId(), mode);
             String modeName = getModeName(mode);
-            player.sendMessage(plugin.getLanguageManager().get("clientside.divining_rod.mode_changed", Map.of("mode", modeName)));
+            player.sendMessage(
+                    plugin.getLanguageManager().get("clientside.divining_rod.mode_changed", Map.of("mode", modeName)));
             player.closeInventory();
         }
     }
@@ -116,7 +121,8 @@ public class DiviningRodListener implements Listener {
     }
 
     private boolean checkCooldown(Player player) {
-        return !cooldowns.containsKey(player.getUniqueId()) || System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) > 500;
+        return !cooldowns.containsKey(player.getUniqueId())
+                || System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) > 500;
     }
 
     private void setCooldown(Player player) {
@@ -179,11 +185,14 @@ public class DiviningRodListener implements Listener {
         if (blockCount > 0) {
             long averageEmc = totalEmc / blockCount;
             player.sendMessage(plugin.getLanguageManager().get("clientside.divining_rod.scan_results"));
-            player.sendMessage(plugin.getLanguageManager().get("clientside.divining_rod.total_blocks", Map.of("count", String.valueOf(blockCount))));
-            player.sendMessage(plugin.getLanguageManager().get("clientside.divining_rod.average_emc", Map.of("emc", String.valueOf(averageEmc))));
+            player.sendMessage(plugin.getLanguageManager()
+                    .get("clientside.divining_rod.total_blocks", Map.of("count", String.valueOf(blockCount))));
+            player.sendMessage(plugin.getLanguageManager()
+                    .get("clientside.divining_rod.average_emc", Map.of("emc", String.valueOf(averageEmc))));
 
             if (diviningRod.isHighDiviningRod(item) && maxEmcMaterial != null) {
-                player.sendMessage(plugin.getLanguageManager().get("clientside.divining_rod.max_emc", Map.of("emc", String.valueOf(maxEmc))));
+                player.sendMessage(plugin.getLanguageManager()
+                        .get("clientside.divining_rod.max_emc", Map.of("emc", String.valueOf(maxEmc))));
             }
         } else {
             player.sendMessage(plugin.getLanguageManager().get("clientside.divining_rod.no_emc_blocks"));
@@ -193,13 +202,13 @@ public class DiviningRodListener implements Listener {
     private int[] getScanDimensions(int mode) {
         switch (mode) {
             case 0: // 3x3x3
-                return new int[]{3, 3, 3};
+                return new int[] {3, 3, 3};
             case 1: // 16x3x3
-                return new int[]{16, 3, 3};
+                return new int[] {16, 3, 3};
             case 2: // 64x3x3
-                return new int[]{64, 3, 3};
+                return new int[] {64, 3, 3};
             default:
-                return new int[]{3, 3, 3};
+                return new int[] {3, 3, 3};
         }
     }
 }

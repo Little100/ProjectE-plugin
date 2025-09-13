@@ -1,16 +1,15 @@
 package org.Little_100.projecte.storage;
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.UUID;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 public class DatabaseManager {
 
@@ -43,24 +42,20 @@ public class DatabaseManager {
 
     private void createTables() {
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS emc_values (" +
-                    "item_key TEXT PRIMARY KEY," +
-                    "emc BIGINT NOT NULL);");
+            statement.execute(
+                    "CREATE TABLE IF NOT EXISTS emc_values (" + "item_key TEXT PRIMARY KEY," + "emc BIGINT NOT NULL);");
 
-            statement.execute("CREATE TABLE IF NOT EXISTS player_emc (" +
-                    "player_uuid TEXT PRIMARY KEY," +
-                    "emc BIGINT NOT NULL);");
+            statement.execute("CREATE TABLE IF NOT EXISTS player_emc (" + "player_uuid TEXT PRIMARY KEY,"
+                    + "emc BIGINT NOT NULL);");
 
-            statement.execute("CREATE TABLE IF NOT EXISTS learned_items (" +
-                    "player_uuid TEXT NOT NULL," +
-                    "item_key TEXT NOT NULL," +
-                    "PRIMARY KEY (player_uuid, item_key));");
+            statement.execute("CREATE TABLE IF NOT EXISTS learned_items (" + "player_uuid TEXT NOT NULL,"
+                    + "item_key TEXT NOT NULL,"
+                    + "PRIMARY KEY (player_uuid, item_key));");
 
-            statement.execute("CREATE TABLE IF NOT EXISTS alchemical_bags (" +
-                    "player_uuid TEXT NOT NULL," +
-                    "bag_color TEXT NOT NULL," +
-                    "inventory_contents TEXT," +
-                    "PRIMARY KEY (player_uuid, bag_color));");
+            statement.execute("CREATE TABLE IF NOT EXISTS alchemical_bags (" + "player_uuid TEXT NOT NULL,"
+                    + "bag_color TEXT NOT NULL,"
+                    + "inventory_contents TEXT,"
+                    + "PRIMARY KEY (player_uuid, bag_color));");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -90,7 +85,8 @@ public class DatabaseManager {
         }
         return 0;
     }
-public boolean hasEmcValues() {
+
+    public boolean hasEmcValues() {
         String sql = "SELECT 1 FROM emc_values LIMIT 1;";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
@@ -193,8 +189,7 @@ public boolean hasEmcValues() {
     }
 
     public void saveBagInventory(UUID playerUUID, String bagColor, ItemStack[] items) {
-        if (items == null)
-            return;
+        if (items == null) return;
 
         String base64Data;
         try {
@@ -204,7 +199,8 @@ public boolean hasEmcValues() {
             return;
         }
 
-        String sql = "INSERT OR REPLACE INTO alchemical_bags (player_uuid, bag_color, inventory_contents) VALUES (?, ?, ?);";
+        String sql =
+                "INSERT OR REPLACE INTO alchemical_bags (player_uuid, bag_color, inventory_contents) VALUES (?, ?, ?);";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, playerUUID.toString());
             pstmt.setString(2, bagColor);

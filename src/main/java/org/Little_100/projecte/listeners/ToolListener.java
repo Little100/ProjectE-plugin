@@ -1,5 +1,9 @@
 package org.Little_100.projecte.listeners;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.devices.DeviceManager;
 import org.Little_100.projecte.gui.ToolChargeGUI;
@@ -21,11 +25,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class ToolListener implements Listener {
 
@@ -49,6 +48,7 @@ public class ToolListener implements Listener {
             event.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onSwapHand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
@@ -60,6 +60,7 @@ public class ToolListener implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f);
         }
     }
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -91,7 +92,8 @@ public class ToolListener implements Listener {
                 mode = container.getOrDefault(key, PersistentDataType.STRING, "standard");
             }
 
-            if ((!mode.equals("standard") && !mode.equals("normal")) && !plugin.getConfig().getBoolean("tools.area_of_effect_mining_enabled", true)) {
+            if ((!mode.equals("standard") && !mode.equals("normal"))
+                    && !plugin.getConfig().getBoolean("tools.area_of_effect_mining_enabled", true)) {
                 return;
             }
 
@@ -123,6 +125,7 @@ public class ToolListener implements Listener {
             processingPlayers.remove(playerUUID);
         }
     }
+
     private void handleBlockBreaking(Player player, ItemStack tool, List<Block> blocks) {
         ItemMeta meta = tool.getItemMeta();
         if (!(meta instanceof Damageable)) return;
@@ -143,7 +146,8 @@ public class ToolListener implements Listener {
                     java.util.Collection<ItemStack> drops = block.getDrops(tool, player);
                     block.setType(org.bukkit.Material.AIR);
                     for (ItemStack drop : drops) {
-                        java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(drop);
+                        java.util.HashMap<Integer, ItemStack> leftover =
+                                player.getInventory().addItem(drop);
                         if (!leftover.isEmpty()) {
                             player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(0));
                         }

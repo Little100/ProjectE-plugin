@@ -1,9 +1,11 @@
 package org.Little_100.projecte.managers;
 
-import org.Little_100.projecte.gui.PhilosopherStoneGUI;
+import java.io.File;
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.GemHelmetGUI;
 import org.Little_100.projecte.gui.NoEmcItemGUI;
+import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.tools.DiviningRod;
@@ -25,9 +27,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
 import org.geysermc.geyser.api.GeyserApi;
-
-import java.io.File;
-import java.util.*;
 
 public class CommandManager implements CommandExecutor, TabCompleter {
 
@@ -53,10 +52,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
         FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFile);
         if (commandsConfig.isConfigurationSection("OpenTransmutationTable")) {
-            for (String key : commandsConfig.getConfigurationSection("OpenTransmutationTable").getKeys(false)) {
-                String command = commandsConfig.getString("OpenTransmutationTable." + key + ".command").replace("/", "");
+            for (String key : commandsConfig
+                    .getConfigurationSection("OpenTransmutationTable")
+                    .getKeys(false)) {
+                String command = commandsConfig
+                        .getString("OpenTransmutationTable." + key + ".command")
+                        .replace("/", "");
                 String permission = commandsConfig.getString("OpenTransmutationTable." + key + ".permission");
-                String permissionMessage = commandsConfig.getString("OpenTransmutationTable." + key + ".permission-message");
+                String permissionMessage =
+                        commandsConfig.getString("OpenTransmutationTable." + key + ".permission-message");
                 Map<String, String> commandData = new HashMap<>();
                 commandData.put("permission", permission);
                 commandData.put("permission-message", permissionMessage);
@@ -191,7 +195,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         Map<String, String> commandData = openTableCommands.get(commandName);
         String permission = commandData.get("permission");
 
-        if (!permission.equalsIgnoreCase("default") && !player.hasPermission("projecte.command." + permission) && !(permission.equalsIgnoreCase("op") && player.isOp())) {
+        if (!permission.equalsIgnoreCase("default")
+                && !player.hasPermission("projecte.command." + permission)
+                && !(permission.equalsIgnoreCase("op") && player.isOp())) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', commandData.get("permission-message")));
             return true;
         }
@@ -312,9 +318,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 recipePlaceholders.put("index", String.valueOf(i + 1));
                 sender.sendMessage(languageManager.get("serverside.command.debug.recipe_header", recipePlaceholders));
                 String divisionStrategy = plugin.getConfig()
-                        .getString("gui.EMC.divisionStrategy", "floor").toLowerCase();
-                java.util.List<String> debugInfo = plugin.getVersionAdapter().getRecipeDebugInfo(recipe,
-                        divisionStrategy);
+                        .getString("gui.EMC.divisionStrategy", "floor")
+                        .toLowerCase();
+                java.util.List<String> debugInfo =
+                        plugin.getVersionAdapter().getRecipeDebugInfo(recipe, divisionStrategy);
                 for (String line : debugInfo) {
                     sender.sendMessage(ChatColor.GRAY + "  " + line);
                 }
@@ -396,8 +403,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         Map<String, String> targetPlaceholders = new HashMap<>();
         targetPlaceholders.put("player", senderPlayer.getName());
         targetPlaceholders.put("amount", String.valueOf(amount));
-        targetPlayer
-                .sendMessage(languageManager.get("serverside.command.pay_emc.receive_success", targetPlaceholders));
+        targetPlayer.sendMessage(languageManager.get("serverside.command.pay_emc.receive_success", targetPlaceholders));
 
         return true;
     }
@@ -637,17 +643,26 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            sb.append(ChatColor.GRAY).append("DisplayName: ")
-                    .append(meta.hasDisplayName() ? meta.getDisplayName() : "None").append("\n");
-            sb.append(ChatColor.GRAY).append("Lore: ").append(meta.hasLore() ? meta.getLore() : "None").append("\n");
+            sb.append(ChatColor.GRAY)
+                    .append("DisplayName: ")
+                    .append(meta.hasDisplayName() ? meta.getDisplayName() : "None")
+                    .append("\n");
+            sb.append(ChatColor.GRAY)
+                    .append("Lore: ")
+                    .append(meta.hasLore() ? meta.getLore() : "None")
+                    .append("\n");
 
             if (meta.hasCustomModelData()) {
                 try {
-                    sb.append(ChatColor.GRAY).append("CustomModelData: ").append(meta.getCustomModelData())
+                    sb.append(ChatColor.GRAY)
+                            .append("CustomModelData: ")
+                            .append(meta.getCustomModelData())
                             .append("\n");
                 } catch (IllegalStateException e) {
-                    sb.append(ChatColor.GRAY).append("CustomModelData: Exists but cannot be read (")
-                            .append(e.getMessage()).append(")\n");
+                    sb.append(ChatColor.GRAY)
+                            .append("CustomModelData: Exists but cannot be read (")
+                            .append(e.getMessage())
+                            .append(")\n");
                 }
             } else {
                 sb.append(ChatColor.GRAY).append("CustomModelData: None\n");
@@ -682,8 +697,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private <T, Z> boolean tryAppendPdcValue(StringBuilder sb, PersistentDataContainer pdc, NamespacedKey key,
-                                             PersistentDataType<T, Z> type, String typeName) {
+    private <T, Z> boolean tryAppendPdcValue(
+            StringBuilder sb,
+            PersistentDataContainer pdc,
+            NamespacedKey key,
+            PersistentDataType<T, Z> type,
+            String typeName) {
         if (pdc.has(key, type)) {
             try {
                 Z value = pdc.get(key, type);
@@ -722,7 +741,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         DiviningRod diviningRod = plugin.getDiviningRod();
-        if (diviningRod.isLowDiviningRod(itemInHand) || diviningRod.isMediumDiviningRod(itemInHand) || diviningRod.isHighDiviningRod(itemInHand)) {
+        if (diviningRod.isLowDiviningRod(itemInHand)
+                || diviningRod.isMediumDiviningRod(itemInHand)
+                || diviningRod.isHighDiviningRod(itemInHand)) {
             plugin.getDiviningRodGUI().openGUI(player);
             return true;
         }
@@ -795,7 +816,25 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 1) {
-                List<String> subCommands = new ArrayList<>(Arrays.asList("recalculate", "reload", "setemc", "debug", "pay", "item", "give", "noemcitem", "bag", "lang", "report", "nbtdebug", "open", "o", "gui", "table", "gemhelmet", "gemboots"));
+                List<String> subCommands = new ArrayList<>(Arrays.asList(
+                        "recalculate",
+                        "reload",
+                        "setemc",
+                        "debug",
+                        "pay",
+                        "item",
+                        "give",
+                        "noemcitem",
+                        "bag",
+                        "lang",
+                        "report",
+                        "nbtdebug",
+                        "open",
+                        "o",
+                        "gui",
+                        "table",
+                        "gemhelmet",
+                        "gemboots"));
                 for (String cmd : openTableCommands.keySet()) {
                     if (cmd.startsWith("projecte ")) {
                         subCommands.add(cmd.split(" ")[1]);
@@ -815,7 +854,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
             if (args[0].equalsIgnoreCase("item")) {
                 List<String> itemIds = new ArrayList<>(plugin.getRecipeManager().getRegisteredItemIds());
-                itemIds.addAll(Arrays.asList("dark_matter_helmet", "dark_matter_chestplate", "dark_matter_leggings", "dark_matter_boots", "red_matter_helmet", "red_matter_chestplate", "red_matter_leggings", "red_matter_boots"));
+                itemIds.addAll(Arrays.asList(
+                        "dark_matter_helmet",
+                        "dark_matter_chestplate",
+                        "dark_matter_leggings",
+                        "dark_matter_boots",
+                        "red_matter_helmet",
+                        "red_matter_chestplate",
+                        "red_matter_leggings",
+                        "red_matter_boots"));
                 return StringUtil.copyPartialMatches(args[1], itemIds, new ArrayList<>());
             }
             if (args[0].equalsIgnoreCase("bag")) {
@@ -826,7 +873,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
             if (args[0].equalsIgnoreCase("gui")) {
                 File dataFolder = plugin.getDataFolder();
-                File[] files = dataFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml"));
+                File[] files =
+                        dataFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml"));
                 List<String> guiFiles = new ArrayList<>();
                 if (files != null) {
                     for (File file : files) {
@@ -842,7 +890,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
             List<String> itemIds = new ArrayList<>(plugin.getRecipeManager().getRegisteredItemIds());
-            itemIds.addAll(Arrays.asList("dark_matter_helmet", "dark_matter_chestplate", "dark_matter_leggings", "dark_matter_boots", "red_matter_helmet", "red_matter_chestplate", "red_matter_leggings", "red_matter_boots"));
+            itemIds.addAll(Arrays.asList(
+                    "dark_matter_helmet",
+                    "dark_matter_chestplate",
+                    "dark_matter_leggings",
+                    "dark_matter_boots",
+                    "red_matter_helmet",
+                    "red_matter_chestplate",
+                    "red_matter_leggings",
+                    "red_matter_boots"));
             itemIds.addAll(plugin.getToolManager().getToolIds());
             return StringUtil.copyPartialMatches(args[2], itemIds, new ArrayList<>());
         }
@@ -862,5 +918,4 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
         return new ArrayList<>();
     }
-
 }

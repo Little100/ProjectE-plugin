@@ -1,5 +1,6 @@
 package org.Little_100.projecte;
 
+import java.util.List;
 import org.Little_100.projecte.util.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -7,8 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.List;
 
 public class CovalenceDust {
     private final ProjectE plugin;
@@ -38,28 +37,30 @@ public class CovalenceDust {
                 1,
                 List.of("item.low_covalence_dust.lore1", "item.low_covalence_dust.lore2"),
                 lowKey,
-                "low_covalence_dust"
-        );
+                "low_covalence_dust");
         mediumCovalenceDust = createCovalenceDustItem(
                 Material.GLOWSTONE_DUST,
                 "item.medium_covalence_dust.name",
                 2,
                 List.of("item.medium_covalence_dust.lore1", "item.medium_covalence_dust.lore2"),
                 mediumKey,
-                "medium_covalence_dust"
-        );
+                "medium_covalence_dust");
         highCovalenceDust = createCovalenceDustItem(
                 Material.GLOWSTONE_DUST,
                 "item.high_covalence_dust.name",
                 3,
                 List.of("item.high_covalence_dust.lore1", "item.high_covalence_dust.lore2"),
                 highKey,
-                "high_covalence_dust"
-        );
+                "high_covalence_dust");
     }
 
-    private ItemStack createCovalenceDustItem(Material material, String displayNameKey, int customModelData,
-                                              List<String> loreKeys, NamespacedKey key, String id) {
+    private ItemStack createCovalenceDustItem(
+            Material material,
+            String displayNameKey,
+            int customModelData,
+            List<String> loreKeys,
+            NamespacedKey key,
+            String id) {
         ItemStack item = new ItemStack(material);
 
         // 统一用CustomModelDataUtil设置cmd，传数字字符串
@@ -69,9 +70,8 @@ public class CovalenceDust {
         if (meta != null) {
             // 设置显示名称和Lore
             meta.setDisplayName(plugin.getLanguageManager().get(displayNameKey));
-            List<String> translatedLore = loreKeys.stream()
-                    .map(plugin.getLanguageManager()::get)
-                    .toList();
+            List<String> translatedLore =
+                    loreKeys.stream().map(plugin.getLanguageManager()::get).toList();
             meta.setLore(translatedLore);
 
             // 设置PDC
@@ -101,10 +101,12 @@ public class CovalenceDust {
         var emcManager = plugin.getEmcManager();
         java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!configFile.exists()) {
-            plugin.getLogger().warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");
+            plugin.getLogger()
+                    .warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");
             return;
         }
-        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+        org.bukkit.configuration.file.YamlConfiguration config =
+                org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
 
         String lowKey = emcManager.getItemKey(getLowCovalenceDust());
         long lowEmc = config.getLong("low_covalence_dust", 1);

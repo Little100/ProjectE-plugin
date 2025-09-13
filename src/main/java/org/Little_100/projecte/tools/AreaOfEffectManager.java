@@ -1,11 +1,10 @@
 package org.Little_100.projecte.tools;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AreaOfEffectManager {
 

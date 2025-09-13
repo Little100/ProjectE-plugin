@@ -1,18 +1,17 @@
 package org.Little_100.projecte.managers;
 
-import org.Little_100.projecte.ProjectE;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.Little_100.projecte.ProjectE;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 public class BlockDataManager {
 
@@ -63,7 +62,9 @@ public class BlockDataManager {
                                 Material baseBlock = Material.valueOf(baseBlockStr.toUpperCase());
                                 customBlockBaseBlocks.put(id, baseBlock);
                             } catch (IllegalArgumentException e) {
-                                plugin.getLogger().warning("Invalid base_block material '" + baseBlockStr + "' for custom block '" + id + "'.");
+                                plugin.getLogger()
+                                        .warning("Invalid base_block material '" + baseBlockStr + "' for custom block '"
+                                                + id + "'.");
                             }
                         }
                     } else {
@@ -94,7 +95,6 @@ public class BlockDataManager {
         }
     }
 
-
     public ItemStack getBlock(String id) {
         return customBlocks.get(id);
     }
@@ -108,7 +108,7 @@ public class BlockDataManager {
         }
         return null;
     }
-    
+
     public ItemStack getBlockByItem(ItemStack item) {
         String id = getBlockIdByItem(item);
         return (id != null) ? getBlock(id) : null;

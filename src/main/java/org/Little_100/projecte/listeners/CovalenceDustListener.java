@@ -77,8 +77,12 @@ public class CovalenceDustListener implements Listener {
                 event.setResult(result);
                 event.getInventory().setRepairCost(0); // 牢版本
                 try {
-                    event.getInventory().getClass().getMethod("setRepairCostAmount", int.class).invoke(event.getInventory(), 0);
-                } catch (Exception ignored) {}
+                    event.getInventory()
+                            .getClass()
+                            .getMethod("setRepairCostAmount", int.class)
+                            .invoke(event.getInventory(), 0);
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -98,7 +102,9 @@ public class CovalenceDustListener implements Listener {
             if (item != null && item.getType() != Material.AIR) {
                 if (isRepairable(item.getType()) && tool == null) {
                     tool = item;
-                } else if (plugin.getCovalenceDust().isLowCovalenceDust(item) || plugin.getCovalenceDust().isMediumCovalenceDust(item) || plugin.getCovalenceDust().isHighCovalenceDust(item)) {
+                } else if (plugin.getCovalenceDust().isLowCovalenceDust(item)
+                        || plugin.getCovalenceDust().isMediumCovalenceDust(item)
+                        || plugin.getCovalenceDust().isHighCovalenceDust(item)) {
                     dust = item;
                     dustCount++;
                 }
@@ -148,10 +154,10 @@ public class CovalenceDustListener implements Listener {
     private boolean isMediumTier(Material material) {
         String name = material.name();
         return name.startsWith("IRON_") || name.startsWith("GOLDEN_");
-    } //中级小破粉可以修复的工具
+    } // 中级小破粉可以修复的工具
 
     private boolean isHighTier(Material material) {
         String name = material.name();
         return name.startsWith("DIAMOND_") || name.startsWith("NETHERITE_");
-    } //高级小破粉可以修复的工具
+    } // 高级小破粉可以修复的工具
 }

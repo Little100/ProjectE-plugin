@@ -1,5 +1,6 @@
 package org.Little_100.projecte.gui;
 
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,8 +11,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.*;
 
 public class PhilosopherStoneGUI {
 
@@ -25,7 +24,7 @@ public class PhilosopherStoneGUI {
     // 充能系统相关常量
     private static final int CHARGE_LEVEL_MAX = 4;
     private static final int EMERALD_SLOT = 10; // 第2行第2列
-    private static final int[] REDSTONE_SLOTS = { 11, 12, 13, 14 }; // 第2行第3-6列
+    private static final int[] REDSTONE_SLOTS = {11, 12, 13, 14}; // 第2行第3-6列
 
     // 模式选择相关常量
     private static final int MODE_PANEL_SLOT = 20; // 第3行第3列
@@ -36,11 +35,7 @@ public class PhilosopherStoneGUI {
     public static final int CRAFTING_TABLE_SLOT = 16; // 第2行第8列
 
     // 玻璃板槽位
-    private static final int[] GLASS_PANE_SLOTS = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8,
-            9, 15, 17,
-            18, 19, 23, 24, 25, 26
-    };
+    private static final int[] GLASS_PANE_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 17, 18, 19, 23, 24, 25, 26};
 
     // 菜单属性数据键
     private static final NamespacedKey GUI_ITEM_KEY = new NamespacedKey(ProjectE.getInstance(), "gui_item");
@@ -142,16 +137,15 @@ public class PhilosopherStoneGUI {
         StoneMode currentMode = playerCurrentMode.get(player);
 
         // 设置绿宝石块（显示当前充能等级）
-        String chargeLevelText = plugin.getLanguageManager()
-                .get("clientside.philosopher_stone_gui.charge_levels.level_" + chargeLevel);
+        String chargeLevelText =
+                plugin.getLanguageManager().get("clientside.philosopher_stone_gui.charge_levels.level_" + chargeLevel);
         String rangeText = currentMode.getRangeDescription(chargeLevel, plugin);
         String clickHint = plugin.getLanguageManager().get("clientside.philosopher_stone_gui.lore.charge_click");
-        String currentRangeText = plugin.getLanguageManager().get("clientside.philosopher_stone_gui.lore.current_range")
+        String currentRangeText = plugin.getLanguageManager()
+                .get("clientside.philosopher_stone_gui.lore.current_range")
                 .replace("{range}", rangeText);
 
-        List<String> emeraldLore = Arrays.asList(
-                ChatColor.GRAY + clickHint,
-                ChatColor.YELLOW + currentRangeText);
+        List<String> emeraldLore = Arrays.asList(ChatColor.GRAY + clickHint, ChatColor.YELLOW + currentRangeText);
 
         ItemStack emeraldItem = createGuiItem(Material.EMERALD_BLOCK, ChatColor.GOLD + chargeLevelText, emeraldLore);
         ItemMeta emeraldMeta = emeraldItem.getItemMeta();
@@ -167,12 +161,10 @@ public class PhilosopherStoneGUI {
             Map<String, String> progressPlaceholders = new HashMap<>();
             progressPlaceholders.put("level", String.valueOf(i + 1));
             progressPlaceholders.put("max_level", String.valueOf(CHARGE_LEVEL_MAX));
-            String progressText = plugin.getLanguageManager().get("clientside.philosopher_stone_gui.charge_progress",
-                    progressPlaceholders);
+            String progressText = plugin.getLanguageManager()
+                    .get("clientside.philosopher_stone_gui.charge_progress", progressPlaceholders);
 
-            List<String> redstoneLore = Arrays.asList(
-                    ChatColor.GRAY + clickHint,
-                    ChatColor.YELLOW + progressText);
+            List<String> redstoneLore = Arrays.asList(ChatColor.GRAY + clickHint, ChatColor.YELLOW + progressText);
 
             ItemStack redstoneItem = createGuiItem(material, ChatColor.GOLD + progressText, redstoneLore);
             ItemMeta redstoneMeta = redstoneItem.getItemMeta();
@@ -219,20 +211,24 @@ public class PhilosopherStoneGUI {
 
         if (selected) {
             String currentModeText = plugin.getLanguageManager()
-                    .get("clientside.philosopher_stone_gui.modes.current_mode").replace("{mode}", modeName);
+                    .get("clientside.philosopher_stone_gui.modes.current_mode")
+                    .replace("{mode}", modeName);
             lore.add(ChatColor.GREEN + "✓ " + currentModeText);
-            lore.add(ChatColor.YELLOW + plugin.getLanguageManager().get("clientside.philosopher_stone_gui.lore.range")
-                    .replace("{range}", rangeText));
+            lore.add(ChatColor.YELLOW
+                    + plugin.getLanguageManager()
+                            .get("clientside.philosopher_stone_gui.lore.range")
+                            .replace("{range}", rangeText));
             modeName = ChatColor.GREEN + "✓ " + modeName;
         } else {
             String clickHint = plugin.getLanguageManager().get("clientside.philosopher_stone_gui.lore.mode_click");
             lore.add(ChatColor.GRAY + clickHint);
-            lore.add(ChatColor.YELLOW + plugin.getLanguageManager().get("clientside.philosopher_stone_gui.lore.range")
-                    .replace("{range}", rangeText));
+            lore.add(ChatColor.YELLOW
+                    + plugin.getLanguageManager()
+                            .get("clientside.philosopher_stone_gui.lore.range")
+                            .replace("{range}", rangeText));
         }
 
         ItemStack item = createGuiItem(material, ChatColor.GOLD + modeName, lore);
-
 
         // 添加模式标识
         ItemMeta meta = item.getItemMeta();

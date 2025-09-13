@@ -1,7 +1,9 @@
 package org.Little_100.projecte.alchemicalbag;
 
-import org.Little_100.projecte.managers.LanguageManager;
+import java.util.HashMap;
+import java.util.Map;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.managers.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -14,9 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AlchemicalBagManager implements Listener {
 
@@ -44,8 +43,9 @@ public class AlchemicalBagManager implements Listener {
     }
 
     public void register() {
-        Bukkit.getServer().getPluginManager().registerEvents(new PlayerInteractListener(plugin, this, inventoryManager),
-                plugin);
+        Bukkit.getServer()
+                .getPluginManager()
+                .registerEvents(new PlayerInteractListener(plugin, this, inventoryManager), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(inventoryManager, plugin);
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         removeVanillaRecipes();
@@ -114,7 +114,8 @@ public class AlchemicalBagManager implements Listener {
         LeatherArmorMeta resultMeta = (LeatherArmorMeta) result.getItemMeta();
         resultMeta.setColor(dyeColor.getColor());
         Map<String, String> placeholders = new HashMap<>();
-        placeholders.put("color", PlayerInteractListener.getChatColor(dyeColor.name()).toString());
+        placeholders.put(
+                "color", PlayerInteractListener.getChatColor(dyeColor.name()).toString());
         placeholders.put("color_name", dyeColor.name());
         resultMeta.setDisplayName(languageManager.get("clientside.alchemical_bag.colored_name", placeholders));
         result.setItemMeta(resultMeta);

@@ -22,9 +22,13 @@ public class PlayerJoinListener implements Listener {
         boolean datapackConfirmed = plugin.getConfig().getBoolean("ConfrimDatapack", false);
 
         if (advancementDatapackEnabled && !datapackConfirmed) {
-            plugin.getSchedulerAdapter().runTaskLater(() -> {
-                player.sendMessage(plugin.getLanguageManager().get("serverside.datapack.not_loaded_warning"));
-            }, 20L);
+            plugin.getSchedulerAdapter()
+                    .runTaskLater(
+                            () -> {
+                                player.sendMessage(
+                                        plugin.getLanguageManager().get("serverside.datapack.not_loaded_warning"));
+                            },
+                            20L);
         }
     }
 }

@@ -1,8 +1,9 @@
 package org.Little_100.projecte.util;
 
-import org.Little_100.projecte.managers.BlockDataManager;
+import java.util.Collection;
 import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.compatibility.SchedulerAdapter;
+import org.Little_100.projecte.compatibility.scheduler.SchedulerAdapter;
+import org.Little_100.projecte.managers.BlockDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,8 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Collection;
 
 public class CustomBlockArtUtil implements Listener {
     private static double yOffset = -0.39;
@@ -84,7 +83,10 @@ public class CustomBlockArtUtil implements Listener {
                 pdc.set(Constants.NAME_KEY, PersistentDataType.STRING, meta.getDisplayName());
             }
         }
-        pdc.set(Constants.MATERIAL_KEY, PersistentDataType.STRING, item.getType().toString());
+        pdc.set(
+                Constants.MATERIAL_KEY,
+                PersistentDataType.STRING,
+                item.getType().toString());
 
         return armorStand;
     }
@@ -101,8 +103,7 @@ public class CustomBlockArtUtil implements Listener {
             String command = blockDataManager.getPlaceCommand(blockId);
 
             if (command != null) {
-                String processedCommand = command
-                        .replace("{x}", String.valueOf(block.getX()))
+                String processedCommand = command.replace("{x}", String.valueOf(block.getX()))
                         .replace("{y}", String.valueOf(block.getY()))
                         .replace("{z}", String.valueOf(block.getZ()))
                         .replace("{world}", block.getWorld().getName())
@@ -126,12 +127,7 @@ public class CustomBlockArtUtil implements Listener {
                     }
                 });
 
-                placeArtBlock(
-                        block.getLocation(),
-                        customBlockItem,
-                        finalBaseMaterial,
-                        Bisected.Half.TOP
-                );
+                placeArtBlock(block.getLocation(), customBlockItem, finalBaseMaterial, Bisected.Half.TOP);
             }
 
             if (player.getGameMode() != org.bukkit.GameMode.CREATIVE) {
@@ -144,9 +140,13 @@ public class CustomBlockArtUtil implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (block.getBlockData() instanceof Stairs) {
-            Collection<Entity> nearbyEntities = block.getWorld().getNearbyEntities(
-                    block.getLocation().add(0.5, 0, 0.5), 0.5, 0.5, 0.5,
-                    entity -> entity.getType() == EntityType.ARMOR_STAND);
+            Collection<Entity> nearbyEntities = block.getWorld()
+                    .getNearbyEntities(
+                            block.getLocation().add(0.5, 0, 0.5),
+                            0.5,
+                            0.5,
+                            0.5,
+                            entity -> entity.getType() == EntityType.ARMOR_STAND);
 
             for (Entity entity : nearbyEntities) {
                 if (entity instanceof ArmorStand) {
@@ -157,8 +157,7 @@ public class CustomBlockArtUtil implements Listener {
                         ItemStack dropItem = createDropItem(stand);
                         stand.remove();
                         String originalBlockStr = pdc.getOrDefault(
-                                new NamespacedKey(plugin, "original_block"),
-                                PersistentDataType.STRING, "AIR");
+                                new NamespacedKey(plugin, "original_block"), PersistentDataType.STRING, "AIR");
                         Material originalMaterial = Material.getMaterial(originalBlockStr);
                         block.setType(originalMaterial != null ? originalMaterial : Material.AIR);
 

@@ -1,8 +1,12 @@
 package org.Little_100.projecte.managers;
 
-import org.Little_100.projecte.alchemicalbag.AlchemicalBagManager;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.alchemicalbag.AlchemicalBagManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -14,15 +18,11 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class RecipeManager {
 
     private final ProjectE plugin;
-    private final Map<String, NamespacedKey> recipeKeys = new HashMap<>();;
+    private final Map<String, NamespacedKey> recipeKeys = new HashMap<>();
+    ;
 
     public RecipeManager(ProjectE plugin) {
         this.plugin = plugin;
@@ -113,15 +113,23 @@ public class RecipeManager {
 
     // 解析单个配方
     private void parseRecipe(String id, ConfigurationSection config) {
-        if (id.contains("_pickaxe") || id.contains("_axe") || id.contains("_shovel") || id.contains("_hoe") || id.contains("_sword") || id.contains("_shears") || id.contains("_hammer")) {
-            if (id.startsWith("dark_matter_") && !plugin.getConfig().getBoolean("tools.dark_matter_tools_enabled", true)) {
+        if (id.contains("_pickaxe")
+                || id.contains("_axe")
+                || id.contains("_shovel")
+                || id.contains("_hoe")
+                || id.contains("_sword")
+                || id.contains("_shears")
+                || id.contains("_hammer")) {
+            if (id.startsWith("dark_matter_")
+                    && !plugin.getConfig().getBoolean("tools.dark_matter_tools_enabled", true)) {
                 return;
             }
-            if (id.startsWith("red_matter_") && !plugin.getConfig().getBoolean("tools.red_matter_tools_enabled", true)) {
+            if (id.startsWith("red_matter_")
+                    && !plugin.getConfig().getBoolean("tools.red_matter_tools_enabled", true)) {
                 return;
             }
         }
- 
+
         java.util.Map<String, String> placeholders = new java.util.HashMap<>();
         placeholders.put("recipe", id);
         Debug.log("debug.recipe.loading_recipe", placeholders);
@@ -167,11 +175,14 @@ public class RecipeManager {
                 if (choice != null) {
                     recipe.setIngredient(keyChar, choice);
                     if (plugin.getConfig().getBoolean("debug")) {
-                        plugin.getLogger().info("[Debug] Recipe " + id + ": ingredient " + keyChar + " = " + ingredientValue);
+                        plugin.getLogger()
+                                .info("[Debug] Recipe " + id + ": ingredient " + keyChar + " = " + ingredientValue);
                     }
                 } else {
                     if (plugin.getConfig().getBoolean("debug")) {
-                        plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + keyChar + " (" + ingredientValue + ") is invalid. Skipping.");
+                        plugin.getLogger()
+                                .warning("[Debug] Recipe " + id + ": ingredient " + keyChar + " (" + ingredientValue
+                                        + ") is invalid. Skipping.");
                     }
                 }
             }
@@ -215,7 +226,9 @@ public class RecipeManager {
                 }
             } else {
                 if (plugin.getConfig().getBoolean("debug")) {
-                    plugin.getLogger().warning("[Debug] Recipe " + id + ": ingredient " + ingredientValue + " is invalid. Skipping.");
+                    plugin.getLogger()
+                            .warning("[Debug] Recipe " + id + ": ingredient " + ingredientValue
+                                    + " is invalid. Skipping.");
                 }
             }
         }
@@ -258,19 +271,36 @@ public class RecipeManager {
                 plugin.getLogger().info("[Debug] Matched special case: any_wool");
             }
             return new RecipeChoice.MaterialChoice(
-                    Material.WHITE_WOOL, Material.ORANGE_WOOL, Material.MAGENTA_WOOL,
-                    Material.LIGHT_BLUE_WOOL, Material.YELLOW_WOOL, Material.LIME_WOOL,
-                    Material.PINK_WOOL, Material.GRAY_WOOL, Material.LIGHT_GRAY_WOOL,
-                    Material.CYAN_WOOL, Material.PURPLE_WOOL, Material.BLUE_WOOL,
-                    Material.BROWN_WOOL, Material.GREEN_WOOL, Material.RED_WOOL, Material.BLACK_WOOL);
+                    Material.WHITE_WOOL,
+                    Material.ORANGE_WOOL,
+                    Material.MAGENTA_WOOL,
+                    Material.LIGHT_BLUE_WOOL,
+                    Material.YELLOW_WOOL,
+                    Material.LIME_WOOL,
+                    Material.PINK_WOOL,
+                    Material.GRAY_WOOL,
+                    Material.LIGHT_GRAY_WOOL,
+                    Material.CYAN_WOOL,
+                    Material.PURPLE_WOOL,
+                    Material.BLUE_WOOL,
+                    Material.BROWN_WOOL,
+                    Material.GREEN_WOOL,
+                    Material.RED_WOOL,
+                    Material.BLACK_WOOL);
         }
 
         if (ingredient.equalsIgnoreCase("any_dye")) {
             if (plugin.getConfig().getBoolean("debug")) {
                 plugin.getLogger().info("[Debug] Matched special case: any_dye");
             }
-            return new RecipeChoice.MaterialChoice(Material.RED_DYE, Material.GREEN_DYE, Material.BLUE_DYE,
-                    Material.WHITE_DYE, Material.BLACK_DYE, Material.YELLOW_DYE, Material.PURPLE_DYE,
+            return new RecipeChoice.MaterialChoice(
+                    Material.RED_DYE,
+                    Material.GREEN_DYE,
+                    Material.BLUE_DYE,
+                    Material.WHITE_DYE,
+                    Material.BLACK_DYE,
+                    Material.YELLOW_DYE,
+                    Material.PURPLE_DYE,
                     Material.ORANGE_DYE);
         }
 
@@ -306,37 +336,68 @@ public class RecipeManager {
 
         // 只有在recipe.yml中对应的配方未成功注册时才使用代码注册
         if (!alchemicalCoalExists) {
-            registerFuelUpgradeRecipe("code_alchemical_coal", new ItemStack(Material.COAL, 4), fuelManager.getAlchemicalCoal(), philosopherStone);
+            registerFuelUpgradeRecipe(
+                    "code_alchemical_coal",
+                    new ItemStack(Material.COAL, 4),
+                    fuelManager.getAlchemicalCoal(),
+                    philosopherStone);
             plugin.getLogger().info("Registered alchemical coal recipe from code");
         }
-        
+
         if (!mobiusFuelExists) {
-            registerFuelUpgradeRecipe("code_mobius_fuel", fuelManager.getAlchemicalCoal(), 4, fuelManager.getMobiusFuel(), 1, philosopherStone);
+            registerFuelUpgradeRecipe(
+                    "code_mobius_fuel",
+                    fuelManager.getAlchemicalCoal(),
+                    4,
+                    fuelManager.getMobiusFuel(),
+                    1,
+                    philosopherStone);
             plugin.getLogger().info("Registered mobius fuel recipe from code");
         }
-        
+
         if (!aeternalisFuelExists) {
-            registerFuelUpgradeRecipe("code_aeternalis_fuel", fuelManager.getMobiusFuel(), 4, fuelManager.getAeternalisFuel(), 1, philosopherStone);
+            registerFuelUpgradeRecipe(
+                    "code_aeternalis_fuel",
+                    fuelManager.getMobiusFuel(),
+                    4,
+                    fuelManager.getAeternalisFuel(),
+                    1,
+                    philosopherStone);
             plugin.getLogger().info("Registered aeternalis fuel recipe from code");
         }
 
         if (!aeternalisToMobiusExists) {
-            registerFuelDowngradeRecipe("code_aeternalis_to_mobius", fuelManager.getAeternalisFuel(), fuelManager.getMobiusFuel(), 4, philosopherStone);
+            registerFuelDowngradeRecipe(
+                    "code_aeternalis_to_mobius",
+                    fuelManager.getAeternalisFuel(),
+                    fuelManager.getMobiusFuel(),
+                    4,
+                    philosopherStone);
             plugin.getLogger().info("Registered aeternalis to mobius recipe from code");
         }
-        
+
         if (!mobiusToAlchemicalExists) {
-            registerFuelDowngradeRecipe("code_mobius_to_alchemical", fuelManager.getMobiusFuel(), fuelManager.getAlchemicalCoal(), 4, philosopherStone);
+            registerFuelDowngradeRecipe(
+                    "code_mobius_to_alchemical",
+                    fuelManager.getMobiusFuel(),
+                    fuelManager.getAlchemicalCoal(),
+                    4,
+                    philosopherStone);
             plugin.getLogger().info("Registered mobius to alchemical recipe from code");
         }
-        
+
         if (!alchemicalToCoalExists) {
-            registerFuelDowngradeRecipe("code_alchemical_to_coal", fuelManager.getAlchemicalCoal(), new ItemStack(Material.COAL, 4), philosopherStone);
+            registerFuelDowngradeRecipe(
+                    "code_alchemical_to_coal",
+                    fuelManager.getAlchemicalCoal(),
+                    new ItemStack(Material.COAL, 4),
+                    philosopherStone);
             plugin.getLogger().info("Registered alchemical to coal recipe from code");
         }
     }
 
-    private void registerFuelUpgradeRecipe(String id, ItemStack input, int inputAmount, ItemStack output, int outputAmount, ItemStack catalyst) {
+    private void registerFuelUpgradeRecipe(
+            String id, ItemStack input, int inputAmount, ItemStack output, int outputAmount, ItemStack catalyst) {
         NamespacedKey key = new NamespacedKey(plugin, "upgrade_" + id);
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output.getType(), outputAmount));
         ItemMeta meta = output.getItemMeta();
@@ -358,7 +419,8 @@ public class RecipeManager {
         recipeKeys.put("upgrade_" + id, key);
     }
 
-    private void registerFuelDowngradeRecipe(String id, ItemStack input, ItemStack output, int outputAmount, ItemStack catalyst) {
+    private void registerFuelDowngradeRecipe(
+            String id, ItemStack input, ItemStack output, int outputAmount, ItemStack catalyst) {
         NamespacedKey key = new NamespacedKey(plugin, "downgrade_" + id);
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output.getType(), outputAmount));
         ItemMeta meta = output.getItemMeta();
@@ -381,8 +443,7 @@ public class RecipeManager {
     }
 
     private ItemStack createResultStack(ConfigurationSection config) {
-        if (config == null)
-            return null;
+        if (config == null) return null;
 
         if (config.contains("projecte_id")) {
             String projecteId = config.getString("projecte_id");
@@ -391,16 +452,15 @@ public class RecipeManager {
             }
 
             ItemStack item;
-            
+
             if (plugin.getConfig().getBoolean("debug")) {
                 plugin.getLogger().info("[Debug] Creating result with projecte_id: " + projecteId);
             }
-            
+
             item = plugin.getItemStackFromKey(projecteId);
             if (item != null && plugin.getConfig().getBoolean("debug")) {
                 plugin.getLogger().info("[Debug] Found item from getItemStackFromKey: " + projecteId);
             }
-
 
             if (item != null) {
                 item.setAmount(config.getInt("amount", 1));
@@ -425,28 +485,13 @@ public class RecipeManager {
             String materialName = config.getString("material");
             Material material = plugin.getVersionAdapter().getMaterial(materialName);
             if (material == null) {
-            material = Material.matchMaterial(materialName);
-        }
-        if (material == null)
-            return null;
+                material = Material.matchMaterial(materialName);
+            }
+            if (material == null) return null;
 
-        ItemStack item = new ItemStack(material, config.getInt("amount", 1));
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            if (config.contains("display_name")) {
-                meta.setDisplayName(plugin.getLanguageManager().get(config.getString("display_name")));
-            }
-            if (config.contains("lore1")) {
-                java.util.List<String> lore = new java.util.ArrayList<>();
-                for (int i = 1; config.contains("lore" + i); i++) {
-                    lore.add(plugin.getLanguageManager().get(config.getString("lore" + i)));
-                }
-                meta.setLore(lore);
-            }
-            if (config.contains("custom_model_data")) {
-                item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(item,
-                        config.getString("custom_model_data"));
-                meta = item.getItemMeta();
+            ItemStack item = new ItemStack(material, config.getInt("amount", 1));
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
                 if (config.contains("display_name")) {
                     meta.setDisplayName(plugin.getLanguageManager().get(config.getString("display_name")));
                 }
@@ -457,11 +502,25 @@ public class RecipeManager {
                     }
                     meta.setLore(lore);
                 }
-            }
-            if (config.getBoolean("unbreakable")) {
-                meta.setUnbreakable(true);
-            }
-            item.setItemMeta(meta);
+                if (config.contains("custom_model_data")) {
+                    item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelData(
+                            item, config.getString("custom_model_data"));
+                    meta = item.getItemMeta();
+                    if (config.contains("display_name")) {
+                        meta.setDisplayName(plugin.getLanguageManager().get(config.getString("display_name")));
+                    }
+                    if (config.contains("lore1")) {
+                        java.util.List<String> lore = new java.util.ArrayList<>();
+                        for (int i = 1; config.contains("lore" + i); i++) {
+                            lore.add(plugin.getLanguageManager().get(config.getString("lore" + i)));
+                        }
+                        meta.setLore(lore);
+                    }
+                }
+                if (config.getBoolean("unbreakable")) {
+                    meta.setUnbreakable(true);
+                }
+                item.setItemMeta(meta);
             }
             return item;
         }
@@ -474,8 +533,8 @@ public class RecipeManager {
         registerUpgradeRecipe("copper_to_iron", Material.COPPER_INGOT, Material.IRON_INGOT, 4, 1, philosopherStone);
         registerUpgradeRecipe("iron_to_gold", Material.IRON_INGOT, Material.GOLD_INGOT, 4, 1, philosopherStone);
         registerUpgradeRecipe("gold_to_diamond", Material.GOLD_INGOT, Material.DIAMOND, 4, 1, philosopherStone);
-        registerSpecialUpgradeRecipe("diamond_to_netherite", Material.DIAMOND_BLOCK, Material.NETHERITE_INGOT, 8, 1,
-                philosopherStone);
+        registerSpecialUpgradeRecipe(
+                "diamond_to_netherite", Material.DIAMOND_BLOCK, Material.NETHERITE_INGOT, 8, 1, philosopherStone);
     }
 
     // 注册降级配方
@@ -485,13 +544,13 @@ public class RecipeManager {
         registerDowngradeRecipe("iron_to_copper", Material.IRON_INGOT, Material.COPPER_INGOT, 1, 4, philosopherStone);
         registerDowngradeRecipe("gold_to_iron", Material.GOLD_INGOT, Material.IRON_INGOT, 1, 4, philosopherStone);
         registerDowngradeRecipe("diamond_to_gold", Material.DIAMOND, Material.GOLD_INGOT, 1, 4, philosopherStone);
-        registerDowngradeRecipe("netherite_to_diamond", Material.NETHERITE_INGOT, Material.DIAMOND_BLOCK, 1, 8,
-                philosopherStone);
+        registerDowngradeRecipe(
+                "netherite_to_diamond", Material.NETHERITE_INGOT, Material.DIAMOND_BLOCK, 1, 8, philosopherStone);
     }
 
     // 注册单个升级配方
-    private void registerUpgradeRecipe(String id, Material input, Material output, int inputAmount, int outputAmount,
-            ItemStack catalyst) {
+    private void registerUpgradeRecipe(
+            String id, Material input, Material output, int inputAmount, int outputAmount, ItemStack catalyst) {
         NamespacedKey key = new NamespacedKey(plugin, "upgrade_" + id);
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output, outputAmount));
         recipe.addIngredient(inputAmount, input);
@@ -501,8 +560,8 @@ public class RecipeManager {
     }
 
     // 注册特殊升级配方
-    private void registerSpecialUpgradeRecipe(String id, Material input, Material output, int inputAmount,
-            int outputAmount, ItemStack catalyst) {
+    private void registerSpecialUpgradeRecipe(
+            String id, Material input, Material output, int inputAmount, int outputAmount, ItemStack catalyst) {
         NamespacedKey key = new NamespacedKey(plugin, "special_" + id);
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output, outputAmount));
         recipe.addIngredient(inputAmount, input);
@@ -512,8 +571,8 @@ public class RecipeManager {
     }
 
     // 注册单个降级配方
-    private void registerDowngradeRecipe(String id, Material input, Material output, int inputAmount, int outputAmount,
-            ItemStack catalyst) {
+    private void registerDowngradeRecipe(
+            String id, Material input, Material output, int inputAmount, int outputAmount, ItemStack catalyst) {
         NamespacedKey key = new NamespacedKey(plugin, "downgrade_" + id);
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(output, outputAmount));
         recipe.addIngredient(inputAmount, input);
@@ -544,33 +603,61 @@ public class RecipeManager {
         RecipeChoice catalyst = new RecipeChoice.ExactChoice(plugin.getPhilosopherStone());
         RecipeChoice fuel = new RecipeChoice.MaterialChoice(Material.COAL, Material.CHARCOAL);
 
-        registerOreTransmutationRecipe("iron",
+        registerOreTransmutationRecipe(
+                "iron",
                 new RecipeChoice.MaterialChoice(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE, Material.RAW_IRON),
-                new ItemStack(Material.IRON_INGOT, 7), catalyst, fuel);
-        registerOreTransmutationRecipe("gold",
+                new ItemStack(Material.IRON_INGOT, 7),
+                catalyst,
+                fuel);
+        registerOreTransmutationRecipe(
+                "gold",
                 new RecipeChoice.MaterialChoice(Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE, Material.RAW_GOLD),
-                new ItemStack(Material.GOLD_INGOT, 7), catalyst, fuel);
-        registerOreTransmutationRecipe("copper", new RecipeChoice.MaterialChoice(Material.COPPER_ORE,
-                Material.DEEPSLATE_COPPER_ORE, Material.RAW_COPPER), new ItemStack(Material.COPPER_INGOT, 7), catalyst,
+                new ItemStack(Material.GOLD_INGOT, 7),
+                catalyst,
                 fuel);
-        registerOreTransmutationRecipe("diamond",
+        registerOreTransmutationRecipe(
+                "copper",
+                new RecipeChoice.MaterialChoice(
+                        Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE, Material.RAW_COPPER),
+                new ItemStack(Material.COPPER_INGOT, 7),
+                catalyst,
+                fuel);
+        registerOreTransmutationRecipe(
+                "diamond",
                 new RecipeChoice.MaterialChoice(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE),
-                new ItemStack(Material.DIAMOND, 7), catalyst, fuel);
-        registerOreTransmutationRecipe("netherite", new RecipeChoice.MaterialChoice(Material.ANCIENT_DEBRIS),
-                new ItemStack(Material.NETHERITE_SCRAP, 7), catalyst, fuel);
-        RecipeChoice logChoice = new RecipeChoice.MaterialChoice(
-                Material.OAK_LOG, Material.SPRUCE_LOG, Material.BIRCH_LOG, Material.JUNGLE_LOG,
-                Material.ACACIA_LOG, Material.DARK_OAK_LOG, Material.MANGROVE_LOG, Material.CHERRY_LOG,
-                Material.STRIPPED_OAK_LOG, Material.STRIPPED_SPRUCE_LOG, Material.STRIPPED_BIRCH_LOG,
-                Material.STRIPPED_JUNGLE_LOG, Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_DARK_OAK_LOG,
-                Material.STRIPPED_MANGROVE_LOG, Material.STRIPPED_CHERRY_LOG);
-        registerOreTransmutationRecipe("wood_to_charcoal", logChoice, new ItemStack(Material.CHARCOAL, 7), catalyst,
+                new ItemStack(Material.DIAMOND, 7),
+                catalyst,
                 fuel);
+        registerOreTransmutationRecipe(
+                "netherite",
+                new RecipeChoice.MaterialChoice(Material.ANCIENT_DEBRIS),
+                new ItemStack(Material.NETHERITE_SCRAP, 7),
+                catalyst,
+                fuel);
+        RecipeChoice logChoice = new RecipeChoice.MaterialChoice(
+                Material.OAK_LOG,
+                Material.SPRUCE_LOG,
+                Material.BIRCH_LOG,
+                Material.JUNGLE_LOG,
+                Material.ACACIA_LOG,
+                Material.DARK_OAK_LOG,
+                Material.MANGROVE_LOG,
+                Material.CHERRY_LOG,
+                Material.STRIPPED_OAK_LOG,
+                Material.STRIPPED_SPRUCE_LOG,
+                Material.STRIPPED_BIRCH_LOG,
+                Material.STRIPPED_JUNGLE_LOG,
+                Material.STRIPPED_ACACIA_LOG,
+                Material.STRIPPED_DARK_OAK_LOG,
+                Material.STRIPPED_MANGROVE_LOG,
+                Material.STRIPPED_CHERRY_LOG);
+        registerOreTransmutationRecipe(
+                "wood_to_charcoal", logChoice, new ItemStack(Material.CHARCOAL, 7), catalyst, fuel);
     }
 
     // 注册单个矿石转化配方
-    private void registerOreTransmutationRecipe(String id, RecipeChoice oreChoice, ItemStack result,
-            RecipeChoice catalyst, RecipeChoice fuel) {
+    private void registerOreTransmutationRecipe(
+            String id, RecipeChoice oreChoice, ItemStack result, RecipeChoice catalyst, RecipeChoice fuel) {
         NamespacedKey key = new NamespacedKey(plugin, "transmute_" + id);
         ShapelessRecipe recipe = new ShapelessRecipe(key, result);
         for (int i = 0; i < 7; i++) {
@@ -584,13 +671,20 @@ public class RecipeManager {
 
     private int getKleinStarLevelFromId(String id) {
         switch (id) {
-            case "klein_star_ein": return 1;
-            case "klein_star_zwei": return 2;
-            case "klein_star_drei": return 3;
-            case "klein_star_vier": return 4;
-            case "klein_star_sphere": return 5;
-            case "klein_star_omega": return 6;
-            default: return -1;
+            case "klein_star_ein":
+                return 1;
+            case "klein_star_zwei":
+                return 2;
+            case "klein_star_drei":
+                return 3;
+            case "klein_star_vier":
+                return 4;
+            case "klein_star_sphere":
+                return 5;
+            case "klein_star_omega":
+                return 6;
+            default:
+                return -1;
         }
     }
 }

@@ -1,7 +1,11 @@
 package org.Little_100.projecte.listeners;
 
-import org.Little_100.projecte.gui.PhilosopherStoneGUI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -17,11 +21,6 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class PhilosopherStoneListener implements Listener {
 
     private final ProjectE plugin;
@@ -31,16 +30,16 @@ public class PhilosopherStoneListener implements Listener {
     private final java.util.Set<java.util.UUID> interactedThisTick = new java.util.HashSet<>();
 
     private static final Material[] MATERIALS_CYCLE = {
-            Material.COBBLESTONE, Material.STONE, Material.GRAVEL, Material.SAND
+        Material.COBBLESTONE, Material.STONE, Material.GRAVEL, Material.SAND
     };
 
-    private static final Material[] BUILDING_CYCLE_1 = {
-            Material.GRASS_BLOCK, Material.DIRT, Material.STONE
-    };
+    private static final Material[] BUILDING_CYCLE_1 = {Material.GRASS_BLOCK, Material.DIRT, Material.STONE};
 
     private static final Material[] BUILDING_CYCLE_2 = {
-            Material.STONE_BRICKS, Material.CRACKED_STONE_BRICKS, Material.MOSSY_STONE_BRICKS,
-            Material.CHISELED_STONE_BRICKS
+        Material.STONE_BRICKS,
+        Material.CRACKED_STONE_BRICKS,
+        Material.MOSSY_STONE_BRICKS,
+        Material.CHISELED_STONE_BRICKS
     };
 
     public PhilosopherStoneListener(ProjectE plugin) {
@@ -59,7 +58,8 @@ public class PhilosopherStoneListener implements Listener {
         ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         // 检查贤者之石右键单击方块的操作
-        if (plugin.isPhilosopherStone(heldItem) && event.getAction() == Action.RIGHT_CLICK_BLOCK
+        if (plugin.isPhilosopherStone(heldItem)
+                && event.getAction() == Action.RIGHT_CLICK_BLOCK
                 && event.getClickedBlock() != null) {
             event.setCancelled(true);
 
@@ -80,17 +80,21 @@ public class PhilosopherStoneListener implements Listener {
             final Block clickedBlock = event.getClickedBlock();
             final BlockFace blockFace = event.getBlockFace();
 
-            plugin.getSchedulerAdapter().runTaskLater(() -> {
-                interactedThisTick.remove(player.getUniqueId());
+            plugin.getSchedulerAdapter()
+                    .runTaskLater(
+                            () -> {
+                                interactedThisTick.remove(player.getUniqueId());
 
-                plugin.getSchedulerAdapter().runTaskAt(clickedBlock.getLocation(), () -> {
-                    handleBlockTransformation(player, player.isSneaking(), clickedBlock, blockFace);
-                });
-            }, 1L);
+                                plugin.getSchedulerAdapter().runTaskAt(clickedBlock.getLocation(), () -> {
+                                    handleBlockTransformation(player, player.isSneaking(), clickedBlock, blockFace);
+                                });
+                            },
+                            1L);
         }
 
         // 如果贤者之石的操作未触发，则检查是否右键单击了石化橡木台阶
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK
+                && event.getClickedBlock() != null
                 && event.getClickedBlock().getType() == Material.PETRIFIED_OAK_SLAB) {
             if (plugin.getConfig().getBoolean("gui.enabled", true)) {
                 if (!player.hasPermission("philosophersstone.interact.gui")) {
@@ -180,7 +184,8 @@ public class PhilosopherStoneListener implements Listener {
         inventory.setMatrix(matrix);
 
         // 检查玩家光标是否为空
-        if (player.getItemOnCursor() != null && !player.getItemOnCursor().getType().isAir()) {
+        if (player.getItemOnCursor() != null
+                && !player.getItemOnCursor().getType().isAir()) {
             event.setCancelled(true);
             return;
         }
@@ -189,10 +194,9 @@ public class PhilosopherStoneListener implements Listener {
         player.setItemOnCursor(result);
     }
 
-    private void handleBlockTransformation(Player player, boolean isShiftClick, Block clickedBlock,
-            BlockFace clickedFace) {
-        if (clickedBlock == null)
-            return;
+    private void handleBlockTransformation(
+            Player player, boolean isShiftClick, Block clickedBlock, BlockFace clickedFace) {
+        if (clickedBlock == null) return;
 
         // 获取转换区域
         PhilosopherStoneGUI.TransformationArea area = PhilosopherStoneGUI.getTransformationArea(player);
@@ -200,8 +204,7 @@ public class PhilosopherStoneListener implements Listener {
         // 根据点击的面获取要转换的方块列表
         List<Block> blocksToTransform = getBlocksInAreaByClickedFace(clickedBlock, area, clickedFace);
 
-        if (blocksToTransform.isEmpty())
-            return;
+        if (blocksToTransform.isEmpty()) return;
 
         // 转换所有方块
         int transformedCount = 0;
@@ -222,7 +225,7 @@ public class PhilosopherStoneListener implements Listener {
         }
 
         if (transformedCount > 0) {
-            player.playSound(clickedBlock.getLocation(), "projecte:custom.petransmute", 1.0f, 1.0f); //需要 材质包支持
+            player.playSound(clickedBlock.getLocation(), "projecte:custom.petransmute", 1.0f, 1.0f); // 需要 材质包支持
 
             // 发送转换消息
             String modeText = area.getMode().getDisplayName(plugin);
@@ -308,21 +311,15 @@ public class PhilosopherStoneListener implements Listener {
         Material result;
 
         result = cycleMaterial(material, MATERIALS_CYCLE, false);
-        if (result != null)
-            return result;
+        if (result != null) return result;
 
-        if (material == Material.GRASS_BLOCK)
-            return Material.DIRT;
-        if (material == Material.DIRT)
-            return Material.STONE;
+        if (material == Material.GRASS_BLOCK) return Material.DIRT;
+        if (material == Material.DIRT) return Material.STONE;
         result = cycleMaterial(material, BUILDING_CYCLE_2, false);
-        if (result != null)
-            return result;
+        if (result != null) return result;
 
-        if (material == Material.OBSIDIAN)
-            return Material.LAVA;
-        if (material == Material.ICE)
-            return Material.WATER;
+        if (material == Material.OBSIDIAN) return Material.LAVA;
+        if (material == Material.ICE) return Material.WATER;
 
         return getOtherCycleTransformation(material, false);
     }
@@ -338,18 +335,13 @@ public class PhilosopherStoneListener implements Listener {
             return result;
         }
 
-        if (material == Material.GRASS_BLOCK)
-            return Material.STONE;
-        if (material == Material.DIRT)
-            return Material.GRASS_BLOCK;
+        if (material == Material.GRASS_BLOCK) return Material.STONE;
+        if (material == Material.DIRT) return Material.GRASS_BLOCK;
 
         result = cycleMaterial(material, BUILDING_CYCLE_2, true);
-        if (result != null)
-            return result;
-        if (material == Material.LAVA)
-            return Material.OBSIDIAN;
-        if (material == Material.WATER)
-            return Material.ICE;
+        if (result != null) return result;
+        if (material == Material.LAVA) return Material.OBSIDIAN;
+        if (material == Material.WATER) return Material.ICE;
 
         return getOtherCycleTransformation(material, true);
     }
@@ -359,46 +351,43 @@ public class PhilosopherStoneListener implements Listener {
 
         // 7种原版树苗
         Material[] saplings = {
-                Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING,
-                Material.JUNGLE_SAPLING, Material.ACACIA_SAPLING, Material.DARK_OAK_SAPLING,
-                Material.MANGROVE_PROPAGULE
+            Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING,
+            Material.JUNGLE_SAPLING, Material.ACACIA_SAPLING, Material.DARK_OAK_SAPLING,
+            Material.MANGROVE_PROPAGULE
         };
 
         // 7种原版原木
         Material[] logs = {
-                Material.OAK_LOG, Material.SPRUCE_LOG, Material.BIRCH_LOG,
-                Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG,
-                Material.MANGROVE_LOG
+            Material.OAK_LOG, Material.SPRUCE_LOG, Material.BIRCH_LOG,
+            Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG,
+            Material.MANGROVE_LOG
         };
 
         // 7种原版树叶
         Material[] leaves = {
-                Material.OAK_LEAVES, Material.SPRUCE_LEAVES, Material.BIRCH_LEAVES,
-                Material.JUNGLE_LEAVES, Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES,
-                Material.MANGROVE_LEAVES
+            Material.OAK_LEAVES, Material.SPRUCE_LEAVES, Material.BIRCH_LEAVES,
+            Material.JUNGLE_LEAVES, Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES,
+            Material.MANGROVE_LEAVES
         };
 
         // 16种原版羊毛
         Material[] wools = {
-                Material.WHITE_WOOL, Material.ORANGE_WOOL, Material.MAGENTA_WOOL,
-                Material.LIGHT_BLUE_WOOL, Material.YELLOW_WOOL, Material.LIME_WOOL,
-                Material.PINK_WOOL, Material.GRAY_WOOL, Material.LIGHT_GRAY_WOOL,
-                Material.CYAN_WOOL, Material.PURPLE_WOOL, Material.BLUE_WOOL,
-                Material.BROWN_WOOL, Material.GREEN_WOOL, Material.RED_WOOL,
-                Material.BLACK_WOOL
+            Material.WHITE_WOOL, Material.ORANGE_WOOL, Material.MAGENTA_WOOL,
+            Material.LIGHT_BLUE_WOOL, Material.YELLOW_WOOL, Material.LIME_WOOL,
+            Material.PINK_WOOL, Material.GRAY_WOOL, Material.LIGHT_GRAY_WOOL,
+            Material.CYAN_WOOL, Material.PURPLE_WOOL, Material.BLUE_WOOL,
+            Material.BROWN_WOOL, Material.GREEN_WOOL, Material.RED_WOOL,
+            Material.BLACK_WOOL
         };
 
         result = cycleMaterial(material, saplings, reverse);
-        if (result != null)
-            return result;
+        if (result != null) return result;
 
         result = cycleMaterial(material, logs, reverse);
-        if (result != null)
-            return result;
+        if (result != null) return result;
 
         result = cycleMaterial(material, leaves, reverse);
-        if (result != null)
-            return result;
+        if (result != null) return result;
 
         return cycleMaterial(material, wools, reverse);
     }
@@ -427,8 +416,8 @@ public class PhilosopherStoneListener implements Listener {
         return false;
     }
 
-    private List<Block> getBlocksInAreaByClickedFace(Block center, PhilosopherStoneGUI.TransformationArea area,
-            org.bukkit.block.BlockFace clickedFace) {
+    private List<Block> getBlocksInAreaByClickedFace(
+            Block center, PhilosopherStoneGUI.TransformationArea area, org.bukkit.block.BlockFace clickedFace) {
         List<Block> blocks = new ArrayList<>();
 
         int width = area.getWidth();
@@ -453,8 +442,8 @@ public class PhilosopherStoneListener implements Listener {
         return blocks;
     }
 
-    private List<Block> getBlocksInPlaneByFace(Block center, int width, int height,
-            org.bukkit.block.BlockFace clickedFace) {
+    private List<Block> getBlocksInPlaneByFace(
+            Block center, int width, int height, org.bukkit.block.BlockFace clickedFace) {
         List<Block> blocks = new ArrayList<>();
 
         Vector right, up;
@@ -549,7 +538,8 @@ public class PhilosopherStoneListener implements Listener {
 
     private void spawnParticleOutline(Player player, List<Block> blocks) {
         org.bukkit.configuration.file.FileConfiguration config = plugin.getConfig();
-        String particleName = config.getString("philosopher_stone.particle.particle-name", "END_ROD").toUpperCase();
+        String particleName = config.getString("philosopher_stone.particle.particle-name", "END_ROD")
+                .toUpperCase();
         Particle particle;
         try {
             particle = Particle.valueOf(particleName);

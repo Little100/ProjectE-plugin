@@ -34,7 +34,7 @@ public class ToolChargeGUIListener implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
 
         if (clickedInventory == null || clickedItem == null || !clickedItem.hasItemMeta()) return;
-        
+
         String expectedTitle = plugin.getLanguageManager().get("clientside.tool_charge_gui.title");
         if (!event.getView().getTitle().equals(expectedTitle)) {
             return;
@@ -82,7 +82,7 @@ public class ToolChargeGUIListener implements Listener {
                 if (toolManager.isRedMatterKatar(tool)) {
                     toolManager.updateKatarAttackDamage(tool);
                 }
-                
+
                 if (newCharge > oldCharge) {
                     player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
                 } else {
@@ -93,7 +93,7 @@ public class ToolChargeGUIListener implements Listener {
                 player.getInventory().setItemInMainHand(tool);
             }
         }
-        
+
         if (clickedContainer.has(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER)) {
             int newMode = clickedContainer.get(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER);
             int oldMode = toolContainer.getOrDefault(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, 0);
@@ -102,10 +102,10 @@ public class ToolChargeGUIListener implements Listener {
                 toolContainer.set(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, newMode);
                 tool.setItemMeta(toolMeta);
                 toolManager.updateLore(tool);
-                
+
                 player.getInventory().setItemInMainHand(tool);
                 player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, 1.5f);
-                
+
                 new ToolChargeGUI(plugin, player, player.getInventory().getItemInMainHand()).open();
             }
         }
@@ -122,17 +122,33 @@ public class ToolChargeGUIListener implements Listener {
 
         if (toolManager.isRedMatterTool(tool)) {
             switch (newCharge) {
-                case 0: newDamage = maxDurability - 2; break;
-                case 1: newDamage = maxDurability * 2 / 3; break;
-                case 2: newDamage = maxDurability / 3; break;
-                case 3: newDamage = maxDurability / 4; break;
-                case 4: newDamage = 1; break;
+                case 0:
+                    newDamage = maxDurability - 2;
+                    break;
+                case 1:
+                    newDamage = maxDurability * 2 / 3;
+                    break;
+                case 2:
+                    newDamage = maxDurability / 3;
+                    break;
+                case 3:
+                    newDamage = maxDurability / 4;
+                    break;
+                case 4:
+                    newDamage = 1;
+                    break;
             }
         } else {
             switch (newCharge) {
-                case 0: newDamage = maxDurability - 2; break;
-                case 1: newDamage = maxDurability / 2; break;
-                case 2: newDamage = 1; break;
+                case 0:
+                    newDamage = maxDurability - 2;
+                    break;
+                case 1:
+                    newDamage = maxDurability / 2;
+                    break;
+                case 2:
+                    newDamage = 1;
+                    break;
             }
         }
         damageable.setDamage(newDamage);

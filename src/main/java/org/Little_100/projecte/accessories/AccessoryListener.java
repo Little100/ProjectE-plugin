@@ -1,5 +1,8 @@
 package org.Little_100.projecte.accessories;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
@@ -12,10 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class AccessoryListener implements Listener {
 
@@ -73,14 +72,17 @@ public class AccessoryListener implements Listener {
             return null;
         }
         ItemMeta meta = item.getItemMeta();
-        if(meta == null) return null;
+        if (meta == null) return null;
 
         PersistentDataContainer data = meta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(ProjectE.getInstance(), "projecte_id");
 
         if (data.has(key, PersistentDataType.STRING)) {
             String id = data.get(key, PersistentDataType.STRING);
-            if ("body_stone".equals(id) || "soul_stone".equals(id) || "life_stone".equals(id) || "mind_stone".equals(id)) {
+            if ("body_stone".equals(id)
+                    || "soul_stone".equals(id)
+                    || "life_stone".equals(id)
+                    || "mind_stone".equals(id)) {
                 return id;
             }
         }

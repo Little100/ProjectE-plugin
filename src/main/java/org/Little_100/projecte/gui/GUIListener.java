@@ -1,15 +1,16 @@
 package org.Little_100.projecte.gui;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import org.Little_100.projecte.Debug;
+import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.managers.LanguageManager;
-import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
 import org.Little_100.projecte.storage.DatabaseManager;
+import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
 import org.Little_100.projecte.util.ShulkerBoxUtil;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,10 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GUIListener implements Listener {
 
@@ -54,14 +51,16 @@ public class GUIListener implements Listener {
                 updateSellButton(gui);
                 return;
             }
-        } else if (gui.getCurrentState() == TransmutationGUI.GuiState.LEARN || gui.getCurrentState() == TransmutationGUI.GuiState.CHARGE) {
+        } else if (gui.getCurrentState() == TransmutationGUI.GuiState.LEARN
+                || gui.getCurrentState() == TransmutationGUI.GuiState.CHARGE) {
             if (event.getClickedInventory() == player.getInventory() || isTransactionArea(event.getSlot())) {
                 event.setCancelled(false);
                 return;
             }
         }
 
-        if (gui.getCurrentState() == TransmutationGUI.GuiState.BUY || gui.getCurrentState() == TransmutationGUI.GuiState.MAIN) {
+        if (gui.getCurrentState() == TransmutationGUI.GuiState.BUY
+                || gui.getCurrentState() == TransmutationGUI.GuiState.MAIN) {
             if (event.getClickedInventory() != gui.getInventory()) {
                 event.setCancelled(true);
                 return;
@@ -122,33 +121,40 @@ public class GUIListener implements Listener {
     }
 
     private void updateSellButton(TransmutationGUI gui) {
-        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
-            Inventory inventory = gui.getInventory();
-            long totalEmcChange = 0;
-            for (int i = 0; i < 54; i++) {
-                if (isTransactionArea(i)) {
-                    ItemStack item = inventory.getItem(i);
-                    if (item != null && !item.getType().isAir()) {
-                        totalEmcChange += calculateItemSellEmc(item);
-                    }
-                }
-            }
+        ProjectE.getInstance()
+                .getSchedulerAdapter()
+                .runTaskLater(
+                        () -> {
+                            Inventory inventory = gui.getInventory();
+                            long totalEmcChange = 0;
+                            for (int i = 0; i < 54; i++) {
+                                if (isTransactionArea(i)) {
+                                    ItemStack item = inventory.getItem(i);
+                                    if (item != null && !item.getType().isAir()) {
+                                        totalEmcChange += calculateItemSellEmc(item);
+                                    }
+                                }
+                            }
 
-            ItemStack confirmButton = inventory.getItem(49);
-            if (confirmButton != null) {
-                ItemMeta meta = confirmButton.getItemMeta();
-                if (meta != null) {
-                    String formattedEmc = String.format("%,d", totalEmcChange);
-                    LanguageManager lang = ProjectE.getInstance().getLanguageManager();
-                    Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("emc", formattedEmc);
-                    meta.setLore(Arrays.asList(
-                            lang.get("clientside.transmutation_table.buttons.confirm_transaction_lore"),
-                            lang.get("clientside.transmutation_table.buttons.you_will_get", placeholders)));
-                    confirmButton.setItemMeta(meta);
-                }
-            }
-        }, 1L);
+                            ItemStack confirmButton = inventory.getItem(49);
+                            if (confirmButton != null) {
+                                ItemMeta meta = confirmButton.getItemMeta();
+                                if (meta != null) {
+                                    String formattedEmc = String.format("%,d", totalEmcChange);
+                                    LanguageManager lang =
+                                            ProjectE.getInstance().getLanguageManager();
+                                    Map<String, String> placeholders = new HashMap<>();
+                                    placeholders.put("emc", formattedEmc);
+                                    meta.setLore(Arrays.asList(
+                                            lang.get("clientside.transmutation_table.buttons.confirm_transaction_lore"),
+                                            lang.get(
+                                                    "clientside.transmutation_table.buttons.you_will_get",
+                                                    placeholders)));
+                                    confirmButton.setItemMeta(meta);
+                                }
+                            }
+                        },
+                        1L);
     }
 
     private long calculateItemSellEmc(ItemStack item) {
@@ -161,7 +167,8 @@ public class GUIListener implements Listener {
         long itemEmc = emcManager.getEmc(item);
 
         // 处理潜影盒
-        if (item.getItemMeta() instanceof BlockStateMeta && ((BlockStateMeta) item.getItemMeta()).getBlockState() instanceof ShulkerBox) {
+        if (item.getItemMeta() instanceof BlockStateMeta
+                && ((BlockStateMeta) item.getItemMeta()).getBlockState() instanceof ShulkerBox) {
             if (ShulkerBoxUtil.getFirstItemWithoutEmc(item) == null) {
                 return (itemEmc + ShulkerBoxUtil.getTotalEmcOfContents(item)) * item.getAmount();
             }
@@ -189,13 +196,11 @@ public class GUIListener implements Listener {
         return itemEmc * item.getAmount();
     }
 
-
     private void handleBuyScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
 
-        if (event.getClickedInventory() != gui.getInventory())
-            return;
+        if (event.getClickedInventory() != gui.getInventory()) return;
 
         // 处理导航和边框点击
         if (slot == 0) { // 返回按钮
@@ -203,7 +208,7 @@ public class GUIListener implements Listener {
             return;
         } else if (slot == 4) { // 搜索按钮
             player.closeInventory();
-            DebugManager.log("Player " + player.getName() + " clicked search button.");
+            Debug.log("Player " + player.getName() + " clicked search button.");
 
             searchingPlayers.put(player, true);
 
@@ -234,8 +239,7 @@ public class GUIListener implements Listener {
         if (clickedItem != null && !clickedItem.getType().isAir()) {
             String itemKey = ProjectE.getInstance().getEmcManager().getItemKey(clickedItem);
             long itemEmc = ProjectE.getInstance().getEmcManager().getEmc(itemKey);
-            if (itemEmc <= 0)
-                return;
+            if (itemEmc <= 0) return;
 
             long playerEmc = ProjectE.getInstance().getDatabaseManager().getPlayerEmc(player.getUniqueId());
             int amountToBuy;
@@ -245,7 +249,8 @@ public class GUIListener implements Listener {
             if (ProjectE.getInstance().isPhilosopherStone(clickedItem)) {
                 // 检查玩家是否已经拥有贤者之石
                 if (player.getInventory().containsAtLeast(ProjectE.getInstance().getPhilosopherStone(), 1)) {
-                    player.sendMessage(ProjectE.getInstance().getLanguageManager()
+                    player.sendMessage(ProjectE.getInstance()
+                            .getLanguageManager()
                             .get("serverside.command.generic.already_have_philosopher_stone"));
                     return;
                 }
@@ -267,8 +272,9 @@ public class GUIListener implements Listener {
 
             if (amountToBuy > 0) {
                 if (playerEmc >= totalCost) {
-                    ProjectE.getInstance().getDatabaseManager().setPlayerEmc(player.getUniqueId(),
-                            playerEmc - totalCost);
+                    ProjectE.getInstance()
+                            .getDatabaseManager()
+                            .setPlayerEmc(player.getUniqueId(), playerEmc - totalCost);
 
                     ItemStack purchasedItem = ProjectE.getInstance().getItemStackFromKey(itemKey);
                     if (purchasedItem != null) {
@@ -279,7 +285,6 @@ public class GUIListener implements Listener {
                             purchasedItem.setItemMeta(clickedItem.getItemMeta());
                         }
                     }
-
 
                     player.getInventory().addItem(purchasedItem);
 
@@ -299,7 +304,8 @@ public class GUIListener implements Listener {
                     refreshGui(player, TransmutationGUI.GuiState.BUY, gui.getPage());
 
                 } else {
-                    player.sendMessage(ProjectE.getInstance().getLanguageManager()
+                    player.sendMessage(ProjectE.getInstance()
+                            .getLanguageManager()
                             .get("serverside.command.generic.not_enough_emc"));
                 }
             }
@@ -317,17 +323,28 @@ public class GUIListener implements Listener {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && !item.getType().isAir()) {
                     // 潜影盒检查
-                    if (item.getItemMeta() instanceof BlockStateMeta && ((BlockStateMeta) item.getItemMeta()).getBlockState() instanceof ShulkerBox) {
+                    if (item.getItemMeta() instanceof BlockStateMeta
+                            && ((BlockStateMeta) item.getItemMeta()).getBlockState() instanceof ShulkerBox) {
                         ItemStack itemWithoutEmc = ShulkerBoxUtil.getFirstItemWithoutEmc(item);
                         if (itemWithoutEmc != null) {
                             LanguageManager lang = ProjectE.getInstance().getLanguageManager();
                             Map<String, String> placeholders = new HashMap<>();
-                            String shulkerColor = item.getType().name().replace("_SHULKER_BOX", "").toLowerCase();
+                            String shulkerColor = item.getType()
+                                    .name()
+                                    .replace("_SHULKER_BOX", "")
+                                    .toLowerCase();
                             placeholders.put("color", shulkerColor);
                             placeholders.put("item_id", item.getType().name());
-                            placeholders.put("item", itemWithoutEmc.hasItemMeta() && itemWithoutEmc.getItemMeta().hasDisplayName() ? itemWithoutEmc.getItemMeta().getDisplayName() : itemWithoutEmc.getType().name());
+                            placeholders.put(
+                                    "item",
+                                    itemWithoutEmc.hasItemMeta()
+                                                    && itemWithoutEmc
+                                                            .getItemMeta()
+                                                            .hasDisplayName()
+                                            ? itemWithoutEmc.getItemMeta().getDisplayName()
+                                            : itemWithoutEmc.getType().name());
                             player.sendMessage(lang.get("serverside.command.generic.shulker_box_no_emc", placeholders));
-                            
+
                             player.getInventory().addItem(item);
                             inventory.setItem(i, null);
                             transactionValid = false;
@@ -341,12 +358,21 @@ public class GUIListener implements Listener {
                         String itemKey = ProjectE.getInstance().getEmcManager().getItemKey(item);
                         ProjectE.getInstance().getDatabaseManager().addLearnedItem(player.getUniqueId(), itemKey);
                         // 如果是潜影盒，学习内部所有物品
-                        if (item.getItemMeta() instanceof BlockStateMeta && ((BlockStateMeta) item.getItemMeta()).getBlockState() instanceof ShulkerBox) {
+                        if (item.getItemMeta() instanceof BlockStateMeta
+                                && ((BlockStateMeta) item.getItemMeta()).getBlockState() instanceof ShulkerBox) {
                             BlockStateMeta bsm = (BlockStateMeta) item.getItemMeta();
                             ShulkerBox shulkerBox = (ShulkerBox) bsm.getBlockState();
-                            for(ItemStack contentItem : shulkerBox.getInventory().getContents()) {
-                                if(contentItem != null && !contentItem.getType().isAir()) {
-                                    ProjectE.getInstance().getDatabaseManager().addLearnedItem(player.getUniqueId(), ProjectE.getInstance().getEmcManager().getItemKey(contentItem));
+                            for (ItemStack contentItem :
+                                    shulkerBox.getInventory().getContents()) {
+                                if (contentItem != null
+                                        && !contentItem.getType().isAir()) {
+                                    ProjectE.getInstance()
+                                            .getDatabaseManager()
+                                            .addLearnedItem(
+                                                    player.getUniqueId(),
+                                                    ProjectE.getInstance()
+                                                            .getEmcManager()
+                                                            .getItemKey(contentItem));
                                 }
                             }
                         }
@@ -388,8 +414,7 @@ public class GUIListener implements Listener {
 
     private void handleLearnScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
         int slot = event.getSlot();
-        if (event.getClickedInventory() != gui.getInventory())
-            return;
+        if (event.getClickedInventory() != gui.getInventory()) return;
 
         if (slot == 0) {
             gui.setState(TransmutationGUI.GuiState.MAIN);
@@ -440,12 +465,16 @@ public class GUIListener implements Listener {
 
     private void refreshGui(Player player, TransmutationGUI.GuiState state, int page) {
         player.closeInventory();
-        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
-            TransmutationGUI newGui = new TransmutationGUI(player);
-            newGui.setState(state);
-            newGui.setPage(page);
-            newGui.open();
-        }, 1L);
+        ProjectE.getInstance()
+                .getSchedulerAdapter()
+                .runTaskLater(
+                        () -> {
+                            TransmutationGUI newGui = new TransmutationGUI(player);
+                            newGui.setState(state);
+                            newGui.setPage(page);
+                            newGui.open();
+                        },
+                        1L);
     }
 
     @EventHandler
@@ -456,11 +485,12 @@ public class GUIListener implements Listener {
             event.setCancelled(true);
             String searchQuery = event.getMessage();
 
-            DebugManager.log("Search query from chat: '" + searchQuery + "'");
+            Debug.log("Search query from chat: '" + searchQuery + "'");
             searchingPlayers.remove(player);
 
             ProjectE.getInstance().getSchedulerAdapter().runTask(() -> {
-                DebugManager.log("Re-opening TransmutationGUI for " + player.getName() + " with search query: '" + searchQuery + "'");
+                Debug.log("Re-opening TransmutationGUI for " + player.getName() + " with search query: '" + searchQuery
+                        + "'");
                 TransmutationGUI newGui = new TransmutationGUI(player);
                 newGui.setState(TransmutationGUI.GuiState.BUY);
                 if (searchQuery != null && !searchQuery.trim().isEmpty()) {
@@ -525,10 +555,10 @@ public class GUIListener implements Listener {
             }
         }
     }
+
     private void handleChargeScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
         int slot = event.getSlot();
-        if (event.getClickedInventory() != gui.getInventory())
-            return;
+        if (event.getClickedInventory() != gui.getInventory()) return;
 
         if (slot == 0) {
             gui.setState(TransmutationGUI.GuiState.MAIN);
@@ -552,7 +582,8 @@ public class GUIListener implements Listener {
                         itemCount++;
                         if (kleinStarManager.isKleinStar(item)) {
                             if (kleinStarItem != null) {
-                                player.sendMessage(languageManager.get("serverside.command.generic.multiple_klein_stars"));
+                                player.sendMessage(
+                                        languageManager.get("serverside.command.generic.multiple_klein_stars"));
                                 return;
                             }
                             kleinStarItem = item;
@@ -579,8 +610,6 @@ public class GUIListener implements Listener {
             long storedEmc = kleinStarManager.getStoredEmc(kleinStarItem);
             long capacity = kleinStarManager.getCapacity(kleinStarItem);
             long space = capacity - storedEmc;
-
-
 
             if (playerEmc <= 0) {
                 player.sendMessage(languageManager.get("serverside.command.generic.not_enough_emc_to_charge"));
@@ -629,14 +658,14 @@ public class GUIListener implements Listener {
     private void handleNoEmcItem(Player player, ItemStack item) {
         LanguageManager lang = ProjectE.getInstance().getLanguageManager();
         Map<String, String> placeholders = new HashMap<>();
-        
+
         String displayName;
         if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
             displayName = item.getItemMeta().getDisplayName();
         } else {
             displayName = item.getType().name();
         }
-        
+
         placeholders.put("item", displayName);
         player.sendMessage(lang.get("serverside.command.generic.no_emc_value_trade", placeholders));
     }

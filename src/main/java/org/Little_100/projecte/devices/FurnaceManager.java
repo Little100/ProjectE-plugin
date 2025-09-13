@@ -1,5 +1,7 @@
 package org.Little_100.projecte.devices;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Bukkit;
@@ -18,20 +20,30 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class FurnaceManager {
 
     private static final Set<Material> ORES = new HashSet<>(Arrays.asList(
-            Material.COAL_ORE, Material.COPPER_ORE, Material.IRON_ORE, Material.GOLD_ORE,
-            Material.LAPIS_ORE, Material.REDSTONE_ORE, Material.DIAMOND_ORE, Material.EMERALD_ORE,
-            Material.NETHER_GOLD_ORE, Material.ANCIENT_DEBRIS,
-            Material.DEEPSLATE_COAL_ORE, Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_IRON_ORE,
-            Material.DEEPSLATE_GOLD_ORE, Material.DEEPSLATE_LAPIS_ORE, Material.DEEPSLATE_REDSTONE_ORE,
-            Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE,
-            Material.RAW_IRON, Material.RAW_GOLD, Material.RAW_COPPER
-    ));
+            Material.COAL_ORE,
+            Material.COPPER_ORE,
+            Material.IRON_ORE,
+            Material.GOLD_ORE,
+            Material.LAPIS_ORE,
+            Material.REDSTONE_ORE,
+            Material.DIAMOND_ORE,
+            Material.EMERALD_ORE,
+            Material.NETHER_GOLD_ORE,
+            Material.ANCIENT_DEBRIS,
+            Material.DEEPSLATE_COAL_ORE,
+            Material.DEEPSLATE_COPPER_ORE,
+            Material.DEEPSLATE_IRON_ORE,
+            Material.DEEPSLATE_GOLD_ORE,
+            Material.DEEPSLATE_LAPIS_ORE,
+            Material.DEEPSLATE_REDSTONE_ORE,
+            Material.DEEPSLATE_DIAMOND_ORE,
+            Material.DEEPSLATE_EMERALD_ORE,
+            Material.RAW_IRON,
+            Material.RAW_GOLD,
+            Material.RAW_COPPER));
 
     private final ProjectE plugin;
     private final Map<Location, FurnaceState> activeFurnaces = new ConcurrentHashMap<>();
@@ -71,17 +83,49 @@ public class FurnaceManager {
             this.armorStandId = armorStandId;
         }
 
-        public UUID getOwner() { return owner; }
-        public Inventory getInventory() { return inventory; }
-        public FurnaceType getType() { return type; }
-        public UUID getArmorStandId() { return armorStandId; }
-        public void setArmorStandId(UUID armorStandId) { this.armorStandId = armorStandId; }
-        public int getFuelTicksLeft() { return fuelTicksLeft; }
-        public void setFuelTicksLeft(int fuelTicksLeft) { this.fuelTicksLeft = fuelTicksLeft; }
-        public int getCookTimeProgress() { return cookTimeProgress; }
-        public void setCookTimeProgress(int cookTimeProgress) { this.cookTimeProgress = cookTimeProgress; }
-        public boolean wasBurning() { return wasBurning; }
-        public void setWasBurning(boolean wasBurning) { this.wasBurning = wasBurning; }
+        public UUID getOwner() {
+            return owner;
+        }
+
+        public Inventory getInventory() {
+            return inventory;
+        }
+
+        public FurnaceType getType() {
+            return type;
+        }
+
+        public UUID getArmorStandId() {
+            return armorStandId;
+        }
+
+        public void setArmorStandId(UUID armorStandId) {
+            this.armorStandId = armorStandId;
+        }
+
+        public int getFuelTicksLeft() {
+            return fuelTicksLeft;
+        }
+
+        public void setFuelTicksLeft(int fuelTicksLeft) {
+            this.fuelTicksLeft = fuelTicksLeft;
+        }
+
+        public int getCookTimeProgress() {
+            return cookTimeProgress;
+        }
+
+        public void setCookTimeProgress(int cookTimeProgress) {
+            this.cookTimeProgress = cookTimeProgress;
+        }
+
+        public boolean wasBurning() {
+            return wasBurning;
+        }
+
+        public void setWasBurning(boolean wasBurning) {
+            this.wasBurning = wasBurning;
+        }
     }
 
     public enum FurnaceType {
@@ -98,49 +142,49 @@ public class FurnaceManager {
                     continue;
                 }
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(is));
-            int size = config.getInt("size", 54);
-            ItemStack[] layout = new ItemStack[size];
-            List<Integer> currentInput = new ArrayList<>();
-            List<Integer> currentOutput = new ArrayList<>();
-            List<Integer> currentProgressBar = new ArrayList<>();
-            List<Integer> currentNonInteractive = new ArrayList<>();
+                int size = config.getInt("size", 54);
+                ItemStack[] layout = new ItemStack[size];
+                List<Integer> currentInput = new ArrayList<>();
+                List<Integer> currentOutput = new ArrayList<>();
+                List<Integer> currentProgressBar = new ArrayList<>();
+                List<Integer> currentNonInteractive = new ArrayList<>();
 
-            ConfigurationSection itemsSection = config.getConfigurationSection("items");
-            if (itemsSection != null) {
-                for (String key : itemsSection.getKeys(false)) {
-                    int slot = Integer.parseInt(key);
-                    String materialName = itemsSection.getString(key + ".material");
-                    Material material = Material.getMaterial(materialName);
-                    if (material == null) continue;
+                ConfigurationSection itemsSection = config.getConfigurationSection("items");
+                if (itemsSection != null) {
+                    for (String key : itemsSection.getKeys(false)) {
+                        int slot = Integer.parseInt(key);
+                        String materialName = itemsSection.getString(key + ".material");
+                        Material material = Material.getMaterial(materialName);
+                        if (material == null) continue;
 
-                    ItemStack item = new ItemStack(material);
-                    ItemMeta meta = item.getItemMeta();
-                    String name = itemsSection.getString(key + ".name");
+                        ItemStack item = new ItemStack(material);
+                        ItemMeta meta = item.getItemMeta();
+                        String name = itemsSection.getString(key + ".name");
 
-                    if ("null".equalsIgnoreCase(name)) {
-                        if(meta != null) meta.setDisplayName(" ");
-                        currentNonInteractive.add(slot);
-                    } else if (name != null) {
-                        if(meta != null) meta.setDisplayName(name);
-                    }
-                    if(meta != null) item.setItemMeta(meta);
-                    layout[slot] = item;
+                        if ("null".equalsIgnoreCase(name)) {
+                            if (meta != null) meta.setDisplayName(" ");
+                            currentNonInteractive.add(slot);
+                        } else if (name != null) {
+                            if (meta != null) meta.setDisplayName(name);
+                        }
+                        if (meta != null) item.setItemMeta(meta);
+                        layout[slot] = item;
 
-                    if (material == Material.IRON_ORE) currentInput.add(slot);
-                    else if (material == Material.IRON_INGOT) currentOutput.add(slot);
-                    else if (material == Material.COAL) fuelSlot.put(type, slot);
-                    else if (material == Material.ARROW) arrowSlot.put(type, slot);
-                    else if (material == Material.CAMPFIRE) fuelIndicatorSlot.put(type, slot);
-                    else if (material == Material.BLACK_STAINED_GLASS_PANE && slot < 9) {
-                        currentProgressBar.add(slot);
+                        if (material == Material.IRON_ORE) currentInput.add(slot);
+                        else if (material == Material.IRON_INGOT) currentOutput.add(slot);
+                        else if (material == Material.COAL) fuelSlot.put(type, slot);
+                        else if (material == Material.ARROW) arrowSlot.put(type, slot);
+                        else if (material == Material.CAMPFIRE) fuelIndicatorSlot.put(type, slot);
+                        else if (material == Material.BLACK_STAINED_GLASS_PANE && slot < 9) {
+                            currentProgressBar.add(slot);
+                        }
                     }
                 }
-            }
-            guiLayouts.put(type, layout);
-            inputSlots.put(type, currentInput);
-            outputSlots.put(type, currentOutput);
-            progressBarSlots.put(type, currentProgressBar);
-            nonInteractiveSlots.put(type, currentNonInteractive);
+                guiLayouts.put(type, layout);
+                inputSlots.put(type, currentInput);
+                outputSlots.put(type, currentOutput);
+                progressBarSlots.put(type, currentProgressBar);
+                nonInteractiveSlots.put(type, currentNonInteractive);
             } catch (java.io.IOException e) {
                 plugin.getLogger().log(java.util.logging.Level.SEVERE, "Could not load GUI layout: " + fileName, e);
             }
@@ -152,15 +196,16 @@ public class FurnaceManager {
     }
 
     public void addFurnace(Location location, UUID owner, FurnaceType type, UUID armorStandId) {
-        String titleKey = (type == FurnaceType.DARK_MATTER) ? "gui.furnace.dark_matter_title" : "gui.furnace.red_matter_title";
+        String titleKey =
+                (type == FurnaceType.DARK_MATTER) ? "gui.furnace.dark_matter_title" : "gui.furnace.red_matter_title";
         String title = plugin.getLanguageManager().get(titleKey);
         Inventory inventory = Bukkit.createInventory(null, 54, title);
         ItemStack[] layout = guiLayouts.get(type);
         if (layout != null) {
             for (int i = 0; i < layout.length; i++) {
-                if (!inputSlots.get(type).contains(i) &&
-                    !outputSlots.get(type).contains(i) &&
-                    !fuelSlot.get(type).equals(i)) {
+                if (!inputSlots.get(type).contains(i)
+                        && !outputSlots.get(type).contains(i)
+                        && !fuelSlot.get(type).equals(i)) {
                     if (layout[i] != null) {
                         inventory.setItem(i, layout[i].clone());
                     }
@@ -186,7 +231,7 @@ public class FurnaceManager {
     public FurnaceState getFurnaceState(Location location) {
         return activeFurnaces.get(location);
     }
-    
+
     public Map<Location, FurnaceState> getActiveFurnaces() {
         return activeFurnaces;
     }
@@ -349,10 +394,10 @@ public class FurnaceManager {
 
         List<Integer> pBarSlots = progressBarSlots.getOrDefault(type, Collections.emptyList());
         int greenPanes = (int) (pBarSlots.size() * percentage);
-        
+
         ItemStack greenPane = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         ItemMeta greenMeta = greenPane.getItemMeta();
-        if(greenMeta != null) {
+        if (greenMeta != null) {
             greenMeta.setDisplayName(" ");
             greenPane.setItemMeta(greenMeta);
         }
@@ -371,8 +416,8 @@ public class FurnaceManager {
             ItemStack arrow = inv.getItem(arrowSlotIndex);
             if (arrow != null && arrow.getType() == Material.ARROW) {
                 ItemMeta meta = arrow.getItemMeta();
-                if(meta != null) {
-                    meta.setDisplayName("§a" + (int)(percentage * 100) + "%");
+                if (meta != null) {
+                    meta.setDisplayName("§a" + (int) (percentage * 100) + "%");
                     arrow.setItemMeta(meta);
                 }
             }
@@ -385,7 +430,7 @@ public class FurnaceManager {
             ItemStack fuelItem = inv.getItem(fuelIndicatorIndex);
             if (fuelItem != null && fuelItem.getType() == Material.CAMPFIRE) {
                 ItemMeta meta = fuelItem.getItemMeta();
-                if(meta != null) {
+                if (meta != null) {
                     int seconds = state.getFuelTicksLeft() / 20;
                     String key = "gui.furnace.fuel_time";
                     Map<String, String> placeholders = new HashMap<>();
@@ -421,13 +466,20 @@ public class FurnaceManager {
             if (container.has(idKey, PersistentDataType.STRING)) {
                 String projecteId = container.get(idKey, PersistentDataType.STRING);
                 switch (projecteId) {
-                    case "alchemical_coal": return 320 * 20;
-                    case "mobius_fuel": return 1280 * 20;
-                    case "aeternalis_fuel": return 5120 * 20;
-                    case "alchemical_coal_block": return 2880 * 20;
-                    case "mobius_fuel_block": return 11520 * 20;
-                    case "aeternalis_fuel_block": return 46080 * 20;
-                    default: break;
+                    case "alchemical_coal":
+                        return 320 * 20;
+                    case "mobius_fuel":
+                        return 1280 * 20;
+                    case "aeternalis_fuel":
+                        return 5120 * 20;
+                    case "alchemical_coal_block":
+                        return 2880 * 20;
+                    case "mobius_fuel_block":
+                        return 11520 * 20;
+                    case "aeternalis_fuel_block":
+                        return 46080 * 20;
+                    default:
+                        break;
                 }
             }
         }

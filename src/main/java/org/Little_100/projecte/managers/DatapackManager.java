@@ -1,13 +1,12 @@
 package org.Little_100.projecte.managers;
 
-import org.Little_100.projecte.ProjectE;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.Little_100.projecte.ProjectE;
 
 public class DatapackManager {
 
@@ -43,7 +42,7 @@ public class DatapackManager {
         String datapackFileName = "ProjectE_Datapack.zip";
         File datapackFile = new File(datapackDir, datapackFileName);
         String resourcePath = "pack/ProjectE Datapack.zip";
-        
+
         try (InputStream in = plugin.getResource(resourcePath)) {
             if (in == null) {
                 logger.warning("Datapack file not found in plugin resources: " + resourcePath);
@@ -51,8 +50,8 @@ public class DatapackManager {
             }
 
             if (datapackFile.exists()) {
-                 logger.info("ProjectE datapack already exists. Skipping installation.");
-                 return;
+                logger.info("ProjectE datapack already exists. Skipping installation.");
+                return;
             }
 
             try (OutputStream out = new FileOutputStream(datapackFile)) {
@@ -62,7 +61,8 @@ public class DatapackManager {
                     out.write(buffer, 0, len);
                 }
                 logger.info("Successfully installed ProjectE datapack to: " + datapackFile.getAbsolutePath());
-                logger.info("Please run '/datapack enable \"file/" + datapackFileName + "\"' and '/reload' or restart the server to apply the datapack.");
+                logger.info("Please run '/datapack enable \"file/" + datapackFileName
+                        + "\"' and '/reload' or restart the server to apply the datapack.");
 
                 plugin.getConfig().set("ConfrimDatapack", true); // 确认加载
                 plugin.saveConfig();

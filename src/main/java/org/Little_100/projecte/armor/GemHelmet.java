@@ -1,13 +1,12 @@
 package org.Little_100.projecte.armor;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class GemHelmet {
 
@@ -34,15 +33,14 @@ public class GemHelmet {
     public static void updateNightVision(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (nightVisionState.getOrDefault(playerUUID, false)) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false, true));
+            player.addPotionEffect(
+                    new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false, true));
         } else {
             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
         }
     }
 
-    public static void applyWaterWalking(Player player) {
-    }
-
+    public static void applyWaterWalking(Player player) {}
 
     public static boolean hasGemHelmet(Player player, ArmorManager armorManager) {
         if (player.getInventory().getHelmet() == null) {

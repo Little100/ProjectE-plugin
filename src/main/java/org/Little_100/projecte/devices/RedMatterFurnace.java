@@ -1,5 +1,6 @@
 package org.Little_100.projecte.devices;
 
+import java.util.Collections;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
@@ -8,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Collections;
 
 public class RedMatterFurnace implements Listener {
 
@@ -25,7 +24,8 @@ public class RedMatterFurnace implements Listener {
         ItemStack item = new ItemStack(Material.FURNACE);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(plugin.getLanguageManager().get("item.projecte.red_matter_furnace.name"));
-        meta.setLore(Collections.singletonList(plugin.getLanguageManager().get("item.projecte.red_matter_furnace.lore1")));
+        meta.setLore(
+                Collections.singletonList(plugin.getLanguageManager().get("item.projecte.red_matter_furnace.lore1")));
         item.setItemMeta(meta);
         item = CustomModelDataUtil.setCustomModelData(item, 2);
         ItemMeta newMeta = item.getItemMeta();

@@ -1,12 +1,11 @@
-package org.Little_100.projecte.compatibility;
+package org.Little_100.projecte.compatibility.scheduler;
 
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.lang.reflect.Method;
-import java.util.function.Consumer;
 
 public class FoliaSchedulerAdapter implements SchedulerAdapter {
 
@@ -94,7 +93,8 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
             Object scheduler = getGlobalRegionScheduler.invoke(null);
             Method runAtFixedRate = findMethodByNameAndParamCount(scheduler.getClass(), "runAtFixedRate", 4);
             long foliaDelay = Math.max(1, delay);
-            runAtFixedRate.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), foliaDelay, period);
+            runAtFixedRate.invoke(
+                    scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), foliaDelay, period);
         } catch (Exception e) {
             throw new RuntimeException("Folia scheduler reflection failed for runTimer", e);
         }
@@ -117,7 +117,14 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
         try {
             Method getScheduler = Entity.class.getMethod("getScheduler");
             Object scheduler = getScheduler.invoke(entity);
-            Method runDelayed = scheduler.getClass().getMethod("runDelayed", org.bukkit.plugin.Plugin.class, java.util.function.Consumer.class, Runnable.class, long.class);
+            Method runDelayed = scheduler
+                    .getClass()
+                    .getMethod(
+                            "runDelayed",
+                            org.bukkit.plugin.Plugin.class,
+                            java.util.function.Consumer.class,
+                            Runnable.class,
+                            long.class);
             runDelayed.invoke(scheduler, plugin, (Consumer<Object>) scheduledTask -> task.run(), null, delay);
         } catch (Exception e) {
             throw new RuntimeException("Folia scheduler reflection failed for runTaskLaterOnEntity", e);

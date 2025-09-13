@@ -2,7 +2,6 @@ package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.TransmutationGUI;
-import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -20,7 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class TransmutationTabletBookListener implements Listener {
 
     private final NamespacedKey projecteIdKey;
-    
+
     public TransmutationTabletBookListener() {
         this.projecteIdKey = new NamespacedKey(ProjectE.getInstance(), "projecte_id");
     }

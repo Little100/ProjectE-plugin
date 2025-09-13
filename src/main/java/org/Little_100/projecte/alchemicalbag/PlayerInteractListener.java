@@ -1,8 +1,10 @@
 package org.Little_100.projecte.alchemicalbag;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.md_5.bungee.api.ChatColor;
-import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.managers.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -18,9 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PlayerInteractListener implements Listener {
 
     private final ProjectE plugin;
@@ -29,7 +28,8 @@ public class PlayerInteractListener implements Listener {
     private final LanguageManager languageManager;
 
     private static final Map<Color, DyeColor> BUKKIT_TO_DYE_COLOR = new HashMap<>();
-    private static final Color DEFAULT_LEATHER_COLOR = Bukkit.getServer().getItemFactory().getDefaultLeatherColor();
+    private static final Color DEFAULT_LEATHER_COLOR =
+            Bukkit.getServer().getItemFactory().getDefaultLeatherColor();
 
     static {
         BUKKIT_TO_DYE_COLOR.put(Color.WHITE, DyeColor.WHITE);
@@ -50,8 +50,8 @@ public class PlayerInteractListener implements Listener {
         BUKKIT_TO_DYE_COLOR.put(Color.fromRGB(51, 76, 178), DyeColor.BLUE);
     }
 
-    public PlayerInteractListener(ProjectE plugin, AlchemicalBagManager alchemicalBagManager,
-            InventoryManager inventoryManager) {
+    public PlayerInteractListener(
+            ProjectE plugin, AlchemicalBagManager alchemicalBagManager, InventoryManager inventoryManager) {
         this.plugin = plugin;
         this.alchemicalBagManager = alchemicalBagManager;
         this.inventoryManager = inventoryManager;
@@ -138,8 +138,8 @@ public class PlayerInteractListener implements Listener {
             Color bukkitColor = meta.getColor();
             String bagColorIdentifier = getBagColorIdentifier(bukkitColor);
 
-            ItemStack[] inventoryContents = plugin.getDatabaseManager().loadBagInventory(player.getUniqueId(),
-                    bagColorIdentifier);
+            ItemStack[] inventoryContents =
+                    plugin.getDatabaseManager().loadBagInventory(player.getUniqueId(), bagColorIdentifier);
 
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("color", getChatColor(bagColorIdentifier).toString());

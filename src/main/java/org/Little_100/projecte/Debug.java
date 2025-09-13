@@ -1,9 +1,8 @@
 package org.Little_100.projecte;
 
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-
-import java.util.Map;
 
 public class Debug {
 

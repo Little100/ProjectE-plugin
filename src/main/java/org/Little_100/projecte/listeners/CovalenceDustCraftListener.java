@@ -1,5 +1,6 @@
 package org.Little_100.projecte.listeners;
 
+import java.util.HashMap;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,8 +11,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.HashMap;
 
 public class CovalenceDustCraftListener implements Listener {
 
@@ -55,7 +54,8 @@ public class CovalenceDustCraftListener implements Listener {
         // 计算实际成功合成的数量（考虑背包满的情况）
         int craftedAmount = resultStack.getAmount();
         if (!leftovers.isEmpty()) {
-            craftedAmount -= leftovers.values().stream().mapToInt(ItemStack::getAmount).sum();
+            craftedAmount -=
+                    leftovers.values().stream().mapToInt(ItemStack::getAmount).sum();
         }
         int numCrafted = craftedAmount / result.getAmount();
 
@@ -115,12 +115,9 @@ public class CovalenceDustCraftListener implements Listener {
 
     private boolean isCovalenceDust(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return false;
-        String id = item.getItemMeta().getPersistentDataContainer().get(
-                Constants.ID_KEY,
-                PersistentDataType.STRING
-        );
-        return "low_covalence_dust".equals(id) ||
-               "medium_covalence_dust".equals(id) ||
-               "high_covalence_dust".equals(id);
+        String id = item.getItemMeta().getPersistentDataContainer().get(Constants.ID_KEY, PersistentDataType.STRING);
+        return "low_covalence_dust".equals(id)
+                || "medium_covalence_dust".equals(id)
+                || "high_covalence_dust".equals(id);
     }
 }

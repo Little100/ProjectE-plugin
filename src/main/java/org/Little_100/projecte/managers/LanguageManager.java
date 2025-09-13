@@ -1,10 +1,5 @@
 package org.Little_100.projecte.managers;
 
-import org.Little_100.projecte.ProjectE;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +11,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.Little_100.projecte.ProjectE;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class LanguageManager {
 
@@ -50,8 +49,8 @@ public class LanguageManager {
 
             try (InputStream defLangStream = plugin.getResource(langFileName)) {
                 if (defLangStream != null) {
-                    config.setDefaults(YamlConfiguration
-                            .loadConfiguration(new InputStreamReader(defLangStream, StandardCharsets.UTF_8)));
+                    config.setDefaults(YamlConfiguration.loadConfiguration(
+                            new InputStreamReader(defLangStream, StandardCharsets.UTF_8)));
                 }
             } catch (Exception e) {
                 plugin.getLogger().log(Level.SEVERE, "Could not load language file: " + langFileName, e);

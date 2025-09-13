@@ -1,6 +1,5 @@
 package org.Little_100.projecte.util;
 
-import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
 
 public class VersionUtils {
@@ -10,10 +9,8 @@ public class VersionUtils {
         if (versionParts.length >= 2) {
             int major = Integer.parseInt(versionParts[0]);
             int minor = Integer.parseInt(versionParts[1]);
-            if (major > 1)
-                return true;
-            if (major == 1 && minor > 21)
-                return true;
+            if (major > 1) return true;
+            if (major == 1 && minor > 21) return true;
             if (major == 1 && minor == 21 && versionParts.length >= 3) {
                 int patch = Integer.parseInt(versionParts[2]);
                 return patch >= 4;
@@ -22,8 +19,8 @@ public class VersionUtils {
         return false;
     }
 
-    public static boolean isVersionOrNewer(String serverVersion, String targetVersion) {
-        String[] serverParts = serverVersion.split("\\.");
+    public static boolean isVersionOrNewer(String targetVersion) {
+        String[] serverParts = getMCVersion().split("\\.");
         String[] targetParts = targetVersion.split("\\.");
 
         int length = Math.max(serverParts.length, targetParts.length);
@@ -38,5 +35,9 @@ public class VersionUtils {
             }
         }
         return true;
+    }
+
+    public static String getMCVersion() {
+        return Bukkit.getServer().getBukkitVersion().split("-")[0];
     }
 }

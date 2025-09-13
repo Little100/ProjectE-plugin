@@ -1,5 +1,10 @@
 package org.Little_100.projecte.listeners;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.CommandManager;
 import org.bukkit.ChatColor;
@@ -11,12 +16,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class GUIEditorListener implements Listener {
 
@@ -53,7 +52,8 @@ public class GUIEditorListener implements Listener {
             File guiFile = new File(plugin.getDataFolder(), fileName);
             YamlConfiguration guiConfig = new YamlConfiguration();
 
-            guiConfig.set("title", inventory.getViewers().get(0).getOpenInventory().getTitle());
+            guiConfig.set(
+                    "title", inventory.getViewers().get(0).getOpenInventory().getTitle());
             guiConfig.set("size", inventory.getSize());
 
             for (int i = 0; i < inventory.getSize(); i++) {
@@ -64,7 +64,9 @@ public class GUIEditorListener implements Listener {
                     if (item.hasItemMeta()) {
                         ItemMeta meta = item.getItemMeta();
                         if (meta.hasDisplayName()) {
-                            guiConfig.set(path + ".name", meta.getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "&"));
+                            guiConfig.set(
+                                    path + ".name",
+                                    meta.getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "&"));
                         }
                         if (meta.hasLore()) {
                             List<String> lore = new ArrayList<>();

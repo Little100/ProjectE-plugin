@@ -1,5 +1,7 @@
 package org.Little_100.projecte.tools;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.ItemUtils;
@@ -9,9 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class DiviningRod {
     private final ProjectE plugin;
@@ -40,26 +39,23 @@ public class DiviningRod {
                 1,
                 List.of("item.low_divining_rod.lore1", "item.low_divining_rod.lore2"),
                 lowKey,
-                "low_divining_rod"
-        );
+                "low_divining_rod");
         mediumDiviningRod = createDiviningRodItem(
                 "item.medium_divining_rod.name",
                 2,
                 List.of("item.medium_divining_rod.lore1", "item.medium_divining_rod.lore2"),
                 mediumKey,
-                "medium_divining_rod"
-        );
+                "medium_divining_rod");
         highDiviningRod = createDiviningRodItem(
                 "item.high_divining_rod.name",
                 3,
                 List.of("item.high_divining_rod.lore1", "item.high_divining_rod.lore2"),
                 highKey,
-                "high_divining_rod"
-        );
+                "high_divining_rod");
     }
 
-    private ItemStack createDiviningRodItem(String displayNameKey, int customModelData,
-                                              List<String> loreKeys, NamespacedKey key, String id) {
+    private ItemStack createDiviningRodItem(
+            String displayNameKey, int customModelData, List<String> loreKeys, NamespacedKey key, String id) {
         ItemStack item = new ItemStack(Material.STICK);
 
         item = org.Little_100.projecte.util.CustomModelDataUtil.setCustomModelDataBoth(item, id, customModelData);
@@ -67,9 +63,8 @@ public class DiviningRod {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(plugin.getLanguageManager().get(displayNameKey));
-            List<String> translatedLore = loreKeys.stream()
-                    .map(plugin.getLanguageManager()::get)
-                    .collect(Collectors.toList());
+            List<String> translatedLore =
+                    loreKeys.stream().map(plugin.getLanguageManager()::get).collect(Collectors.toList());
             meta.setLore(translatedLore);
 
             PersistentDataContainer container = meta.getPersistentDataContainer();
@@ -97,10 +92,12 @@ public class DiviningRod {
         var emcManager = plugin.getEmcManager();
         java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!configFile.exists()) {
-            plugin.getLogger().warning("custommoditememc.yml not found, custom divining rod EMC values will not be loaded.");
+            plugin.getLogger()
+                    .warning("custommoditememc.yml not found, custom divining rod EMC values will not be loaded.");
             return;
         }
-        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+        org.bukkit.configuration.file.YamlConfiguration config =
+                org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
 
         String lowKey = emcManager.getItemKey(getLowDiviningRod());
         long lowEmc = config.getLong("low_divining_rod", 12);

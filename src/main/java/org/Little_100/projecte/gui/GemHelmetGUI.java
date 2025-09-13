@@ -1,5 +1,6 @@
 package org.Little_100.projecte.gui;
 
+import java.util.Collections;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.armor.GemHelmet;
 import org.bukkit.Bukkit;
@@ -8,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Collections;
 
 public class GemHelmetGUI {
 
@@ -35,9 +34,11 @@ public class GemHelmetGUI {
         if (nightVisionMeta != null) {
             boolean isNightVisionOn = GemHelmet.isNightVisionActive(player);
 
-            String statusKey = isNightVisionOn ? "item.gem_helmet.gui.night_vision_on" : "item.gem_helmet.gui.night_vision_off";
+            String statusKey =
+                    isNightVisionOn ? "item.gem_helmet.gui.night_vision_on" : "item.gem_helmet.gui.night_vision_off";
             nightVisionMeta.setDisplayName(plugin.getLanguageManager().get(statusKey));
-            nightVisionMeta.setLore(Collections.singletonList(plugin.getLanguageManager().get("item.gem_helmet.gui.toggle_lore")));
+            nightVisionMeta.setLore(
+                    Collections.singletonList(plugin.getLanguageManager().get("item.gem_helmet.gui.toggle_lore")));
             nightVisionButton.setItemMeta(nightVisionMeta);
         }
         gui.setItem(12, nightVisionButton);
@@ -49,7 +50,6 @@ public class GemHelmetGUI {
             closeButton.setItemMeta(closeMeta);
         }
         gui.setItem(14, closeButton);
-
 
         player.openInventory(gui);
     }

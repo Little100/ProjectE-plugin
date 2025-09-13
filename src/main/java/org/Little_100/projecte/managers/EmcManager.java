@@ -1,5 +1,9 @@
 package org.Little_100.projecte.managers;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.compatibility.VersionAdapter;
@@ -10,11 +14,6 @@ import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class EmcManager {
 
@@ -30,17 +29,18 @@ public class EmcManager {
         this.databaseManager = plugin.getDatabaseManager();
         this.versionAdapter = plugin.getVersionAdapter();
         this.recipeConflictStrategy = plugin.getConfig()
-                .getString("gui.EMC.recipeConflictStrategy", "lowest").toLowerCase();
-        this.divisionStrategy = plugin.getConfig().getString("gui.EMC.divisionStrategy", "floor")
+                .getString("gui.EMC.recipeConflictStrategy", "lowest")
                 .toLowerCase();
-        
+        this.divisionStrategy = plugin.getConfig()
+                .getString("gui.EMC.divisionStrategy", "floor")
+                .toLowerCase();
+
         // 确保文件存在
         File customEmcFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!customEmcFile.exists()) {
             plugin.getLogger().info("custommoditememc.yml not found, creating default file.");
             plugin.saveResource("custommoditememc.yml", false);
         }
-        
     }
 
     public void calculateAndStoreEmcValues(boolean forceRecalculate) {
@@ -73,7 +73,7 @@ public class EmcManager {
                 break;
             }
         }
-        
+
         // 如果是第一次计算，存储到数据库
 
         plugin.getLogger().info("EMC value calculation completed.");
@@ -91,7 +91,8 @@ public class EmcManager {
 
         if (plugin.isOnlyMcItems()) {
             if (recipe instanceof ShapedRecipe) {
-                for (ItemStack ingredient : ((ShapedRecipe) recipe).getIngredientMap().values()) {
+                for (ItemStack ingredient :
+                        ((ShapedRecipe) recipe).getIngredientMap().values()) {
                     if (isPdcItem(ingredient)) return false;
                 }
             } else if (recipe instanceof ShapelessRecipe) {
@@ -158,7 +159,7 @@ public class EmcManager {
         }
 
         if (plugin.isOnlyMcItems() && item.hasItemMeta() && item.getItemMeta().hasCustomModelData()) {
-             return databaseManager.getEmc(getItemKey(item));
+            return databaseManager.getEmc(getItemKey(item));
         }
 
         if (plugin.isPdcExcluded() && isPdcItem(item)) {
@@ -173,7 +174,7 @@ public class EmcManager {
         if (emc > 0) {
             return emc;
         }
- 
+
         if (currentlyCalculating.contains(itemKey)) {
             return 0;
         }
@@ -241,10 +242,10 @@ public class EmcManager {
                             return "projecte:" + projecteId;
                         }
                     } else {
-                         return "projecte:" + projecteId;
+                        return "projecte:" + projecteId;
                     }
                 }
-                
+
                 NamespacedKey kleinStarKey = new NamespacedKey(plugin, "klein_star_level");
                 if (container.has(kleinStarKey, PersistentDataType.INTEGER)) {
                     int level = container.get(kleinStarKey, PersistentDataType.INTEGER);
@@ -288,11 +289,11 @@ public class EmcManager {
         }
         return getItemKey(item);
     }
- 
+
     public String getSpecificItemKey(ItemStack item) {
         return getItemKey(item);
     }
- 
+
     public boolean isPdcItem(ItemStack item) {
         if (item == null || !item.hasItemMeta()) {
             return false;
@@ -308,13 +309,20 @@ public class EmcManager {
 
     private String getLevelName(int level) {
         switch (level) {
-            case 1: return "ein";
-            case 2: return "zwei";
-            case 3: return "drei";
-            case 4: return "vier";
-            case 5: return "sphere";
-            case 6: return "omega";
-            default: return null;
+            case 1:
+                return "ein";
+            case 2:
+                return "zwei";
+            case 3:
+                return "drei";
+            case 4:
+                return "vier";
+            case 5:
+                return "sphere";
+            case 6:
+                return "omega";
+            default:
+                return null;
         }
     }
 
@@ -335,9 +343,11 @@ public class EmcManager {
         NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
         return container.get(idKey, PersistentDataType.STRING);
     }
+
     public void registerEmc(String itemKey, long emcValue) {
         databaseManager.setEmc(itemKey, emcValue);
     }
+
     public void setEmcValue(ItemStack item, long emc) {
         if (item == null) return;
         String key = getItemKey(item);

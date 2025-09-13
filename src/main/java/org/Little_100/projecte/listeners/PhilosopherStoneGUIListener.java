@@ -1,7 +1,7 @@
 package org.Little_100.projecte.listeners;
 
-import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -77,18 +77,15 @@ public class PhilosopherStoneGUIListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-    }
+    public void onInventoryClose(InventoryCloseEvent event) {}
 
     /**
      * 检查是否为充能槽位。
      */
     private boolean isChargeSlot(int slot) {
-        if (slot == 10)
-            return true;
+        if (slot == 10) return true;
         for (int i = 11; i <= 14; i++) {
-            if (slot == i)
-                return true;
+            if (slot == i) return true;
         }
         return false;
     }
@@ -126,9 +123,12 @@ public class PhilosopherStoneGUIListener implements Listener {
         PhilosopherStoneGUI.setChargeLevel(player, newChargeLevel);
         player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.5f);
 
-        plugin.getSchedulerAdapter().runTaskLater(() -> {
-            new PhilosopherStoneGUI(plugin, player).open();
-        }, 1L);
+        plugin.getSchedulerAdapter()
+                .runTaskLater(
+                        () -> {
+                            new PhilosopherStoneGUI(plugin, player).open();
+                        },
+                        1L);
     }
 
     /**
@@ -150,14 +150,18 @@ public class PhilosopherStoneGUIListener implements Listener {
         if (PhilosopherStoneGUI.getCurrentMode(player) != newMode) {
             PhilosopherStoneGUI.setCurrentMode(player, newMode);
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
-            String message = plugin.getLanguageManager().get("clientside.philosopher_stone.mode_change")
+            String message = plugin.getLanguageManager()
+                    .get("clientside.philosopher_stone.mode_change")
                     .replace("{mode}", newMode.getDisplayName(plugin));
             player.sendMessage(ChatColor.GREEN + message);
         }
 
-        plugin.getSchedulerAdapter().runTaskLater(() -> {
-            new PhilosopherStoneGUI(plugin, player).open();
-        }, 1L);
+        plugin.getSchedulerAdapter()
+                .runTaskLater(
+                        () -> {
+                            new PhilosopherStoneGUI(plugin, player).open();
+                        },
+                        1L);
     }
 
     /**
@@ -167,8 +171,11 @@ public class PhilosopherStoneGUIListener implements Listener {
         // 关闭
         player.closeInventory();
 
-        plugin.getSchedulerAdapter().runTaskLater(() -> {
-            player.openWorkbench(null, true);
-        }, 1L);
+        plugin.getSchedulerAdapter()
+                .runTaskLater(
+                        () -> {
+                            player.openWorkbench(null, true);
+                        },
+                        1L);
     }
 }

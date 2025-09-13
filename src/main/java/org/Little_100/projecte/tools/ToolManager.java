@@ -1,5 +1,8 @@
 package org.Little_100.projecte.tools;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
@@ -14,10 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class ToolManager {
     private final ProjectE plugin;
@@ -68,28 +67,46 @@ public class ToolManager {
     }
 
     private void createDarkMatterTools() {
-        darkMatterPickaxe = createToolItem(Material.DIAMOND_PICKAXE, "dark_matter_pickaxe", 1, "item.dark_matter_pickaxe.name", 8, 1.2);
+        darkMatterPickaxe = createToolItem(
+                Material.DIAMOND_PICKAXE, "dark_matter_pickaxe", 1, "item.dark_matter_pickaxe.name", 8, 1.2);
         darkMatterAxe = createToolItem(Material.DIAMOND_AXE, "dark_matter_axe", 1, "item.dark_matter_axe.name", 9, 1.0);
-        darkMatterShovel = createToolItem(Material.DIAMOND_SHOVEL, "dark_matter_shovel", 1, "item.dark_matter_shovel.name", 6, 1.0);
+        darkMatterShovel = createToolItem(
+                Material.DIAMOND_SHOVEL, "dark_matter_shovel", 1, "item.dark_matter_shovel.name", 6, 1.0);
         darkMatterHoe = createToolItem(Material.DIAMOND_HOE, "dark_matter_hoe", 7, "item.dark_matter_hoe.name", 1, 1.0);
-        darkMatterSword = createToolItem(Material.DIAMOND_SWORD, "dark_matter_sword", 1, "item.dark_matter_sword.name", 13, 1.6);
-        darkMatterShears = createToolItem(Material.SHEARS, "dark_matter_shears", 1, "item.dark_matter_shears.name", 1, 1.0);
-        darkMatterHammer = createToolItem(Material.DIAMOND_PICKAXE, "dark_matter_hammer", 3, "item.dark_matter_hammer.name", 14, 1.2);
+        darkMatterSword =
+                createToolItem(Material.DIAMOND_SWORD, "dark_matter_sword", 1, "item.dark_matter_sword.name", 13, 1.6);
+        darkMatterShears =
+                createToolItem(Material.SHEARS, "dark_matter_shears", 1, "item.dark_matter_shears.name", 1, 1.0);
+        darkMatterHammer = createToolItem(
+                Material.DIAMOND_PICKAXE, "dark_matter_hammer", 3, "item.dark_matter_hammer.name", 14, 1.2);
     }
 
     private void createRedMatterTools() {
-        redMatterPickaxe = createToolItem(Material.DIAMOND_PICKAXE, "red_matter_pickaxe", 2, "item.red_matter_pickaxe.name", 9, 1.2);
+        redMatterPickaxe = createToolItem(
+                Material.DIAMOND_PICKAXE, "red_matter_pickaxe", 2, "item.red_matter_pickaxe.name", 9, 1.2);
         redMatterAxe = createToolItem(Material.DIAMOND_AXE, "red_matter_axe", 2, "item.red_matter_axe.name", 10, 1.0);
-        redMatterShovel = createToolItem(Material.DIAMOND_SHOVEL, "red_matter_shovel", 2, "item.red_matter_shovel.name", 7, 1.0);
+        redMatterShovel =
+                createToolItem(Material.DIAMOND_SHOVEL, "red_matter_shovel", 2, "item.red_matter_shovel.name", 7, 1.0);
         redMatterHoe = createToolItem(Material.DIAMOND_HOE, "red_matter_hoe", 8, "item.red_matter_hoe.name", 1, 4.0);
-        redMatterSword = createToolItem(Material.DIAMOND_SWORD, "red_matter_sword", 2, "item.red_matter_sword.name", 14, 1.6);
-        redMatterShears = createToolItem(Material.SHEARS, "red_matter_shears", 2, "item.red_matter_shears.name", 1, 1.0);
-        redMatterHammer = createToolItem(Material.DIAMOND_PICKAXE, "red_matter_hammer", 4, "item.red_matter_hammer.name", 15, 1.2);
-        redMatterKatar = createToolItem(Material.DIAMOND_AXE, "red_matter_katar", 10, "item.red_matter_katar.name", 24, 1.6);
-        redMatterMorningstar = createToolItem(Material.DIAMOND_PICKAXE, "red_matter_morningstar", 11, "item.red_matter_morningstar.name", 24, 1.2);
+        redMatterSword =
+                createToolItem(Material.DIAMOND_SWORD, "red_matter_sword", 2, "item.red_matter_sword.name", 14, 1.6);
+        redMatterShears =
+                createToolItem(Material.SHEARS, "red_matter_shears", 2, "item.red_matter_shears.name", 1, 1.0);
+        redMatterHammer = createToolItem(
+                Material.DIAMOND_PICKAXE, "red_matter_hammer", 4, "item.red_matter_hammer.name", 15, 1.2);
+        redMatterKatar =
+                createToolItem(Material.DIAMOND_AXE, "red_matter_katar", 10, "item.red_matter_katar.name", 24, 1.6);
+        redMatterMorningstar = createToolItem(
+                Material.DIAMOND_PICKAXE, "red_matter_morningstar", 11, "item.red_matter_morningstar.name", 24, 1.2);
     }
 
-    private ItemStack createToolItem(Material baseMaterial, String id, int customModelData, String displayNameKey, double attackDamage, double attackSpeed) {
+    private ItemStack createToolItem(
+            Material baseMaterial,
+            String id,
+            int customModelData,
+            String displayNameKey,
+            double attackDamage,
+            double attackSpeed) {
         ItemStack item = new ItemStack(baseMaterial);
 
         CustomModelDataUtil.registerMapping(id, customModelData);
@@ -112,16 +129,29 @@ public class ToolManager {
                     container.set(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, 0);
                     break;
                 case "red_matter_morningstar":
-                    container.set(new NamespacedKey(plugin, "projecte_morningstar_mode"), PersistentDataType.STRING, "normal");
+                    container.set(
+                            new NamespacedKey(plugin, "projecte_morningstar_mode"),
+                            PersistentDataType.STRING,
+                            "normal");
                     break;
             }
 
             if (attackDamage > 0) {
-                AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attack_damage", attackDamage - 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+                AttributeModifier damageModifier = new AttributeModifier(
+                        UUID.randomUUID(),
+                        "generic.attack_damage",
+                        attackDamage - 1,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlot.HAND);
                 meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
             }
             if (attackSpeed > 0) {
-                AttributeModifier speedModifier = new AttributeModifier(UUID.randomUUID(), "generic.attack_speed", attackSpeed - 4, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+                AttributeModifier speedModifier = new AttributeModifier(
+                        UUID.randomUUID(),
+                        "generic.attack_speed",
+                        attackSpeed - 4,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlot.HAND);
                 meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_SPEED"), speedModifier);
             }
 
@@ -155,26 +185,36 @@ public class ToolManager {
 
         Integer charge = container.get(Constants.CHARGE_KEY, PersistentDataType.INTEGER);
         if (charge != null) {
-            newLore.add(plugin.getLanguageManager().get("clientside.dark_matter_tool.charge").replace("{level}", charge.toString()));
+            newLore.add(plugin.getLanguageManager()
+                    .get("clientside.dark_matter_tool.charge")
+                    .replace("{level}", charge.toString()));
         }
 
         if (isRedMatterSword(item)) {
             Integer mode = container.get(new NamespacedKey(plugin, "projecte_sword_mode"), PersistentDataType.INTEGER);
             if (mode != null) {
-                String modeKey = (mode == 0) ? "clientside.red_matter_sword.mode_hostile" : "clientside.red_matter_sword.mode_all";
-                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_sword.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
+                String modeKey = (mode == 0)
+                        ? "clientside.red_matter_sword.mode_hostile"
+                        : "clientside.red_matter_sword.mode_all";
+                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_sword.mode_prefix") + " "
+                        + plugin.getLanguageManager().get(modeKey));
             }
         } else if (isRedMatterKatar(item)) {
             Integer mode = container.get(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER);
             if (mode != null) {
-                String modeKey = (mode == 0) ? "clientside.red_matter_katar.mode_all" : "clientside.red_matter_katar.mode_hostile";
-                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_katar.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
+                String modeKey = (mode == 0)
+                        ? "clientside.red_matter_katar.mode_all"
+                        : "clientside.red_matter_katar.mode_hostile";
+                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_katar.mode_prefix") + " "
+                        + plugin.getLanguageManager().get(modeKey));
             }
         } else if (isRedMatterMorningstar(item)) {
-            String mode = container.get(new NamespacedKey(plugin, "projecte_morningstar_mode"), PersistentDataType.STRING);
+            String mode =
+                    container.get(new NamespacedKey(plugin, "projecte_morningstar_mode"), PersistentDataType.STRING);
             if (mode != null) {
                 String modeKey = "clientside.red_matter_morningstar.mode_" + mode;
-                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_morningstar.mode_prefix") + " " + plugin.getLanguageManager().get(modeKey));
+                newLore.add(plugin.getLanguageManager().get("clientside.red_matter_morningstar.mode_prefix") + " "
+                        + plugin.getLanguageManager().get(modeKey));
             }
         }
 
@@ -182,46 +222,162 @@ public class ToolManager {
         item.setItemMeta(meta);
     }
 
-    public ItemStack getDarkMatterPickaxe() { ItemStack item = darkMatterPickaxe.clone(); updateLore(item); return item; }
-    public ItemStack getDarkMatterAxe() { ItemStack item = darkMatterAxe.clone(); updateLore(item); return item; }
-    public ItemStack getDarkMatterShovel() { ItemStack item = darkMatterShovel.clone(); updateLore(item); return item; }
-    public ItemStack getDarkMatterHoe() { ItemStack item = darkMatterHoe.clone(); updateLore(item); return item; }
-    public ItemStack getDarkMatterSword() { ItemStack item = darkMatterSword.clone(); updateLore(item); return item; }
-    public ItemStack getDarkMatterShears() { return darkMatterShears.clone(); }
-    public ItemStack getDarkMatterHammer() { return darkMatterHammer.clone(); }
+    public ItemStack getDarkMatterPickaxe() {
+        ItemStack item = darkMatterPickaxe.clone();
+        updateLore(item);
+        return item;
+    }
 
-    public ItemStack getRedMatterPickaxe() { ItemStack item = redMatterPickaxe.clone(); updateLore(item); return item; }
-    public ItemStack getRedMatterAxe() { ItemStack item = redMatterAxe.clone(); updateLore(item); return item; }
-    public ItemStack getRedMatterShovel() { ItemStack item = redMatterShovel.clone(); updateLore(item); return item; }
-    public ItemStack getRedMatterHoe() { ItemStack item = redMatterHoe.clone(); updateLore(item); return item; }
-    public ItemStack getRedMatterSword() { ItemStack item = redMatterSword.clone(); updateLore(item); return item; }
-    public ItemStack getRedMatterShears() { return redMatterShears.clone(); }
-    public ItemStack getRedMatterHammer() { return redMatterHammer.clone(); }
-    public ItemStack getRedMatterKatar() { ItemStack item = redMatterKatar.clone(); updateLore(item); return item; }
-    public ItemStack getRedMatterMorningstar() { ItemStack item = redMatterMorningstar.clone(); updateLore(item); return item; }
+    public ItemStack getDarkMatterAxe() {
+        ItemStack item = darkMatterAxe.clone();
+        updateLore(item);
+        return item;
+    }
 
-    public boolean isDarkMatterPickaxe(ItemStack item) { return isTool(item, "dark_matter_pickaxe"); }
-    public boolean isDarkMatterAxe(ItemStack item) { return isTool(item, "dark_matter_axe"); }
-    public boolean isDarkMatterShovel(ItemStack item) { return isTool(item, "dark_matter_shovel"); }
-    public boolean isDarkMatterHoe(ItemStack item) { return isTool(item, "dark_matter_hoe"); }
-    public boolean isDarkMatterSword(ItemStack item) { return isTool(item, "dark_matter_sword"); }
-    public boolean isDarkMatterShears(ItemStack item) { return isTool(item, "dark_matter_shears"); }
-    public boolean isDarkMatterHammer(ItemStack item) { return isTool(item, "dark_matter_hammer"); }
+    public ItemStack getDarkMatterShovel() {
+        ItemStack item = darkMatterShovel.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getDarkMatterHoe() {
+        ItemStack item = darkMatterHoe.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getDarkMatterSword() {
+        ItemStack item = darkMatterSword.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getDarkMatterShears() {
+        return darkMatterShears.clone();
+    }
+
+    public ItemStack getDarkMatterHammer() {
+        return darkMatterHammer.clone();
+    }
+
+    public ItemStack getRedMatterPickaxe() {
+        ItemStack item = redMatterPickaxe.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getRedMatterAxe() {
+        ItemStack item = redMatterAxe.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getRedMatterShovel() {
+        ItemStack item = redMatterShovel.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getRedMatterHoe() {
+        ItemStack item = redMatterHoe.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getRedMatterSword() {
+        ItemStack item = redMatterSword.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getRedMatterShears() {
+        return redMatterShears.clone();
+    }
+
+    public ItemStack getRedMatterHammer() {
+        return redMatterHammer.clone();
+    }
+
+    public ItemStack getRedMatterKatar() {
+        ItemStack item = redMatterKatar.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public ItemStack getRedMatterMorningstar() {
+        ItemStack item = redMatterMorningstar.clone();
+        updateLore(item);
+        return item;
+    }
+
+    public boolean isDarkMatterPickaxe(ItemStack item) {
+        return isTool(item, "dark_matter_pickaxe");
+    }
+
+    public boolean isDarkMatterAxe(ItemStack item) {
+        return isTool(item, "dark_matter_axe");
+    }
+
+    public boolean isDarkMatterShovel(ItemStack item) {
+        return isTool(item, "dark_matter_shovel");
+    }
+
+    public boolean isDarkMatterHoe(ItemStack item) {
+        return isTool(item, "dark_matter_hoe");
+    }
+
+    public boolean isDarkMatterSword(ItemStack item) {
+        return isTool(item, "dark_matter_sword");
+    }
+
+    public boolean isDarkMatterShears(ItemStack item) {
+        return isTool(item, "dark_matter_shears");
+    }
+
+    public boolean isDarkMatterHammer(ItemStack item) {
+        return isTool(item, "dark_matter_hammer");
+    }
 
     public boolean isDarkMatterTool(ItemStack item) {
         String id = getToolId(item);
         return id != null && id.startsWith("dark_matter_");
     }
 
-    public boolean isRedMatterPickaxe(ItemStack item) { return isTool(item, "red_matter_pickaxe"); }
-    public boolean isRedMatterAxe(ItemStack item) { return isTool(item, "red_matter_axe"); }
-    public boolean isRedMatterShovel(ItemStack item) { return isTool(item, "red_matter_shovel"); }
-    public boolean isRedMatterHoe(ItemStack item) { return isTool(item, "red_matter_hoe"); }
-    public boolean isRedMatterSword(ItemStack item) { return isTool(item, "red_matter_sword"); }
-    public boolean isRedMatterShears(ItemStack item) { return isTool(item, "red_matter_shears"); }
-    public boolean isRedMatterHammer(ItemStack item) { return isTool(item, "red_matter_hammer"); }
-    public boolean isRedMatterKatar(ItemStack item) { return isTool(item, "red_matter_katar"); }
-    public boolean isRedMatterMorningstar(ItemStack item) { return isTool(item, "red_matter_morningstar"); }
+    public boolean isRedMatterPickaxe(ItemStack item) {
+        return isTool(item, "red_matter_pickaxe");
+    }
+
+    public boolean isRedMatterAxe(ItemStack item) {
+        return isTool(item, "red_matter_axe");
+    }
+
+    public boolean isRedMatterShovel(ItemStack item) {
+        return isTool(item, "red_matter_shovel");
+    }
+
+    public boolean isRedMatterHoe(ItemStack item) {
+        return isTool(item, "red_matter_hoe");
+    }
+
+    public boolean isRedMatterSword(ItemStack item) {
+        return isTool(item, "red_matter_sword");
+    }
+
+    public boolean isRedMatterShears(ItemStack item) {
+        return isTool(item, "red_matter_shears");
+    }
+
+    public boolean isRedMatterHammer(ItemStack item) {
+        return isTool(item, "red_matter_hammer");
+    }
+
+    public boolean isRedMatterKatar(ItemStack item) {
+        return isTool(item, "red_matter_katar");
+    }
+
+    public boolean isRedMatterMorningstar(ItemStack item) {
+        return isTool(item, "red_matter_morningstar");
+    }
 
     public boolean isRedMatterTool(ItemStack item) {
         String id = getToolId(item);
@@ -351,7 +507,12 @@ public class ToolManager {
         double baseDamage = 15;
         double newDamage = baseDamage + charge;
 
-        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attack_damage", newDamage - 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier damageModifier = new AttributeModifier(
+                UUID.randomUUID(),
+                "generic.attack_damage",
+                newDamage - 1,
+                AttributeModifier.Operation.ADD_NUMBER,
+                EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
 
         hammer.setItemMeta(meta);
@@ -374,7 +535,12 @@ public class ToolManager {
         }
         double newDamage = baseDamage + charge;
 
-        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attack_damage", newDamage - 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier damageModifier = new AttributeModifier(
+                UUID.randomUUID(),
+                "generic.attack_damage",
+                newDamage - 1,
+                AttributeModifier.Operation.ADD_NUMBER,
+                EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
 
         sword.setItemMeta(meta);
@@ -392,7 +558,12 @@ public class ToolManager {
         double baseDamage = 24;
         double newDamage = baseDamage + charge;
 
-        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attack_damage", newDamage - 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier damageModifier = new AttributeModifier(
+                UUID.randomUUID(),
+                "generic.attack_damage",
+                newDamage - 1,
+                AttributeModifier.Operation.ADD_NUMBER,
+                EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
 
         katar.setItemMeta(meta);
@@ -426,33 +597,60 @@ public class ToolManager {
     public ItemStack getTool(String id) {
         if (id == null) return null;
         switch (id) {
-            case "dark_matter_pickaxe": return getDarkMatterPickaxe();
-            case "dark_matter_axe": return getDarkMatterAxe();
-            case "dark_matter_shovel": return getDarkMatterShovel();
-            case "dark_matter_hoe": return getDarkMatterHoe();
-            case "dark_matter_sword": return getDarkMatterSword();
-            case "dark_matter_shears": return getDarkMatterShears();
-            case "dark_matter_hammer": return getDarkMatterHammer();
-            case "red_matter_pickaxe": return getRedMatterPickaxe();
-            case "red_matter_axe": return getRedMatterAxe();
-            case "red_matter_shovel": return getRedMatterShovel();
-            case "red_matter_hoe": return getRedMatterHoe();
-            case "red_matter_sword": return getRedMatterSword();
-            case "red_matter_shears": return getRedMatterShears();
-            case "red_matter_hammer": return getRedMatterHammer();
-            case "red_matter_katar": return getRedMatterKatar();
-            case "red_matter_morningstar": return getRedMatterMorningstar();
-            default: return null;
+            case "dark_matter_pickaxe":
+                return getDarkMatterPickaxe();
+            case "dark_matter_axe":
+                return getDarkMatterAxe();
+            case "dark_matter_shovel":
+                return getDarkMatterShovel();
+            case "dark_matter_hoe":
+                return getDarkMatterHoe();
+            case "dark_matter_sword":
+                return getDarkMatterSword();
+            case "dark_matter_shears":
+                return getDarkMatterShears();
+            case "dark_matter_hammer":
+                return getDarkMatterHammer();
+            case "red_matter_pickaxe":
+                return getRedMatterPickaxe();
+            case "red_matter_axe":
+                return getRedMatterAxe();
+            case "red_matter_shovel":
+                return getRedMatterShovel();
+            case "red_matter_hoe":
+                return getRedMatterHoe();
+            case "red_matter_sword":
+                return getRedMatterSword();
+            case "red_matter_shears":
+                return getRedMatterShears();
+            case "red_matter_hammer":
+                return getRedMatterHammer();
+            case "red_matter_katar":
+                return getRedMatterKatar();
+            case "red_matter_morningstar":
+                return getRedMatterMorningstar();
+            default:
+                return null;
         }
     }
 
     public List<String> getToolIds() {
         return new ArrayList<>(List.of(
-                "dark_matter_pickaxe", "dark_matter_axe", "dark_matter_shovel", "dark_matter_hoe",
-                "dark_matter_sword", "dark_matter_shears", "dark_matter_hammer",
-                "red_matter_pickaxe", "red_matter_axe", "red_matter_shovel", "red_matter_hoe",
-                "red_matter_sword", "red_matter_shears", "red_matter_hammer",
-                "red_matter_katar", "red_matter_morningstar"
-        ));
+                "dark_matter_pickaxe",
+                "dark_matter_axe",
+                "dark_matter_shovel",
+                "dark_matter_hoe",
+                "dark_matter_sword",
+                "dark_matter_shears",
+                "dark_matter_hammer",
+                "red_matter_pickaxe",
+                "red_matter_axe",
+                "red_matter_shovel",
+                "red_matter_hoe",
+                "red_matter_sword",
+                "red_matter_shears",
+                "red_matter_hammer",
+                "red_matter_katar",
+                "red_matter_morningstar"));
     }
 }

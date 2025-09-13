@@ -1,5 +1,6 @@
 package org.Little_100.projecte.gui;
 
+import java.util.List;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.tools.ToolManager;
 import org.Little_100.projecte.util.Constants;
@@ -14,8 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.List;
 
 public class ToolChargeGUI {
 
@@ -72,7 +71,9 @@ public class ToolChargeGUI {
 
         for (int i = 0; i <= maxCharge; i++) {
             Material material = (i <= currentCharge) ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK;
-            String name = plugin.getLanguageManager().get("clientside.dark_matter_tool.charge").replace("{level}", String.valueOf(i));
+            String name = plugin.getLanguageManager()
+                    .get("clientside.dark_matter_tool.charge")
+                    .replace("{level}", String.valueOf(i));
             ItemStack chargeItem = createGuiItem(material, name, null, "charge_level", i);
             if (i == currentCharge) {
                 addGlow(chargeItem);
@@ -106,15 +107,14 @@ public class ToolChargeGUI {
             }
 
             if (currentMode == 0) {
-                 material = Material.PLAYER_HEAD;
-                 name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_all");
-                 nextMode = 1;
+                material = Material.PLAYER_HEAD;
+                name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_all");
+                nextMode = 1;
             } else {
-                 material = Material.ZOMBIE_HEAD;
-                 name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_hostile");
-                 nextMode = 0;
+                material = Material.ZOMBIE_HEAD;
+                name = plugin.getLanguageManager().get("clientside.red_matter_katar.mode_hostile");
+                nextMode = 0;
             }
-
 
             ItemStack modeToggleItem = createGuiItem(material, name, null, "katar_mode", nextMode);
             addGlow(modeToggleItem);

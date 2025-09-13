@@ -1,5 +1,7 @@
 package org.Little_100.projecte.listeners;
 
+import java.util.*;
+import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.tools.ToolManager;
 import org.bukkit.Location;
@@ -18,9 +20,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ToolAbilityListener implements Listener {
 
@@ -49,12 +48,13 @@ public class ToolAbilityListener implements Listener {
             return;
         }
 
-        if (player.isSneaking() && (toolManager.isDarkMatterSword(itemInHand) || toolManager.isRedMatterSword(itemInHand))) {
+        if (player.isSneaking()
+                && (toolManager.isDarkMatterSword(itemInHand) || toolManager.isRedMatterSword(itemInHand))) {
             handleSwordAbility(player, itemInHand);
             event.setCancelled(true);
             return;
         }
-        
+
         if (toolManager.isRedMatterKatar(itemInHand)) {
             if (player.isSneaking()) {
                 handleKatarShear(player, itemInHand);
@@ -92,13 +92,14 @@ public class ToolAbilityListener implements Listener {
     //     }
     // }
 
-
     private void handleKatarShear(Player player, ItemStack katar) {
         int range = 50;
 
-        List<org.bukkit.entity.Sheep> sheepList = player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
-            .filter(sheep -> !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
-            .collect(java.util.stream.Collectors.toList());
+        List<org.bukkit.entity.Sheep> sheepList =
+                player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
+                        .filter(sheep ->
+                                !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
+                        .collect(java.util.stream.Collectors.toList());
 
         if (!sheepList.isEmpty()) {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_SHEEP_SHEAR, 1.0f, 1.0f);
@@ -109,8 +110,9 @@ public class ToolAbilityListener implements Listener {
             int woolAmount = 1 + new java.util.Random().nextInt(3);
             Material woolType = getWoolMaterial(sheep.getColor());
             ItemStack woolStack = new ItemStack(woolType, woolAmount);
-            
-            java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(woolStack);
+
+            java.util.HashMap<Integer, ItemStack> leftover =
+                    player.getInventory().addItem(woolStack);
             if (!leftover.isEmpty()) {
                 player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(0));
             }
@@ -128,28 +130,33 @@ public class ToolAbilityListener implements Listener {
         if (!katar.hasItemMeta()) return;
         org.bukkit.inventory.meta.ItemMeta meta = katar.getItemMeta();
         org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
-        int currentMode = container.getOrDefault(new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"), org.bukkit.persistence.PersistentDataType.INTEGER, 0);
+        int currentMode = container.getOrDefault(
+                new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"),
+                org.bukkit.persistence.PersistentDataType.INTEGER,
+                0);
 
         // 检查配置是否允许全部模式伤害
         boolean attackAllModeEnabled = plugin.getConfig().getBoolean("tools.katar_attack_all_mode_enabled", true);
-        
+
         double damage = 1000.0;
         int range = 10; // 20x20
 
-        Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), range, range, range);
+        Collection<Entity> nearbyEntities =
+                player.getWorld().getNearbyEntities(player.getLocation(), range, range, range);
 
         List<LivingEntity> targets = nearbyEntities.stream()
-            .filter(e -> e instanceof LivingEntity && !e.equals(player) && !(e instanceof org.bukkit.entity.ArmorStand))
-            .filter(e -> {
-                // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
-                if (!attackAllModeEnabled || currentMode == 1) {
-                    return e instanceof Monster;
-                } else { // 全部模式且配置允许
-                    return true;
-                }
-            })
-            .map(e -> (LivingEntity) e)
-            .collect(Collectors.toList());
+                .filter(e ->
+                        e instanceof LivingEntity && !e.equals(player) && !(e instanceof org.bukkit.entity.ArmorStand))
+                .filter(e -> {
+                    // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
+                    if (!attackAllModeEnabled || currentMode == 1) {
+                        return e instanceof Monster;
+                    } else { // 全部模式且配置允许
+                        return true;
+                    }
+                })
+                .map(e -> (LivingEntity) e)
+                .collect(Collectors.toList());
 
         if (targets.isEmpty()) {
             return;
@@ -170,35 +177,53 @@ public class ToolAbilityListener implements Listener {
 
         int radius;
         switch (charge) {
-            case 1: radius = 1; break;
-            case 2: radius = 2; break;
-            case 3: radius = 3; break;
-            case 4: radius = 4; break;
-            default: return;
+            case 1:
+                radius = 1;
+                break;
+            case 2:
+                radius = 2;
+                break;
+            case 3:
+                radius = 3;
+                break;
+            case 4:
+                radius = 4;
+                break;
+            default:
+                return;
         }
 
         List<Block> affectedBlocks;
         Material blockType = clickedBlock.getType();
 
-        if (isRock(blockType) || isShovelable(blockType) || Tag.LOGS.isTagged(blockType) ||
-            toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_PICKAXE)) ||
-            toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_SHOVEL)) ||
-            toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_AXE))) {
+        if (isRock(blockType)
+                || isShovelable(blockType)
+                || Tag.LOGS.isTagged(blockType)
+                || toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_PICKAXE))
+                || toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_SHOVEL))
+                || toolManager.isValidMaterialForTool(blockType, new ItemStack(Material.DIAMOND_AXE))) {
             affectedBlocks = getBlocksInCube(clickedBlock, radius);
         } else {
             affectedBlocks = getBlocksInCube(clickedBlock, radius).stream()
-                .filter(b -> b.getType() == blockType)
-                .collect(Collectors.toList());
+                    .filter(b -> b.getType() == blockType)
+                    .collect(Collectors.toList());
         }
 
         if (!affectedBlocks.isEmpty()) {
             player.playSound(player.getLocation(), "projecte:custom.pedestruct", 1.0f, 1.0f);
-            breakBlocksAndDropAtCenter(player, morningstar, affectedBlocks, clickedBlock.getLocation().add(0.5, 0.5, 0.5));
+            breakBlocksAndDropAtCenter(
+                    player,
+                    morningstar,
+                    affectedBlocks,
+                    clickedBlock.getLocation().add(0.5, 0.5, 0.5));
         }
     }
 
     private boolean isShovelable(Material material) {
-        return Tag.DIRT.isTagged(material) || Tag.SAND.isTagged(material) || material == Material.GRAVEL || material == Material.CLAY;
+        return Tag.DIRT.isTagged(material)
+                || Tag.SAND.isTagged(material)
+                || material == Material.GRAVEL
+                || material == Material.CLAY;
     }
 
     private void breakBlocksAndGiveToPlayer(Player player, ItemStack tool, List<Block> blocks) {
@@ -207,7 +232,8 @@ public class ToolAbilityListener implements Listener {
                 Collection<ItemStack> drops = block.getDrops(tool);
                 block.setType(Material.AIR);
                 for (ItemStack drop : drops) {
-                    java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(drop);
+                    java.util.HashMap<Integer, ItemStack> leftover =
+                            player.getInventory().addItem(drop);
                     if (!leftover.isEmpty()) {
                         player.getWorld().dropItemNaturally(block.getLocation(), leftover.get(0));
                     }
@@ -218,7 +244,10 @@ public class ToolAbilityListener implements Listener {
 
     private void breakBlocksAndDropAtCenter(Player player, ItemStack tool, List<Block> blocks, Location dropLocation) {
         for (Block block : blocks) {
-            if (block.getType() == Material.AIR || block.getType() == Material.BEDROCK || block.isLiquid() || block.isPassable()) {
+            if (block.getType() == Material.AIR
+                    || block.getType() == Material.BEDROCK
+                    || block.isLiquid()
+                    || block.isPassable()) {
                 continue;
             }
             Collection<ItemStack> drops = block.getDrops(tool);
@@ -267,7 +296,7 @@ public class ToolAbilityListener implements Listener {
     private void handleKatarTill(Player player, ItemStack katar, Block clickedBlock) {
         int charge = toolManager.getCharge(katar);
         if (charge == 0) return;
-        
+
         int range = 4; // 9x9 Area
         List<Block> affectedBlocks = new ArrayList<>();
         for (int x = -range; x <= range; x++) {
@@ -279,7 +308,7 @@ public class ToolAbilityListener implements Listener {
                 }
             }
         }
-        
+
         if (!affectedBlocks.isEmpty()) {
             player.playSound(player.getLocation(), org.bukkit.Sound.ITEM_HOE_TILL, 1.0f, 1.0f);
         }
@@ -323,7 +352,6 @@ public class ToolAbilityListener implements Listener {
         return treeBlocks;
     }
 
-
     private void handleKatarChop(Player player, ItemStack katar, Block clickedBlock) {
         List<Block> blocksToBreak = findTree(clickedBlock);
 
@@ -333,7 +361,6 @@ public class ToolAbilityListener implements Listener {
 
         breakBlocksAndGiveToPlayer(player, katar, blocksToBreak);
     }
-
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -346,7 +373,7 @@ public class ToolAbilityListener implements Listener {
                 }
             }
         }
-        
+
         if (!(event.getDamager() instanceof Player)) return;
 
         Player player = (Player) event.getDamager();
@@ -357,11 +384,14 @@ public class ToolAbilityListener implements Listener {
         if (!itemInHand.hasItemMeta()) return;
         org.bukkit.inventory.meta.ItemMeta meta = itemInHand.getItemMeta();
         org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
-        int currentMode = container.getOrDefault(new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"), org.bukkit.persistence.PersistentDataType.INTEGER, 0);
+        int currentMode = container.getOrDefault(
+                new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"),
+                org.bukkit.persistence.PersistentDataType.INTEGER,
+                0);
 
         // 检查配置是否允许全部模式伤害
         boolean attackAllModeEnabled = plugin.getConfig().getBoolean("tools.katar_attack_all_mode_enabled", true);
-        
+
         // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
         if (!attackAllModeEnabled || currentMode == 1) {
             // 如果不是怪物，取消伤害
@@ -385,9 +415,11 @@ public class ToolAbilityListener implements Listener {
 
         if (range == 0) return;
 
-        List<org.bukkit.entity.Sheep> sheepList = player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
-            .filter(sheep -> !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
-            .collect(java.util.stream.Collectors.toList());
+        List<org.bukkit.entity.Sheep> sheepList =
+                player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
+                        .filter(sheep ->
+                                !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
+                        .collect(java.util.stream.Collectors.toList());
 
         if (!sheepList.isEmpty()) {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_SHEEP_SHEAR, 1.0f, 1.0f);
@@ -398,14 +430,15 @@ public class ToolAbilityListener implements Listener {
             int woolAmount = 1 + new java.util.Random().nextInt(3);
             Material woolType = getWoolMaterial(sheep.getColor());
             ItemStack woolStack = new ItemStack(woolType, woolAmount);
-            
-            java.util.HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(woolStack);
+
+            java.util.HashMap<Integer, ItemStack> leftover =
+                    player.getInventory().addItem(woolStack);
             if (!leftover.isEmpty()) {
                 player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(0));
             }
         }
     }
-    
+
     private Material getWoolMaterial(org.bukkit.DyeColor color) {
         if (color == null) return Material.WHITE_WOOL;
         try {
@@ -434,9 +467,9 @@ public class ToolAbilityListener implements Listener {
             Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(center, range, range, range);
 
             List<LivingEntity> targets = nearbyEntities.stream()
-                .filter(e -> e instanceof Monster && !e.equals(player))
-                .map(e -> (LivingEntity) e)
-                .collect(Collectors.toList());
+                    .filter(e -> e instanceof Monster && !e.equals(player))
+                    .map(e -> (LivingEntity) e)
+                    .collect(Collectors.toList());
 
             if (targets.isEmpty()) {
                 return;
@@ -449,44 +482,43 @@ public class ToolAbilityListener implements Listener {
             }
             swordCooldowns.put(player.getUniqueId(), now);
         } else if (toolManager.isRedMatterSword(sword)) {
-           int charge = toolManager.getCharge(sword);
-           if (charge == 0) return;
+            int charge = toolManager.getCharge(sword);
+            if (charge == 0) return;
 
-           double damage = 18.0;
-           int range = charge;
-           int mode = toolManager.getSwordMode(sword);
+            double damage = 18.0;
+            int range = charge;
+            int mode = toolManager.getSwordMode(sword);
 
-           Location eyeLocation = player.getEyeLocation();
-           Vector direction = eyeLocation.getDirection();
-           Location center = eyeLocation.add(direction.multiply(range + 1));
+            Location eyeLocation = player.getEyeLocation();
+            Vector direction = eyeLocation.getDirection();
+            Location center = eyeLocation.add(direction.multiply(range + 1));
 
-           Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(center, range, range, range);
+            Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(center, range, range, range);
 
-           List<LivingEntity> targets = nearbyEntities.stream()
-               .filter(e -> e instanceof LivingEntity && !e.equals(player))
-               .filter(e -> {
-                   if (mode == 0) {
-                       return e instanceof Monster;
-                   } else {
-                       return true;
-                   }
-               })
-               .map(e -> (LivingEntity) e)
-               .collect(Collectors.toList());
+            List<LivingEntity> targets = nearbyEntities.stream()
+                    .filter(e -> e instanceof LivingEntity && !e.equals(player))
+                    .filter(e -> {
+                        if (mode == 0) {
+                            return e instanceof Monster;
+                        } else {
+                            return true;
+                        }
+                    })
+                    .map(e -> (LivingEntity) e)
+                    .collect(Collectors.toList());
 
-           if (targets.isEmpty()) {
-               return;
-           }
+            if (targets.isEmpty()) {
+                return;
+            }
 
-           player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.5f);
-           player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
-           for (LivingEntity target : targets) {
-               target.damage(damage, player);
-           }
-           swordCooldowns.put(player.getUniqueId(), now);
-       }
+            player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.5f);
+            player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
+            for (LivingEntity target : targets) {
+                target.damage(damage, player);
+            }
+            swordCooldowns.put(player.getUniqueId(), now);
+        }
     }
-
 
     private void handleHammerAbility(Player player, ItemStack hammer, Block clickedBlock) {
         int charge = toolManager.getCharge(hammer);
@@ -494,10 +526,23 @@ public class ToolAbilityListener implements Listener {
 
         int width, height, depth;
         switch (charge) {
-            case 1: width = 3; height = 3; depth = 2; break;
-            case 2: width = 5; height = 4; depth = 3; break;
-            case 3: width = 7; height = 5; depth = 4; break;
-            default: return;
+            case 1:
+                width = 3;
+                height = 3;
+                depth = 2;
+                break;
+            case 2:
+                width = 5;
+                height = 4;
+                depth = 3;
+                break;
+            case 3:
+                width = 7;
+                height = 5;
+                depth = 4;
+                break;
+            default:
+                return;
         }
 
         List<Block> affectedBlocks = getBlocksInVolume(clickedBlock, player.getFacing(), width, height, depth);
@@ -517,9 +562,17 @@ public class ToolAbilityListener implements Listener {
 
     private boolean isRock(Material material) {
         String name = material.name();
-        return name.endsWith("_ORE") || name.endsWith("STONE") || name.equals("GRANITE") || name.equals("DIORITE") ||
-               name.equals("ANDESITE") || name.equals("DEEPSLATE") || name.equals("NETHERRACK") || name.equals("BASALT") ||
-               name.equals("BLACKSTONE") || name.equals("END_STONE") || name.equals("OBSIDIAN");
+        return name.endsWith("_ORE")
+                || name.endsWith("STONE")
+                || name.equals("GRANITE")
+                || name.equals("DIORITE")
+                || name.equals("ANDESITE")
+                || name.equals("DEEPSLATE")
+                || name.equals("NETHERRACK")
+                || name.equals("BASALT")
+                || name.equals("BLACKSTONE")
+                || name.equals("END_STONE")
+                || name.equals("OBSIDIAN");
     }
 
     private List<Block> getBlocksInVolume(Block start, BlockFace facing, int width, int height, int depth) {
@@ -527,10 +580,13 @@ public class ToolAbilityListener implements Listener {
         int halfWidth = (width - 1) / 2;
         int halfHeight = (height - 1) / 2;
 
-        boolean isHorizontal = (facing == BlockFace.NORTH || facing == BlockFace.SOUTH || facing == BlockFace.EAST || facing == BlockFace.WEST);
+        boolean isHorizontal = (facing == BlockFace.NORTH
+                || facing == BlockFace.SOUTH
+                || facing == BlockFace.EAST
+                || facing == BlockFace.WEST);
 
         if (isHorizontal) {
-             for (int d = 0; d < depth; d++) {
+            for (int d = 0; d < depth; d++) {
                 Block depthBlock = start.getRelative(facing.getOppositeFace(), d);
                 for (int w = -halfWidth; w <= halfWidth; w++) {
                     for (int h = -halfHeight; h <= halfHeight; h++) {
@@ -542,7 +598,7 @@ public class ToolAbilityListener implements Listener {
         } else {
             for (int d = 0; d < depth; d++) {
                 Block depthBlock = start.getRelative(facing.getOppositeFace(), d);
-                 for (int w = -halfWidth; w <= halfWidth; w++) {
+                for (int w = -halfWidth; w <= halfWidth; w++) {
                     for (int h = -halfWidth; h <= halfWidth; h++) {
                         blocks.add(depthBlock.getRelative(w, 0, h));
                     }
@@ -613,23 +669,21 @@ public class ToolAbilityListener implements Listener {
         return vein;
     }
 
-
     private void handleShovelAbility(Player player, ItemStack shovel, Block clickedBlock) {
         if (clickedBlock == null) return;
 
         Material blockType = clickedBlock.getType();
-        if (!blockType.toString().endsWith("_CONCRETE_POWDER") &&
-            !Tag.SAND.isTagged(blockType) &&
-            blockType != Material.CLAY &&
-            blockType != Material.DIRT &&
-            blockType != Material.GRASS_BLOCK &&
-            blockType != Material.DIRT_PATH &&
-            blockType != Material.GRAVEL &&
-            blockType != Material.SOUL_SAND &&
-            blockType != Material.SOUL_SOIL) {
+        if (!blockType.toString().endsWith("_CONCRETE_POWDER")
+                && !Tag.SAND.isTagged(blockType)
+                && blockType != Material.CLAY
+                && blockType != Material.DIRT
+                && blockType != Material.GRASS_BLOCK
+                && blockType != Material.DIRT_PATH
+                && blockType != Material.GRAVEL
+                && blockType != Material.SOUL_SAND
+                && blockType != Material.SOUL_SOIL) {
             return;
         }
-
 
         int charge = toolManager.getCharge(shovel);
         if (charge == 0) return;

@@ -1,5 +1,9 @@
 package org.Little_100.projecte.managers;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.util.VersionUtils;
@@ -13,11 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FuelManager implements Listener {
     private final ProjectE plugin;
@@ -64,8 +63,11 @@ public class FuelManager implements Listener {
         burnTimes.put("mobius_fuel_block", 11520 * 20);
         burnTimes.put("aeternalis_fuel_block", 46080 * 20);
 
-        plugin.getLogger().info("FuelManager: Detected version " + Bukkit.getServer().getBukkitVersion()
-                + (VersionUtils.is1214OrNewer() ? " (using modern material handling)" : " (using legacy material handling)"));
+        plugin.getLogger()
+                .info("FuelManager: Detected version " + Bukkit.getServer().getBukkitVersion()
+                        + (VersionUtils.is1214OrNewer()
+                                ? " (using modern material handling)"
+                                : " (using legacy material handling)"));
 
         createFuelItems();
         registerCustomBlocks();
@@ -77,51 +79,107 @@ public class FuelManager implements Listener {
 
     private void createModernFuelItems() {
         // 煤炭
-        alchemicalCoal = createFuelItem(Material.COAL, "item.alchemical_coal.name", 1,
+        alchemicalCoal = createFuelItem(
+                Material.COAL,
+                "item.alchemical_coal.name",
+                1,
                 Arrays.asList("item.alchemical_coal.lore1", "item.alchemical_coal.lore2"),
-                alchemicalCoalKey, (byte) 1, "alchemical_coal");
+                alchemicalCoalKey,
+                (byte) 1,
+                "alchemical_coal");
 
-        mobiusFuel = createFuelItem(Material.COAL, "item.mobius_fuel.name", 2,
+        mobiusFuel = createFuelItem(
+                Material.COAL,
+                "item.mobius_fuel.name",
+                2,
                 Arrays.asList("item.mobius_fuel.lore1", "item.mobius_fuel.lore2"),
-                mobiusFuelKey, (byte) 1, "mobius_fuel");
+                mobiusFuelKey,
+                (byte) 1,
+                "mobius_fuel");
 
-        aeternalisFuel = createFuelItem(Material.COAL, "item.aeternalis_fuel.name", 3,
+        aeternalisFuel = createFuelItem(
+                Material.COAL,
+                "item.aeternalis_fuel.name",
+                3,
                 Arrays.asList("item.aeternalis_fuel.lore1", "item.aeternalis_fuel.lore2"),
-                aeternalisFuelKey, (byte) 1, "aeternalis_fuel");
+                aeternalisFuelKey,
+                (byte) 1,
+                "aeternalis_fuel");
 
-        alchemicalCoalBlock = createFuelItem(Material.COAL_BLOCK, "item.alchemical_coal_block.name", 1,
+        alchemicalCoalBlock = createFuelItem(
+                Material.COAL_BLOCK,
+                "item.alchemical_coal_block.name",
+                1,
                 Arrays.asList("item.alchemical_coal_block.lore1", "item.alchemical_coal_block.lore2"),
-                alchemicalCoalKey, (byte) 2, "alchemical_coal_block");
+                alchemicalCoalKey,
+                (byte) 2,
+                "alchemical_coal_block");
 
-        mobiusFuelBlock = createFuelItem(Material.COAL_BLOCK, "item.mobius_fuel_block.name", 2,
+        mobiusFuelBlock = createFuelItem(
+                Material.COAL_BLOCK,
+                "item.mobius_fuel_block.name",
+                2,
                 Arrays.asList("item.mobius_fuel_block.lore1", "item.mobius_fuel_block.lore2"),
-                mobiusFuelKey, (byte) 2, "mobius_fuel_block");
+                mobiusFuelKey,
+                (byte) 2,
+                "mobius_fuel_block");
 
-        aeternalisFuelBlock = createFuelItem(Material.COAL_BLOCK, "item.aeternalis_fuel_block.name", 3,
+        aeternalisFuelBlock = createFuelItem(
+                Material.COAL_BLOCK,
+                "item.aeternalis_fuel_block.name",
+                3,
                 Arrays.asList("item.aeternalis_fuel_block.lore1", "item.aeternalis_fuel_block.lore2"),
-                aeternalisFuelKey, (byte) 2, "aeternalis_fuel_block");
+                aeternalisFuelKey,
+                (byte) 2,
+                "aeternalis_fuel_block");
 
         // 物质
-        darkMatter = createFuelItem(Material.SLIME_BALL, "item.dark_matter.name", 1,
+        darkMatter = createFuelItem(
+                Material.SLIME_BALL,
+                "item.dark_matter.name",
+                1,
                 Arrays.asList("item.dark_matter.lore1", "item.dark_matter.lore2"),
-                darkMatterKey, (byte) 1, "dark_matter");
+                darkMatterKey,
+                (byte) 1,
+                "dark_matter");
 
-        redMatter = createFuelItem(Material.SLIME_BALL, "item.red_matter.name", 2,
+        redMatter = createFuelItem(
+                Material.SLIME_BALL,
+                "item.red_matter.name",
+                2,
                 Arrays.asList("item.red_matter.lore1", "item.red_matter.lore2"),
-                redMatterKey, (byte) 1, "red_matter");
+                redMatterKey,
+                (byte) 1,
+                "red_matter");
 
         // 物质块
-        darkMatterBlock = createFuelItem(Material.BLACK_CONCRETE, "item.dark_matter_block.name", 1,
+        darkMatterBlock = createFuelItem(
+                Material.BLACK_CONCRETE,
+                "item.dark_matter_block.name",
+                1,
                 Arrays.asList("item.dark_matter_block.lore1", "item.dark_matter_block.lore2"),
-                darkMatterKey, (byte) 2, "dark_matter_block");
+                darkMatterKey,
+                (byte) 2,
+                "dark_matter_block");
 
-        redMatterBlock = createFuelItem(Material.REDSTONE_BLOCK, "item.red_matter_block.name", 1,
+        redMatterBlock = createFuelItem(
+                Material.REDSTONE_BLOCK,
+                "item.red_matter_block.name",
+                1,
                 Arrays.asList("item.red_matter_block.lore1", "item.red_matter_block.lore2"),
-                redMatterKey, (byte) 2, "red_matter_block");
+                redMatterKey,
+                (byte) 2,
+                "red_matter_block");
     }
 
-    private ItemStack createFuelItem(Material material, String displayNameKey, int customModelData,
-            java.util.List<String> loreKeys, NamespacedKey key, byte value, String id) {
+    private ItemStack createFuelItem(
+            Material material,
+            String displayNameKey,
+            int customModelData,
+            java.util.List<String> loreKeys,
+            NamespacedKey key,
+            byte value,
+            String id) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -154,7 +212,6 @@ public class FuelManager implements Listener {
             item.setItemMeta(meta);
         }
     }
-
 
     // 获取燃料物品
     public ItemStack getAlchemicalCoal() {
@@ -199,113 +256,93 @@ public class FuelManager implements Listener {
 
     // 检查是否为特定的燃料物品
     public boolean isAlchemicalCoal(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(alchemicalCoalKey, PersistentDataType.BYTE) &&
-                container.get(alchemicalCoalKey, PersistentDataType.BYTE) == (byte) 1;
+        return container.has(alchemicalCoalKey, PersistentDataType.BYTE)
+                && container.get(alchemicalCoalKey, PersistentDataType.BYTE) == (byte) 1;
     }
 
     public boolean isMobiusFuel(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(mobiusFuelKey, PersistentDataType.BYTE) &&
-                container.get(mobiusFuelKey, PersistentDataType.BYTE) == (byte) 1;
+        return container.has(mobiusFuelKey, PersistentDataType.BYTE)
+                && container.get(mobiusFuelKey, PersistentDataType.BYTE) == (byte) 1;
     }
 
     public boolean isAeternalisFuel(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(aeternalisFuelKey, PersistentDataType.BYTE) &&
-                container.get(aeternalisFuelKey, PersistentDataType.BYTE) == (byte) 1;
+        return container.has(aeternalisFuelKey, PersistentDataType.BYTE)
+                && container.get(aeternalisFuelKey, PersistentDataType.BYTE) == (byte) 1;
     }
 
     public boolean isAlchemicalCoalBlock(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(alchemicalCoalKey, PersistentDataType.BYTE) &&
-                container.get(alchemicalCoalKey, PersistentDataType.BYTE) == (byte) 2;
+        return container.has(alchemicalCoalKey, PersistentDataType.BYTE)
+                && container.get(alchemicalCoalKey, PersistentDataType.BYTE) == (byte) 2;
     }
 
     public boolean isMobiusFuelBlock(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(mobiusFuelKey, PersistentDataType.BYTE) &&
-                container.get(mobiusFuelKey, PersistentDataType.BYTE) == (byte) 2;
+        return container.has(mobiusFuelKey, PersistentDataType.BYTE)
+                && container.get(mobiusFuelKey, PersistentDataType.BYTE) == (byte) 2;
     }
 
     public boolean isAeternalisFuelBlock(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(aeternalisFuelKey, PersistentDataType.BYTE) &&
-                container.get(aeternalisFuelKey, PersistentDataType.BYTE) == (byte) 2;
+        return container.has(aeternalisFuelKey, PersistentDataType.BYTE)
+                && container.get(aeternalisFuelKey, PersistentDataType.BYTE) == (byte) 2;
     }
 
     public boolean isDarkMatter(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(darkMatterKey, PersistentDataType.BYTE) &&
-                container.get(darkMatterKey, PersistentDataType.BYTE) == (byte) 1;
+        return container.has(darkMatterKey, PersistentDataType.BYTE)
+                && container.get(darkMatterKey, PersistentDataType.BYTE) == (byte) 1;
     }
 
     public boolean isRedMatter(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(redMatterKey, PersistentDataType.BYTE) &&
-                container.get(redMatterKey, PersistentDataType.BYTE) == (byte) 1;
+        return container.has(redMatterKey, PersistentDataType.BYTE)
+                && container.get(redMatterKey, PersistentDataType.BYTE) == (byte) 1;
     }
 
     public boolean isDarkMatterBlock(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(darkMatterKey, PersistentDataType.BYTE) &&
-                container.get(darkMatterKey, PersistentDataType.BYTE) == (byte) 2;
+        return container.has(darkMatterKey, PersistentDataType.BYTE)
+                && container.get(darkMatterKey, PersistentDataType.BYTE) == (byte) 2;
     }
 
     public boolean isRedMatterBlock(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return false;
+        if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(redMatterKey, PersistentDataType.BYTE) &&
-                container.get(redMatterKey, PersistentDataType.BYTE) == (byte) 2;
+        return container.has(redMatterKey, PersistentDataType.BYTE)
+                && container.get(redMatterKey, PersistentDataType.BYTE) == (byte) 2;
     }
 
     // 熔炉燃烧事件处理器
@@ -334,7 +371,6 @@ public class FuelManager implements Listener {
         }
     }
 
-
     // 获取燃料类型的CustomModelData
     private String getModelDataForFuelType(String fuelType) {
         switch (fuelType) {
@@ -357,24 +393,21 @@ public class FuelManager implements Listener {
 
     // 检查是否为燃料物品
     private boolean isFuelItem(ItemStack item, String fuelType) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
 
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
 
-        return container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING) &&
-                fuelType.equals(container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING));
+        return container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING)
+                && fuelType.equals(container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING));
     }
 
     private boolean isFuelItem(ItemStack item) {
-        if (item == null || !item.hasItemMeta())
-            return false;
+        if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         return container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
     }
-
 
     // 获取特殊燃料的NBT标签信息以供材质包使用
     public String getNbtTagInfo() {

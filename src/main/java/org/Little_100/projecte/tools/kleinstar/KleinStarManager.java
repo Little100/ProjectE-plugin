@@ -1,5 +1,9 @@
 package org.Little_100.projecte.tools.kleinstar;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
@@ -11,11 +15,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class KleinStarManager {
 
@@ -61,7 +60,9 @@ public class KleinStarManager {
             meta.setDisplayName(plugin.getLanguageManager().get("item." + nameKey + ".name"));
             List<String> lore = new ArrayList<>();
             lore.add(plugin.getLanguageManager().get("item." + nameKey + ".lore1"));
-            lore.add(plugin.getLanguageManager().get("item." + nameKey + ".lore2").replace("{staremc}", "0"));
+            lore.add(plugin.getLanguageManager()
+                    .get("item." + nameKey + ".lore2")
+                    .replace("{staremc}", "0"));
             meta.setLore(lore);
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             if (meta instanceof Damageable) {
