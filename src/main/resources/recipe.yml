@@ -1,19 +1,19 @@
-# 这是一个注释示例
-# 物品ID:
-#   enabled: true # 是否启用
-#   type: "shaped" # "shaped" 或 "shapeless"
-#   shape: # 如果是 "shaped"，则需要此项
+# Here's an example / 以下是一个示例:
+# Item ID / 物品ID:
+#   enabled: true # Whether it is enabled / 是否启用
+#   type: "shaped" or "shapeless" / "shaped" 或 "shapeless"
+#   shape: # required if the type is "shaped" / 如果type是shaped，则此项必填
 #     - "AAA"
 #     - "A A"
 #     - "AAA"
-#   ingredients: # "shaped" 和 "shapeless" 都需要
+#   ingredients:       # required / 必填项
 #     A: "DIAMOND"
-#   result: # 结果
+#   result:
 #     material: "DIAMOND"
 #     amount: 1
-#     display_name: "显示的名字"
+#     display_name: "The display name" # 物品显示名称
 #     lore:
-#       - "最好别动"
+#       - "Don't touch it"
 #     custom_model_data: 123456
 #     projecte_id: "my_custom_item"
 
@@ -372,7 +372,7 @@ recipes:
       projecte_id: "transmutation_tablet_book"
       display_name: "item.transmutation_tablet_book.name"
 
-  # Dark Matter Tools
+  # Dark Matter tools
   dark_matter_pickaxe:
     enabled: true
     type: "shaped"
@@ -463,7 +463,7 @@ recipes:
     result:
       projecte_id: "dark_matter_hammer"
 
-  # Red Matter Tools
+  # Red Matter tools
   red_matter_pickaxe:
     enabled: true
     type: "shaped"
@@ -559,7 +559,7 @@ recipes:
     result:
       projecte_id: "red_matter_hammer"
 
-  # Dark Matter Armor
+  # Dark Matter armor
   dark_matter_helmet:
     enabled: true
     type: "shaped"
@@ -606,7 +606,7 @@ recipes:
     result:
       projecte_id: "dark_matter_boots"
 
-  # Red Matter Armor
+  # Red Matter armor
   red_matter_helmet:
     enabled: true
     type: "shaped"

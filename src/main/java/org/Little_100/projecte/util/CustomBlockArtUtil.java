@@ -1,6 +1,6 @@
 package org.Little_100.projecte.util;
 
-import org.Little_100.projecte.BlockDataManager;
+import org.Little_100.projecte.managers.BlockDataManager;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.compatibility.SchedulerAdapter;
 import org.bukkit.Bukkit;
@@ -77,16 +77,14 @@ public class CustomBlockArtUtil implements Listener {
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta.hasCustomModelData()) {
-                pdc.set(new NamespacedKey(Bukkit.getPluginManager().getPlugin("ProjectE"), "cmd"),
-                        PersistentDataType.INTEGER, meta.getCustomModelData());
+                pdc.set(Constants.MODEL_KEY, PersistentDataType.INTEGER, meta.getCustomModelData());
             }
+
             if (meta.hasDisplayName()) {
-                pdc.set(new NamespacedKey(Bukkit.getPluginManager().getPlugin("ProjectE"), "name"),
-                        PersistentDataType.STRING, meta.getDisplayName());
+                pdc.set(Constants.NAME_KEY, PersistentDataType.STRING, meta.getDisplayName());
             }
         }
-        pdc.set(new NamespacedKey(Bukkit.getPluginManager().getPlugin("ProjectE"), "material"),
-                PersistentDataType.STRING, item.getType().toString());
+        pdc.set(Constants.MATERIAL_KEY, PersistentDataType.STRING, item.getType().toString());
 
         return armorStand;
     }
@@ -154,7 +152,7 @@ public class CustomBlockArtUtil implements Listener {
                 if (entity instanceof ArmorStand) {
                     ArmorStand stand = (ArmorStand) entity;
                     PersistentDataContainer pdc = stand.getPersistentDataContainer();
-                    if (pdc.has(new NamespacedKey(plugin, "material"), PersistentDataType.STRING)) {
+                    if (pdc.has(Constants.MATERIAL_KEY, PersistentDataType.STRING)) {
                         event.setCancelled(true);
                         ItemStack dropItem = createDropItem(stand);
                         stand.remove();
@@ -183,7 +181,7 @@ public class CustomBlockArtUtil implements Listener {
         if (event.getRightClicked() instanceof ArmorStand) {
             ArmorStand stand = (ArmorStand) event.getRightClicked();
             PersistentDataContainer pdc = stand.getPersistentDataContainer();
-            if (pdc.has(new NamespacedKey(plugin, "material"), PersistentDataType.STRING)) {
+            if (pdc.has(Constants.MATERIAL_KEY, PersistentDataType.STRING)) {
                 event.setCancelled(true);
             }
         }
@@ -194,7 +192,7 @@ public class CustomBlockArtUtil implements Listener {
         if (event.getEntity() instanceof ArmorStand) {
             ArmorStand stand = (ArmorStand) event.getEntity();
             PersistentDataContainer pdc = stand.getPersistentDataContainer();
-            if (pdc.has(new NamespacedKey(plugin, "material"), PersistentDataType.STRING)) {
+            if (pdc.has(Constants.MATERIAL_KEY, PersistentDataType.STRING)) {
                 event.setCancelled(true);
             }
         }
@@ -202,7 +200,7 @@ public class CustomBlockArtUtil implements Listener {
 
     private ItemStack createDropItem(ArmorStand stand) {
         PersistentDataContainer pdc = stand.getPersistentDataContainer();
-        String materialStr = pdc.get(new NamespacedKey(plugin, "material"), PersistentDataType.STRING);
+        String materialStr = pdc.get(Constants.MATERIAL_KEY, PersistentDataType.STRING);
         if (materialStr == null) return null;
         Material material = Material.getMaterial(materialStr);
         if (material == null) return null;
@@ -211,12 +209,13 @@ public class CustomBlockArtUtil implements Listener {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
 
-        if (pdc.has(new NamespacedKey(plugin, "cmd"), PersistentDataType.INTEGER)) {
-            int cmd = pdc.get(new NamespacedKey(plugin, "cmd"), PersistentDataType.INTEGER);
+        if (pdc.has(Constants.MODEL_KEY, PersistentDataType.INTEGER)) {
+            int cmd = pdc.get(Constants.MODEL_KEY, PersistentDataType.INTEGER);
             meta.setCustomModelData(cmd);
         }
-        if (pdc.has(new NamespacedKey(plugin, "name"), PersistentDataType.STRING)) {
-            String name = pdc.get(new NamespacedKey(plugin, "name"), PersistentDataType.STRING);
+
+        if (pdc.has(Constants.NAME_KEY, PersistentDataType.STRING)) {
+            String name = pdc.get(Constants.NAME_KEY, PersistentDataType.STRING);
             meta.setDisplayName(name);
         }
 

@@ -28,7 +28,7 @@ public class DatabaseManager {
                 return;
             }
 
-            File dbFile = new File(dataFolder, "TransmutationTable/transmutation.db");
+            File dbFile = new File(dataFolder, "gui/transmutation.db");
             if (!dbFile.getParentFile().exists()) {
                 dbFile.getParentFile().mkdirs();
             }

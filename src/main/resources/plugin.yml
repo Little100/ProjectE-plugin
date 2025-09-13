@@ -1,7 +1,7 @@
 name: ProjectE
 version: '1.0.1'
 main: org.Little_100.projecte.ProjectE
-api-version: '1.14'
+api-version: '1.16'
 folia-supported: true
 authors: [ Little_100 ]
 description: ProjectE插件(原名贤者之石插件但是突然感觉性质变了就改名ProjectE了)

@@ -3,6 +3,7 @@ package org.Little_100.projecte.compatibility;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Method;
@@ -40,7 +41,7 @@ public class SpigotSchedulerAdapter implements SchedulerAdapter {
         try {
             Method schedulingMethod = Entity.class.getMethod("scheduling");
             Object entityScheduler = schedulingMethod.invoke(entity);
-            Method runMethod = entityScheduler.getClass().getMethod("run", org.bukkit.plugin.Plugin.class, Runnable.class, Runnable.class);
+            Method runMethod = entityScheduler.getClass().getMethod("run", Plugin.class, Runnable.class, Runnable.class);
             runMethod.invoke(entityScheduler, plugin, task, null);
         } catch (Exception e) {
             runTask(task);

@@ -129,7 +129,7 @@ public class AccessoryRecipeManager {
         }
 
         if (config.contains("projecte_id")) {
-            String projecteId = config.getString("projecte_id");
+            String projecteId = config.getString("projecte_id", "");
             switch (projecteId) {
                 case "body_stone":
                     return BodyStone.createBodyStone();

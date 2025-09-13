@@ -1,11 +1,7 @@
 # ProjectE
-[合成表](./help/recipe.md)
+[合成表](./help/recipe.md) [鸣谢列表](./help/credits.md)
 
 [English Version](./help/README_en.md)
-
-[鸣谢列表](./help/credits.md)
-
-[Credits](./help/credits_en.md)
 
 [Issues](./help/issues.md)
 ## 描述

@@ -1,6 +1,6 @@
 package org.Little_100.projecte.compatibility;
 
-import org.Little_100.projecte.EmcManager;
+import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
@@ -73,9 +73,7 @@ public class LegacyAdapter implements VersionAdapter {
             isCooking = true;
             FurnaceRecipe furnaceRecipe = (FurnaceRecipe) recipe;
             ItemStack input = furnaceRecipe.getInput();
-            if (input != null) {
-                totalEmc = getIngredientEmc(input);
-            }
+            totalEmc = getIngredientEmc(input);
         }
 
         if (totalEmc <= 0) {
@@ -111,16 +109,16 @@ public class LegacyAdapter implements VersionAdapter {
     public void loadInitialEmcValues() {
         org.bukkit.configuration.file.FileConfiguration config = ProjectE.getInstance().getConfig();
         org.bukkit.configuration.ConfigurationSection emcSection = config
-                .getConfigurationSection("TransmutationTable.EMC.ImportantItems");
+                .getConfigurationSection("gui.EMC.ImportantItems");
 
         if (emcSection == null) {
             ProjectE.getInstance().getLogger()
-                    .warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
+                    .warning("EMC section 'gui.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
         List<Map<?, ?>> items = emcSection.getMapList("default");
-        if (items == null || items.isEmpty()) {
+        if (items.isEmpty()) {
             ProjectE.getInstance().getLogger().warning("'default' EMC list is missing or empty in config.yml");
             return;
         }
@@ -177,19 +175,11 @@ public class LegacyAdapter implements VersionAdapter {
         } else if (recipe instanceof FurnaceRecipe) {
             debugInfo.add(" - Ingredient:");
             ItemStack input = ((FurnaceRecipe) recipe).getInput();
-            if (input != null) {
-                String key = getItemKey(input);
-                long emc = getIngredientEmc(input);
-                debugInfo.add("   - " + key + ": " + emc + " EMC");
-            }
-
+            String key = getItemKey(input);
+            long emc = getIngredientEmc(input);
+            debugInfo.add("   - " + key + ": " + emc + " EMC");
         }
         return debugInfo;
-    }
-
-    @Override
-    public boolean isModern() {
-        return false;
     }
 
     @Override

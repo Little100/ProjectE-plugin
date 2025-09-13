@@ -1,6 +1,6 @@
 package org.Little_100.projecte.compatibility;
 
-import org.Little_100.projecte.EmcManager;
+import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
@@ -151,10 +151,10 @@ public class ModernAdapter implements VersionAdapter {
     public void loadInitialEmcValues() {
         org.bukkit.configuration.file.FileConfiguration config = ProjectE.getInstance().getConfig();
         org.bukkit.configuration.ConfigurationSection emcSection = config
-                .getConfigurationSection("TransmutationTable.EMC.ImportantItems");
+                .getConfigurationSection("gui.EMC.ImportantItems");
         if (emcSection == null) {
             ProjectE.getInstance().getLogger()
-                    .warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
+                    .warning("EMC section 'gui.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
@@ -252,11 +252,6 @@ public class ModernAdapter implements VersionAdapter {
 
         }
         return debugInfo;
-    }
-
-    @Override
-    public boolean isModern() {
-        return true;
     }
 
     @Override

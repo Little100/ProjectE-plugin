@@ -1,6 +1,6 @@
 package org.Little_100.projecte;
 
-import org.bukkit.Bukkit;
+import org.Little_100.projecte.util.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +12,6 @@ import java.util.List;
 
 public class CovalenceDust {
     private final ProjectE plugin;
-    private final boolean isModernVersion;
 
     private final NamespacedKey lowKey;
     private final NamespacedKey mediumKey;
@@ -24,36 +23,12 @@ public class CovalenceDust {
 
     public CovalenceDust(ProjectE plugin) {
         this.plugin = plugin;
-        this.isModernVersion = isVersion1_21_4OrNewer();
 
         this.lowKey = new NamespacedKey(plugin, "low_covalence_dust");
         this.mediumKey = new NamespacedKey(plugin, "medium_covalence_dust");
         this.highKey = new NamespacedKey(plugin, "high_covalence_dust");
 
         createCovalenceDustItems();
-    }
-
-
-    private boolean isVersion1_21_4OrNewer() {
-        try {
-            String version = Bukkit.getServer().getBukkitVersion().split("-")[0];
-            String[] versionParts = version.split("\\.");
-            if (versionParts.length >= 2) {
-                int major = Integer.parseInt(versionParts[0]);
-                int minor = Integer.parseInt(versionParts[1]);
-                if (major > 1)
-                    return true;
-                if (major == 1 && minor > 21)
-                    return true;
-                if (major == 1 && minor == 21 && versionParts.length >= 3) {
-                    int patch = Integer.parseInt(versionParts[2]);
-                    return patch >= 4;
-                }
-            }
-        } catch (Exception e) {
-            plugin.getLogger().warning("Could not parse version number, using legacy mode: " + e.getMessage());
-        }
-        return false;
     }
 
     private void createCovalenceDustItems() {
@@ -145,23 +120,18 @@ public class CovalenceDust {
     }
 
     public boolean isLowCovalenceDust(ItemStack item) {
-        return isCovalenceDust(item, lowKey, "low_covalence_dust");
+        return isCovalenceDust(item, "low_covalence_dust");
     }
 
     public boolean isMediumCovalenceDust(ItemStack item) {
-        return isCovalenceDust(item, mediumKey, "medium_covalence_dust");
+        return isCovalenceDust(item, "medium_covalence_dust");
     }
 
     public boolean isHighCovalenceDust(ItemStack item) {
-        return isCovalenceDust(item, highKey, "high_covalence_dust");
+        return isCovalenceDust(item, "high_covalence_dust");
     }
 
-    private boolean isCovalenceDust(ItemStack item, NamespacedKey key, String id) {
-        if (item == null || !item.hasItemMeta()) return false;
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return false;
-        PersistentDataContainer container = meta.getPersistentDataContainer();
-        String foundId = container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
-        return id.equals(foundId);
+    private boolean isCovalenceDust(ItemStack item, String id) {
+        return ItemUtils.isProjectEItem(item, id);
     }
 }

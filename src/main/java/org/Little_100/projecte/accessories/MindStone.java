@@ -1,6 +1,6 @@
 package org.Little_100.projecte.accessories;
 
-import org.Little_100.projecte.LanguageManager;
+import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;

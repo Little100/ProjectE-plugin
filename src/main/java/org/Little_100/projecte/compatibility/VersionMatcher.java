@@ -1,6 +1,7 @@
 package org.Little_100.projecte.compatibility;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.VersionUtils;
 import org.bukkit.Bukkit;
 
 public class VersionMatcher {
@@ -14,10 +15,10 @@ public class VersionMatcher {
             plugin.getLogger().info("Detected Server Version: " + version);
 
             try {
-                if (isVersionOrNewer(version, "1.13")) {
+                if (VersionUtils.isVersionOrNewer(version, "1.13")) {
                     adapter = new ModernAdapter();
                 } else {
-                    adapter = new LegacyAdapter();
+                    adapter = new LegacyAdapter(); //为什么一个1.14+的插件要考虑这个？
                 }
                 plugin.getLogger().info("Loaded Compatibility Adapter: " + adapter.getClass().getSimpleName());
             } catch (Exception e) {
@@ -26,23 +27,5 @@ public class VersionMatcher {
             }
         }
         return adapter;
-    }
-
-    private static boolean isVersionOrNewer(String serverVersion, String targetVersion) {
-        String[] serverParts = serverVersion.split("\\.");
-        String[] targetParts = targetVersion.split("\\.");
-
-        int length = Math.max(serverParts.length, targetParts.length);
-        for (int i = 0; i < length; i++) {
-            int serverPart = i < serverParts.length ? Integer.parseInt(serverParts[i]) : 0;
-            int targetPart = i < targetParts.length ? Integer.parseInt(targetParts[i]) : 0;
-            if (serverPart > targetPart) {
-                return true;
-            }
-            if (serverPart < targetPart) {
-                return false;
-            }
-        }
-        return true;
     }
 }

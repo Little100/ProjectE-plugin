@@ -5,6 +5,7 @@
  */
 package org.Little_100.projecte.util;
 
+import org.Little_100.projecte.ProjectE;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * 用于处理CustomModelData的工具类，同时支持1.21.4+的字符串标识符和旧版的整数值
@@ -183,51 +185,16 @@ public class CustomModelDataUtil {
      */
     private static void setNewApiModelData(ItemMeta meta, String modelId) {
         try {
-            // 获取现有的CustomModelDataComponent，如果没有则创建新的
             CustomModelDataComponent component = meta.getCustomModelDataComponent();
             
             // 如果组件为null，我们需要通过设置字符串来创建它
             // 由于CustomModelDataComponent是抽象类，我们不能直接实例化
             // 但我们可以通过ItemMeta的方法来间接操作
-            if (component == null) {
-                // 创建一个临时的组件来设置字符串
-                // 这里我们使用反射或其他安全方法来处理
-                try {
-                    // 尝试通过现有的组件设置
-                    component = meta.getCustomModelDataComponent();
-                    if (component != null) {
-                        component.setStrings(Collections.singletonList(modelId));
-                        meta.setCustomModelDataComponent(component);
-                    } else {
-                        // 如果组件仍为null，我们需要找到替代方法
-                        // 在某些版本中，直接设置可能会自动创建组件
-                        meta.setCustomModelDataComponent(createCustomModelDataComponent(modelId));
-                    }
-                } catch (Exception e) {
-                    // 如果所有方法都失败，抛出异常让调用者处理
-                    throw new RuntimeException("Unable to set CustomModelDataComponent: " + e.getMessage(), e);
-                }
-            } else {
-                component.setStrings(Collections.singletonList(modelId));
-                meta.setCustomModelDataComponent(component);
-            }
+            component.setStrings(Collections.singletonList(modelId));
+            meta.setCustomModelDataComponent(component);
         } catch (Exception e) {
             throw new RuntimeException("Failed to set new API model data: " + e.getMessage(), e);
         }
-    }
-    
-    /**
-     * 创建CustomModelDataComponent的辅助方法
-     * 由于CustomModelDataComponent是抽象类，我们需要找到正确的实例化方法
-     * 
-     * @param modelId 字符串标识符
-     * @return CustomModelDataComponent实例
-     */
-    private static CustomModelDataComponent createCustomModelDataComponent(String modelId) {
-        // 这里我们不能直接new CustomModelDataComponent()因为它是抽象的
-        // 我们需要使用Bukkit提供的工厂方法或其他方式
-        // 作为临时解决方案，我们返回null并让调用者处理
-        return null;
     }
     
     /**
@@ -297,7 +264,7 @@ public class CustomModelDataUtil {
         if (isNewApiSupported()) {
             try {
                 CustomModelDataComponent component = meta.getCustomModelDataComponent();
-                if (component != null && !component.getStrings().isEmpty()) {
+                if (!component.getStrings().isEmpty()) {
                     return component.getStrings().get(0);
                 }
             } catch (Exception e) {
@@ -349,7 +316,7 @@ public class CustomModelDataUtil {
         if (isNewApiSupported()) {
             try {
                 CustomModelDataComponent component = meta.getCustomModelDataComponent();
-                if (component != null && !component.getStrings().isEmpty()) {
+                if (!component.getStrings().isEmpty()) {
                     String modelId = component.getStrings().get(0);
                     return STRING_TO_INT_MAPPING.getOrDefault(modelId, 0);
                 }
@@ -439,10 +406,10 @@ public class CustomModelDataUtil {
         if (isNewApiSupported()) {
             try {
                 CustomModelDataComponent component = meta.getCustomModelDataComponent();
-                return component != null && !component.getStrings().isEmpty();
+                return !component.getStrings().isEmpty();
             } catch (Exception e) {
                 // 忽略错误，记录日志但继续执行
-                System.err.println("Warning: Failed to check CustomModelData: " + e.getMessage());
+                ProjectE.getInstance().getLogger().log(Level.WARNING, "Failed to check CustomModelData", e);
             }
         }
         

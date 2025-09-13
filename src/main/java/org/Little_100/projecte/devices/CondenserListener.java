@@ -11,11 +11,9 @@ import java.util.Map;
 
 public class CondenserListener implements Listener {
 
-    private final ProjectE plugin;
     private final CondenserManager condenserManager;
 
     public CondenserListener(ProjectE plugin) {
-        this.plugin = plugin;
         this.condenserManager = plugin.getCondenserManager();
     }
 
