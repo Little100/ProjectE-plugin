@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.Little_100"
-version = "1.0.3-SNAPSHOT"
+version = properties["version"]!!
 
 repositories {
     mavenCentral()
@@ -43,7 +43,7 @@ spotless {
 
 tasks {
     runServer {
-        minecraftVersion("1.21")
+        minecraftVersion("1.21.1")
     }
 
     withType<JavaCompile>().configureEach {
@@ -59,15 +59,14 @@ tasks {
 
         from(sourceSets.main.get().resources.srcDirs) {
             include("**/*.yml")
-            expand(
-                "version" to version
-            )
-        }
-        from(sourceSets.main.get().resources.srcDirs) {
-            include("**/*.zip")
-        }
-        from(sourceSets.main.get().resources.srcDirs) {
-            include("**/plugin.yml")
+            include("*.yml")
+            include("pack/*.zip")
+
+            filesMatching("plugin.yml") {
+                expand(
+                    "version" to version
+                )
+            }
         }
     }
 

@@ -93,7 +93,7 @@ public class ToolListener implements Listener {
             }
 
             if ((!mode.equals("standard") && !mode.equals("normal"))
-                    && !plugin.getConfig().getBoolean("tools.area_of_effect_mining_enabled", true)) {
+                    && !plugin.getConfig().getBoolean("Tools.area_of_effect_mining_enabled", true)) {
                 return;
             }
 

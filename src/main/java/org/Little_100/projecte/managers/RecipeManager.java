@@ -121,11 +121,11 @@ public class RecipeManager {
                 || id.contains("_shears")
                 || id.contains("_hammer")) {
             if (id.startsWith("dark_matter_")
-                    && !plugin.getConfig().getBoolean("tools.dark_matter_tools_enabled", true)) {
+                    && !plugin.getConfig().getBoolean("Tools.dark_matter_tools_enabled", true)) {
                 return;
             }
             if (id.startsWith("red_matter_")
-                    && !plugin.getConfig().getBoolean("tools.red_matter_tools_enabled", true)) {
+                    && !plugin.getConfig().getBoolean("Tools.red_matter_tools_enabled", true)) {
                 return;
             }
         }

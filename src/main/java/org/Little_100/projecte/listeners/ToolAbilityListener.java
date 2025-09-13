@@ -136,7 +136,7 @@ public class ToolAbilityListener implements Listener {
                 0);
 
         // 检查配置是否允许全部模式伤害
-        boolean attackAllModeEnabled = plugin.getConfig().getBoolean("tools.katar_attack_all_mode_enabled", true);
+        boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
 
         double damage = 1000.0;
         int range = 10; // 20x20
@@ -390,7 +390,7 @@ public class ToolAbilityListener implements Listener {
                 0);
 
         // 检查配置是否允许全部模式伤害
-        boolean attackAllModeEnabled = plugin.getConfig().getBoolean("tools.katar_attack_all_mode_enabled", true);
+        boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
 
         // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
         if (!attackAllModeEnabled || currentMode == 1) {
