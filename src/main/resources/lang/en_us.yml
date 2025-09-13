@@ -28,11 +28,16 @@ clientside:
       prev_page: "§ePrevious Page"
       confirm_transaction_lore: "&7Click to confirm transaction"
       you_will_get: "&aYou will get: {emc} EMC"
+      search: "§bSearch Items"
+      search_lore: "Click to search for items"
+      search_lore_current: "Current search: {search}"
     item_lore:
       emc_single: "§6EMC (Single): {emc}"
       emc_stack: "§6EMC (Stack): {stack_emc}"
       buy_one: "§7Left-click to buy 1"
       buy_stack: "§7Right-click to buy {amount}"
+    search_sign:
+      line1: "Enter search term below"
   alchemical_bag:
     name: "§fAlchemical Bag"
     default_name: "§fAlchemical Bag"

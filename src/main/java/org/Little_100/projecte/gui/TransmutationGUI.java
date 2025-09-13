@@ -3,6 +3,7 @@ package org.Little_100.projecte.gui;
 import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.SearchLanguageManager;
 import org.Little_100.projecte.compatibility.VersionAdapter;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
@@ -13,8 +14,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TransmutationGUI implements InventoryHolder {
@@ -25,9 +28,11 @@ public class TransmutationGUI implements InventoryHolder {
     private final VersionAdapter versionAdapter;
     private final EmcManager emcManager;
     private final LanguageManager languageManager;
+    private final SearchLanguageManager searchLanguageManager;
     private long playerEmc;
     private GuiState currentState = GuiState.MAIN;
     private int page = 0;
+    private String searchQuery = null;
 
     public enum GuiState {
         MAIN,
@@ -43,6 +48,7 @@ public class TransmutationGUI implements InventoryHolder {
         this.versionAdapter = ProjectE.getInstance().getVersionAdapter();
         this.emcManager = ProjectE.getInstance().getEmcManager();
         this.languageManager = ProjectE.getInstance().getLanguageManager();
+        this.searchLanguageManager = ProjectE.getInstance().getSearchLanguageManager();
         this.playerEmc = databaseManager.getPlayerEmc(player.getUniqueId());
         this.inventory = Bukkit.createInventory(this, 54, getTitle());
         initializeItems();
@@ -144,7 +150,88 @@ public class TransmutationGUI implements InventoryHolder {
             }
         }
 
-        java.util.List<String> learnedItems = databaseManager.getLearnedItems(player.getUniqueId());
+        ItemStack searchButton = createGuiItem(Material.SNOWBALL, languageManager.get("clientside.transmutation_table.buttons.search"), languageManager.get("clientside.transmutation_table.buttons.search_lore"));
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            ItemMeta meta = searchButton.getItemMeta();
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("search", searchQuery);
+            List<String> lore = new ArrayList<>();
+            lore.add(languageManager.get("clientside.transmutation_table.buttons.search_lore_current", placeholders));
+            meta.setLore(lore);
+            searchButton.setItemMeta(meta);
+        }
+        inventory.setItem(4, searchButton);
+
+        List<String> learnedItems = databaseManager.getLearnedItems(player.getUniqueId());
+
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            String searchLower = searchQuery.toLowerCase();
+
+            long startTime = System.currentTimeMillis();
+            Map<String, String> matchingIds = searchLanguageManager.findMatchingIds(searchLower);
+            long searchTime = System.currentTimeMillis() - startTime;
+
+            if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
+                DebugManager.log("搜索 '" + searchQuery + "' 找到 " + matchingIds.size() + " 个潜在匹配项，耗时: " + searchTime + "ms");
+            }
+
+            List<String> filteredItems = new ArrayList<>();
+
+            if (!matchingIds.isEmpty()) {
+                for (String itemKey : learnedItems) {
+                    ItemStack item = ProjectE.getInstance().getItemStackFromKey(itemKey);
+                    if (item != null) {
+                        String itemType = item.getType().name().toLowerCase();
+                        String minecraftId = "item.minecraft." + itemType;
+                        String blockMinecraftId = "block.minecraft." + itemType;
+
+                        String displayName = item.getItemMeta() != null && item.getItemMeta().hasDisplayName() ?
+                            item.getItemMeta().getDisplayName().toLowerCase() : itemType;
+
+                        boolean matches = matchingIds.containsKey(minecraftId) ||
+                                         matchingIds.containsKey(blockMinecraftId) ||
+                                         displayName.contains(searchLower) ||
+                                         itemType.contains(searchLower) ||
+                                         itemType.replace("_", " ").contains(searchLower);
+
+                        if (matches) {
+                            filteredItems.add(itemKey);
+
+                            if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
+                                DebugManager.log("匹配成功: " + itemKey);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (String itemKey : learnedItems) {
+                    ItemStack item = ProjectE.getInstance().getItemStackFromKey(itemKey);
+                    if (item != null) {
+                        String displayName = item.getItemMeta() != null && item.getItemMeta().hasDisplayName() ?
+                            item.getItemMeta().getDisplayName().toLowerCase() : "";
+                        String typeName = item.getType().name().toLowerCase();
+
+                        if (displayName.contains(searchLower) ||
+                            typeName.contains(searchLower) ||
+                            typeName.replace("_", " ").contains(searchLower)) {
+
+                            filteredItems.add(itemKey);
+
+                            if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
+                                DebugManager.log("简单匹配: " + itemKey);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (ProjectE.getInstance().getConfig().getBoolean("debug")) {
+                DebugManager.log("最终匹配到 " + filteredItems.size() + " 个已学习的物品");
+            }
+
+            learnedItems = filteredItems;
+        }
+
         int itemsPerPage = 28; // 4*7
         int startIndex = page * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, learnedItems.size());
@@ -256,6 +343,12 @@ public class TransmutationGUI implements InventoryHolder {
 
     public int getPage() {
         return page;
+    }
+
+    public void setSearchQuery(String query) {
+        this.searchQuery = query;
+        this.page = 0;
+        initializeItems();
     }
 
     protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {

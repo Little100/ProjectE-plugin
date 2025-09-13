@@ -287,4 +287,9 @@ public class ModernAdapter implements VersionAdapter {
 
         return newKeys;
     }
+
+    @Override
+    public void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign) {
+        player.openSign(sign);
+    }
 }

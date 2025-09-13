@@ -18,6 +18,7 @@ import org.Little_100.projecte.managers.*;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.util.CustomBlockArtUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -26,10 +27,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +50,7 @@ public final class ProjectE extends JavaPlugin {
     private AlchemicalBagManager alchemicalBagManager;
     private LanguageManager languageManager;
     private ResourcePackListener resourcePackManager;
+    private SearchLanguageManager searchLanguageManager;
     private DatapackManager datapackManager;
     private SchedulerAdapter schedulerAdapter;
     private BlockDataManager blockDataManager;
@@ -72,7 +76,7 @@ public final class ProjectE extends JavaPlugin {
 
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
- 
+
      public FileConfiguration getDevicesConfig() {
         if (devicesConfig == null) {
             File devicesFile = new File(getDataFolder(), "devices.yml");
@@ -108,6 +112,9 @@ public final class ProjectE extends JavaPlugin {
  
          // 初始化语言管理器
          languageManager = new LanguageManager(this);
+
+         // 初始化搜索语言管理器
+         searchLanguageManager = new SearchLanguageManager(this);
 
         // 初始化调试管理器
         Debug.init(this);
@@ -215,7 +222,7 @@ public final class ProjectE extends JavaPlugin {
        armorManager = new ArmorManager(this);
 
        // 初始化炼金袋管理器
-       if (getConfig().getBoolean("alchemicalbag.enabled", true)) {
+       if (getConfig().getBoolean("AlchemicalBag.enabled", true)) {
            alchemicalBagManager = new AlchemicalBagManager(this);
            alchemicalBagManager.register();
            getLogger().info("Alchemical Bag feature is enabled.");
@@ -439,6 +446,7 @@ public final class ProjectE extends JavaPlugin {
  
         // 重新加载语言文件
         languageManager.loadLanguageFiles();
+        searchLanguageManager.loadSearchLanguageFile();
 
         // 注销并重新注册所有配方
         if (recipeManager != null) {
@@ -491,6 +499,10 @@ public final class ProjectE extends JavaPlugin {
 
     public ResourcePackListener getResourcePackManager() {
         return resourcePackManager;
+    }
+
+    public SearchLanguageManager getSearchLanguageManager() {
+        return searchLanguageManager;
     }
 
     public GeyserAdapter getGeyserAdapter() {
@@ -566,8 +578,8 @@ public final class ProjectE extends JavaPlugin {
     }
 
      private void loadConfigOptions() {
-        excludePDC = getConfig().getBoolean("gui.EMC.Exclude_PDC.enabled", true);
-        onlyMcItems = getConfig().getBoolean("gui.EMC.Exclude_PDC.only_mc_items", true);
+        excludePDC = getConfig().getBoolean("TransmutationTable.EMC.Exclude_PDC.enabled", true);
+        onlyMcItems = getConfig().getBoolean("TransmutationTable.EMC.Exclude_PDC.only_mc_items", true);
     }
  
     private void startContinuousParticleTask() {
@@ -638,7 +650,7 @@ public final class ProjectE extends JavaPlugin {
             // Talismans
             case "repair_talisman": return repairTalisman.getRepairTalisman();
 
-            // Dark Matter tools
+            // Dark Matter Tools
             case "dark_matter_pickaxe": return toolManager.getDarkMatterPickaxe();
             case "dark_matter_axe": return toolManager.getDarkMatterAxe();
             case "dark_matter_shovel": return toolManager.getDarkMatterShovel();
@@ -647,7 +659,7 @@ public final class ProjectE extends JavaPlugin {
            case "dark_matter_shears": return toolManager.getDarkMatterShears();
            case "dark_matter_hammer": return toolManager.getDarkMatterHammer();
 
-           // Red Matter tools
+           // Red Matter Tools
            case "red_matter_pickaxe": return toolManager.getRedMatterPickaxe();
            case "red_matter_axe": return toolManager.getRedMatterAxe();
            case "red_matter_shovel": return toolManager.getRedMatterShovel();
@@ -658,19 +670,19 @@ public final class ProjectE extends JavaPlugin {
            case "red_matter_katar": return toolManager.getRedMatterKatar();
            case "red_matter_morningstar": return toolManager.getRedMatterMorningstar();
  
-             // Dark Matter armor
+             // Dark Matter Armor
             case "dark_matter_helmet": return armorManager.getDarkMatterHelmet();
             case "dark_matter_chestplate": return armorManager.getDarkMatterChestplate();
             case "dark_matter_leggings": return armorManager.getDarkMatterLeggings();
             case "dark_matter_boots": return armorManager.getDarkMatterBoots();
 
-            // Red Matter armor
+            // Red Matter Armor
             case "red_matter_helmet": return armorManager.getRedMatterHelmet();
             case "red_matter_chestplate": return armorManager.getRedMatterChestplate();
             case "red_matter_leggings": return armorManager.getRedMatterLeggings();
             case "red_matter_boots": return armorManager.getRedMatterBoots();
 
-            // Gem armor
+            // Gem Armor
             case "gem_helmet": return armorManager.getGemHelmet();
             case "gem_chestplate": return armorManager.getGemChestplate();
             case "gem_leggings": return armorManager.getGemLeggings();

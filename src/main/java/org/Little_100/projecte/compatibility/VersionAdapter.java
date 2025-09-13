@@ -19,5 +19,7 @@ public interface VersionAdapter {
 
     List<String> getRecipeDebugInfo(Recipe recipe, String divisionStrategy);
 
-    Map<String, NamespacedKey> registerTransmutationTableRecipes();
+    Map<String, org.bukkit.NamespacedKey> registerTransmutationTableRecipes();
+
+    void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign);
 }

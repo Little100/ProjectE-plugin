@@ -48,8 +48,7 @@ TransmutationTable:
   EMC:
     recipeConflictStrategy: "lowest" # 当一个物品有多种合成方式时，使用 "lowest" (最低值) 还是 "highest" (最高值)
     # if a item has multiple recipes, use "lowest" (lowest value) or "highest" (highest value)
-    divisionStrategy:
-      "floor"
+    divisionStrategy: "floor"
       # 当配方计算结果无法整除时，使用 "floor" (向下取整) 还是 "ceil" (向上取整)
       # 比如 65/3=21.666... 向下取整为 21， 向上取整为 22
       # when the result of the recipe cannot be divided, use "floor" (round down) or "ceil" (round up)
