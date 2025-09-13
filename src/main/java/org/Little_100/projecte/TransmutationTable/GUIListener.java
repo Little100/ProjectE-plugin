@@ -1,17 +1,22 @@
 package org.Little_100.projecte.TransmutationTable;
 
+import org.Little_100.projecte.DebugManager;
 import org.Little_100.projecte.EmcManager;
 import org.Little_100.projecte.LanguageManager;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.Tools.KleinStar.KleinStarManager;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.util.ShulkerBoxUtil;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GUIListener implements Listener {
+
+    private final Map<Player, Boolean> searchingPlayers = new HashMap<>();
 
     public GUIListener() {
         // huh?
@@ -196,6 +203,21 @@ public class GUIListener implements Listener {
         // 处理导航和边框点击
         if (slot == 0) { // 返回按钮
             gui.setState(TransmutationGUI.GuiState.MAIN);
+            return;
+        } else if (slot == 4) { // 搜索按钮
+            player.closeInventory();
+            DebugManager.log("Player " + player.getName() + " clicked search button.");
+            
+            searchingPlayers.put(player, true);
+            
+            LanguageManager languageManager = ProjectE.getInstance().getLanguageManager();
+            // 发送搜索提示
+            player.sendMessage("§a" + languageManager.get("clientside.transmutation_table.search_sign.line1"));
+            player.sendMessage("§e例如: 钻石, 铁锭, 煤炭, 红石, 青金石, 木材, 石头等");
+            player.sendMessage("§e支持搜索材料类型: §b铁, 金, 钻石, 木, 石, 铜, 羊毛, 玻璃, 混凝土等");
+            player.sendMessage("§e支持搜索物品类型: §b剑, 斧, 镐, 锄, 锹, 盔甲, 床, 箱子等");
+            player.sendMessage("§e您还可以搜索: §b方块, 矿石, 工具, 食物, 装饰品, 种子, 树苗等");
+            player.sendMessage("§a请输入您想要查找的物品关键词:");
             return;
         } else if (slot == 48) {
             if (gui.getPage() > 0) {
@@ -427,6 +449,29 @@ public class GUIListener implements Listener {
             newGui.setPage(page);
             newGui.open();
         }, 1L);
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        
+        if (searchingPlayers.containsKey(player) && searchingPlayers.get(player)) {
+            event.setCancelled(true);
+            String searchQuery = event.getMessage();
+            
+            DebugManager.log("Search query from chat: '" + searchQuery + "'");
+            searchingPlayers.remove(player);
+            
+            ProjectE.getInstance().getSchedulerAdapter().runTask(() -> {
+                DebugManager.log("Re-opening TransmutationGUI for " + player.getName() + " with search query: '" + searchQuery + "'");
+                TransmutationGUI newGui = new TransmutationGUI(player);
+                newGui.setState(TransmutationGUI.GuiState.BUY);
+                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    newGui.setSearchQuery(searchQuery);
+                }
+                newGui.open();
+            });
+        }
     }
 
     private boolean isTransactionArea(int slot) {

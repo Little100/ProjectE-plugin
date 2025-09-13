@@ -44,6 +44,7 @@ public final class ProjectE extends JavaPlugin {
     private VersionAdapter versionAdapter;
     private AlchemicalBagManager alchemicalBagManager;
     private LanguageManager languageManager;
+    private SearchLanguageManager searchLanguageManager;
     private ResourcePackManager resourcePackManager;
     private DatapackManager datapackManager;
     private SchedulerAdapter schedulerAdapter;
@@ -104,6 +105,9 @@ public final class ProjectE extends JavaPlugin {
  
          // 初始化语言管理器
          languageManager = new LanguageManager(this);
+         
+         // 初始化搜索语言管理器
+         searchLanguageManager = new SearchLanguageManager(this);
 
         // 初始化调试管理器
         DebugManager.init(this);
@@ -435,6 +439,7 @@ public final class ProjectE extends JavaPlugin {
  
         // 重新加载语言文件
         languageManager.loadLanguageFiles();
+        searchLanguageManager.loadSearchLanguageFile();
 
         // 注销并重新注册所有配方
         if (recipeManager != null) {
@@ -487,6 +492,10 @@ public final class ProjectE extends JavaPlugin {
 
     public ResourcePackManager getResourcePackManager() {
         return resourcePackManager;
+    }
+    
+    public SearchLanguageManager getSearchLanguageManager() {
+        return searchLanguageManager;
     }
 
     public GeyserAdapter getGeyserAdapter() {

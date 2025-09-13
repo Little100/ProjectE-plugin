@@ -26,11 +26,16 @@ clientside:
       prev_page: "§e上一页"
       confirm_transaction_lore: "&7点击以确认交易"
       you_will_get: "&a您将获得: {emc} EMC"
+      search: "§b搜索物品"
+      search_lore: "点击以搜索物品"
+      search_lore_current: "当前搜索: {search}"
     item_lore:
       emc_single: "§6EMC (单个): {emc}"
       emc_stack: "§6EMC (一组): {stack_emc}"
       buy_one: "§7左键点击购买 1 个"
       buy_stack: "§7右键点击购买 {amount} 个"
+    search_sign:
+      line1: "请在下面输入搜索内容"
   alchemical_bag:
     name: "§f炼金术袋"
     default_name: "§f炼金术袋"

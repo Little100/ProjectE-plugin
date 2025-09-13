@@ -18,4 +18,6 @@ public interface VersionAdapter {
     java.util.Map<String, org.bukkit.NamespacedKey> registerTransmutationTableRecipes();
 
     boolean isModern();
+
+    void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign);
 }
