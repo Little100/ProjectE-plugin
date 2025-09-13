@@ -1,5 +1,7 @@
 package org.Little_100.projecte.devices;
 
+import java.util.Collection;
+import java.util.List;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,9 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Collection;
-import java.util.List;
-
 public class DeviceListener implements Listener {
 
     private final ProjectE plugin;
@@ -42,17 +41,16 @@ public class DeviceListener implements Listener {
     }
 
     private boolean isCustomDevice(Block block) {
-        Collection<Entity> nearbyEntities = block.getWorld().getNearbyEntities(
-                block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5,
-                entity -> entity instanceof ArmorStand
-        );
+        Collection<Entity> nearbyEntities = block.getWorld()
+                .getNearbyEntities(
+                        block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5, entity -> entity instanceof ArmorStand);
 
         for (Entity entity : nearbyEntities) {
-            if (entity.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+            if (entity.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
                 return true;
             }
         }
@@ -80,6 +78,7 @@ public class DeviceListener implements Listener {
             }
         }
     }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         ItemStack itemInHand = event.getItemInHand();
@@ -97,8 +96,10 @@ public class DeviceListener implements Listener {
         } else if (meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
         }
 
-
-        if (furnaceType != null || meta.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE) || meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE) || meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+        if (furnaceType != null
+                || meta.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE)
+                || meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)
+                || meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
             Block block = event.getBlock();
             Player player = event.getPlayer();
             Location location = block.getLocation();
@@ -107,7 +108,8 @@ public class DeviceListener implements Listener {
             block.setType(Material.BEACON);
 
             plugin.getSchedulerAdapter().runTaskAt(location, () -> {
-                ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0.5, -0.39, 0.5), EntityType.ARMOR_STAND);
+                ArmorStand armorStand = (ArmorStand)
+                        location.getWorld().spawnEntity(location.clone().add(0.5, -0.39, 0.5), EntityType.ARMOR_STAND);
                 armorStand.setVisible(false);
                 armorStand.setGravity(false);
                 armorStand.setSmall(true);
@@ -139,11 +141,22 @@ public class DeviceListener implements Listener {
                 }
 
                 if (finalFurnaceType != null) {
-                    plugin.getFurnaceManager().addFurnace(location, player.getUniqueId(), finalFurnaceType, armorStand.getUniqueId());
+                    plugin.getFurnaceManager()
+                            .addFurnace(location, player.getUniqueId(), finalFurnaceType, armorStand.getUniqueId());
                 } else if (meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)) {
-                    plugin.getCondenserManager().addCondenser(location, player.getUniqueId(), CondenserManager.CondenserType.ENERGY_CONDENSER, armorStand.getUniqueId());
+                    plugin.getCondenserManager()
+                            .addCondenser(
+                                    location,
+                                    player.getUniqueId(),
+                                    CondenserManager.CondenserType.ENERGY_CONDENSER,
+                                    armorStand.getUniqueId());
                 } else if (meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
-                    plugin.getCondenserManager().addCondenser(location, player.getUniqueId(), CondenserManager.CondenserType.ENERGY_CONDENSER_MK2, armorStand.getUniqueId());
+                    plugin.getCondenserManager()
+                            .addCondenser(
+                                    location,
+                                    player.getUniqueId(),
+                                    CondenserManager.CondenserType.ENERGY_CONDENSER_MK2,
+                                    armorStand.getUniqueId());
                 }
             });
         }
@@ -154,10 +167,9 @@ public class DeviceListener implements Listener {
         Block block = event.getBlock();
         if (block.getType() != Material.BEACON) return;
 
-        Collection<Entity> nearbyEntities = block.getWorld().getNearbyEntities(
-                block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5,
-                entity -> entity instanceof ArmorStand
-        );
+        Collection<Entity> nearbyEntities = block.getWorld()
+                .getNearbyEntities(
+                        block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5, entity -> entity instanceof ArmorStand);
 
         for (Entity entity : nearbyEntities) {
             if (entity instanceof ArmorStand) {
@@ -165,17 +177,19 @@ public class DeviceListener implements Listener {
                 ItemStack helmet = armorStand.getEquipment().getHelmet();
                 if (helmet != null && helmet.getItemMeta() != null) {
                     ItemMeta meta = helmet.getItemMeta();
-                    if (meta.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE) ||
-                        meta.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE) ||
-                        meta.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE) ||
-                        meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE) ||
-                        meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+                    if (meta.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
 
-                        if (meta.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE) ||
-                            meta.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE)) {
+                        if (meta.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE)
+                                || meta.getPersistentDataContainer()
+                                        .has(redMatterFurnaceKey, PersistentDataType.BYTE)) {
                             plugin.getFurnaceManager().removeFurnace(block.getLocation());
-                        } else if (meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE) ||
-                                   meta.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+                        } else if (meta.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)
+                                || meta.getPersistentDataContainer()
+                                        .has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
                             plugin.getCondenserManager().removeCondenser(block.getLocation());
                         }
 
@@ -198,10 +212,14 @@ public class DeviceListener implements Listener {
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null || clickedBlock.getType() != Material.BEACON) return;
 
-        Collection<Entity> nearbyEntities = clickedBlock.getWorld().getNearbyEntities(
-                clickedBlock.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5,
-                entity -> entity instanceof ArmorStand
-        );
+        Collection<Entity> nearbyEntities = clickedBlock
+                .getWorld()
+                .getNearbyEntities(
+                        clickedBlock.getLocation().add(0.5, 0.5, 0.5),
+                        0.5,
+                        1.0,
+                        0.5,
+                        entity -> entity instanceof ArmorStand);
 
         for (Entity entity : nearbyEntities) {
             Player player = event.getPlayer();

@@ -1,5 +1,6 @@
 package org.Little_100.projecte.devices;
 
+import java.util.Collections;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
@@ -8,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Collections;
 
 public class EnergyCondenserMK2 implements Listener {
 
@@ -25,7 +24,8 @@ public class EnergyCondenserMK2 implements Listener {
         ItemStack item = new ItemStack(Material.BARREL);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(plugin.getLanguageManager().get("item.projecte.energy_condenser_mk2.name"));
-        meta.setLore(Collections.singletonList(plugin.getLanguageManager().get("item.projecte.energy_condenser_mk2.lore1")));
+        meta.setLore(
+                Collections.singletonList(plugin.getLanguageManager().get("item.projecte.energy_condenser_mk2.lore1")));
         item.setItemMeta(meta);
         item = CustomModelDataUtil.setCustomModelData(item, 3);
         ItemMeta newMeta = item.getItemMeta();

@@ -1,6 +1,11 @@
 package org.Little_100.projecte.compatibility;
 
+import java.util.List;
+import java.util.Map;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
@@ -13,11 +18,9 @@ public interface VersionAdapter {
 
     void loadInitialEmcValues();
 
-    java.util.List<String> getRecipeDebugInfo(Recipe recipe, String divisionStrategy);
+    List<String> getRecipeDebugInfo(Recipe recipe, String divisionStrategy);
 
-    java.util.Map<String, org.bukkit.NamespacedKey> registerTransmutationTableRecipes();
+    Map<String, NamespacedKey> registerTransmutationTableRecipes();
 
-    boolean isModern();
-
-    void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign);
+    void openSign(Player player, Sign sign);
 }

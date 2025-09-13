@@ -1,14 +1,15 @@
 package org.Little_100.projecte.compatibility;
 
-import org.Little_100.projecte.EmcManager;
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
-
-import java.util.*;
 
 public class LegacyAdapter implements VersionAdapter {
 
@@ -45,37 +46,31 @@ public class LegacyAdapter implements VersionAdapter {
 
     @Override
     public long calculateRecipeEmc(Recipe recipe, String divisionStrategy) {
-        if (recipe == null)
-            return 0;
+        if (recipe == null) return 0;
 
         long totalEmc = 0;
         boolean isCooking = false;
 
         if (recipe instanceof ShapedRecipe) {
-            for (ItemStack ingredient : ((ShapedRecipe) recipe).getIngredientMap().values()) {
-                if (ingredient == null)
-                    continue;
+            for (ItemStack ingredient :
+                    ((ShapedRecipe) recipe).getIngredientMap().values()) {
+                if (ingredient == null) continue;
                 long ingredientEmc = getIngredientEmc(ingredient);
-                if (ingredientEmc == 0)
-                    return 0;
+                if (ingredientEmc == 0) return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof ShapelessRecipe) {
             for (ItemStack ingredient : ((ShapelessRecipe) recipe).getIngredientList()) {
-                if (ingredient == null)
-                    continue;
+                if (ingredient == null) continue;
                 long ingredientEmc = getIngredientEmc(ingredient);
-                if (ingredientEmc == 0)
-                    return 0;
+                if (ingredientEmc == 0) return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof FurnaceRecipe) {
             isCooking = true;
             FurnaceRecipe furnaceRecipe = (FurnaceRecipe) recipe;
             ItemStack input = furnaceRecipe.getInput();
-            if (input != null) {
-                totalEmc = getIngredientEmc(input);
-            }
+            totalEmc = getIngredientEmc(input);
         }
 
         if (totalEmc <= 0) {
@@ -102,25 +97,24 @@ public class LegacyAdapter implements VersionAdapter {
     }
 
     private long getIngredientEmc(ItemStack ingredient) {
-        if (ingredient == null)
-            return 0;
+        if (ingredient == null) return 0;
         return getEmcManager().getEmc(getItemKey(ingredient));
     }
 
     @Override
     public void loadInitialEmcValues() {
-        org.bukkit.configuration.file.FileConfiguration config = ProjectE.getInstance().getConfig();
-        org.bukkit.configuration.ConfigurationSection emcSection = config
-                .getConfigurationSection("TransmutationTable.EMC.ImportantItems");
+        org.bukkit.configuration.file.FileConfiguration config =
+                ProjectE.getInstance().getConfig();
+        org.bukkit.configuration.ConfigurationSection emcSection =
+                config.getConfigurationSection("gui.EMC.ImportantItems");
 
         if (emcSection == null) {
-            ProjectE.getInstance().getLogger()
-                    .warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
+            ProjectE.getInstance().getLogger().warning("EMC section 'gui.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
         List<Map<?, ?>> items = emcSection.getMapList("default");
-        if (items == null || items.isEmpty()) {
+        if (items.isEmpty()) {
             ProjectE.getInstance().getLogger().warning("'default' EMC list is missing or empty in config.yml");
             return;
         }
@@ -135,8 +129,11 @@ public class LegacyAdapter implements VersionAdapter {
                         if (getMaterial(itemKey) != null) {
                             databaseManager.setEmc("minecraft:" + itemKey.toLowerCase(), emc);
                         } else {
-                            ProjectE.getInstance().getLogger().warning("Item '" + itemKey
-                                    + "' from 'default' EMC list not found in this Minecraft version. Skipping.");
+                            ProjectE.getInstance()
+                                    .getLogger()
+                                    .warning(
+                                            "Item '" + itemKey
+                                                    + "' from 'default' EMC list not found in this Minecraft version. Skipping.");
                         }
                     }
                 }
@@ -158,7 +155,8 @@ public class LegacyAdapter implements VersionAdapter {
 
         if (recipe instanceof ShapedRecipe) {
             debugInfo.add(" - Ingredients:");
-            for (Map.Entry<Character, ItemStack> entry : ((ShapedRecipe) recipe).getIngredientMap().entrySet()) {
+            for (Map.Entry<Character, ItemStack> entry :
+                    ((ShapedRecipe) recipe).getIngredientMap().entrySet()) {
                 if (entry.getValue() != null) {
                     String key = getItemKey(entry.getValue());
                     long emc = getIngredientEmc(entry.getValue());
@@ -177,19 +175,11 @@ public class LegacyAdapter implements VersionAdapter {
         } else if (recipe instanceof FurnaceRecipe) {
             debugInfo.add(" - Ingredient:");
             ItemStack input = ((FurnaceRecipe) recipe).getInput();
-            if (input != null) {
-                String key = getItemKey(input);
-                long emc = getIngredientEmc(input);
-                debugInfo.add("   - " + key + ": " + emc + " EMC");
-            }
-
+            String key = getItemKey(input);
+            long emc = getIngredientEmc(input);
+            debugInfo.add("   - " + key + ": " + emc + " EMC");
         }
         return debugInfo;
-    }
-
-    @Override
-    public boolean isModern() {
-        return false;
     }
 
     @Override
@@ -198,8 +188,8 @@ public class LegacyAdapter implements VersionAdapter {
         ProjectE plugin = ProjectE.getInstance();
         ItemStack transmutationTable = new ItemStack(Material.PETRIFIED_OAK_SLAB);
 
-        List<Material> stones = Arrays.asList(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.DIORITE,
-                Material.GRANITE);
+        List<Material> stones = Arrays.asList(
+                Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE);
 
         for (Material stone : stones) {
             String key1_id = "transmutation_table_1_" + stone.name().toLowerCase();
@@ -226,7 +216,7 @@ public class LegacyAdapter implements VersionAdapter {
     }
 
     @Override
-    public void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign) {
+    public void openSign(Player player, Sign sign) {
         player.sendMessage("Please right-click the sign to search.");
     }
 }

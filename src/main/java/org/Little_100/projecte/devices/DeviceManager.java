@@ -1,5 +1,6 @@
 package org.Little_100.projecte.devices;
 
+import java.util.Collection;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -7,8 +8,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Collection;
 
 public class DeviceManager {
 
@@ -36,17 +35,16 @@ public class DeviceManager {
     public boolean isDevice(Block block) {
         if (block.getType() != org.bukkit.Material.BEACON) return false;
 
-        Collection<Entity> nearbyEntities = block.getWorld().getNearbyEntities(
-                block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5,
-                entity -> entity instanceof ArmorStand
-        );
+        Collection<Entity> nearbyEntities = block.getWorld()
+                .getNearbyEntities(
+                        block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5, entity -> entity instanceof ArmorStand);
 
         for (Entity entity : nearbyEntities) {
-            if (entity.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE) ||
-                entity.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+            if (entity.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
                 return true;
             }
         }

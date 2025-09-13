@@ -1,5 +1,7 @@
 package org.Little_100.projecte.devices;
 
+import java.io.InputStreamReader;
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,9 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.io.InputStreamReader;
-import java.util.*;
 
 public class CondenserManager {
 
@@ -49,14 +48,37 @@ public class CondenserManager {
             this.armorStandId = armorStandId;
         }
 
-        public Inventory getInventory() { return inventory; }
-        public CondenserType getType() { return type; }
-        public long getStoredEmc() { return storedEmc; }
-        public void setStoredEmc(long storedEmc) { this.storedEmc = storedEmc; }
-        public void addEmc(long amount) { this.storedEmc += amount; }
-        public void removeEmc(long amount) { this.storedEmc -= amount; }
-        public int getProgress() { return progress; }
-        public void setProgress(int progress) { this.progress = progress; }
+        public Inventory getInventory() {
+            return inventory;
+        }
+
+        public CondenserType getType() {
+            return type;
+        }
+
+        public long getStoredEmc() {
+            return storedEmc;
+        }
+
+        public void setStoredEmc(long storedEmc) {
+            this.storedEmc = storedEmc;
+        }
+
+        public void addEmc(long amount) {
+            this.storedEmc += amount;
+        }
+
+        public void removeEmc(long amount) {
+            this.storedEmc -= amount;
+        }
+
+        public int getProgress() {
+            return progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
+        }
     }
 
     public CondenserManager(ProjectE plugin) {
@@ -68,7 +90,8 @@ public class CondenserManager {
     private void loadGuiLayouts() {
         for (CondenserType type : CondenserType.values()) {
             String fileName = (type == CondenserType.ENERGY_CONDENSER) ? "condenser.yml" : "condenser_mk2.yml";
-            try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(plugin.getResource(fileName)))) {
+            try (InputStreamReader reader =
+                    new InputStreamReader(Objects.requireNonNull(plugin.getResource(fileName)))) {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
                 int size = config.getInt("size", 54);
                 if (size > 54 || size % 9 != 0) {
@@ -140,18 +163,22 @@ public class CondenserManager {
     }
 
     private void startUpdateTask() {
-        plugin.getSchedulerAdapter().runTimer(() -> {
-            tickCounter++;
-            activeCondensers.forEach((location, state) -> {
-                if (state.getType() == CondenserType.ENERGY_CONDENSER) {
-                    if (tickCounter % 2 == 0) {
-                        tick(location, state);
-                    }
-                } else if (state.getType() == CondenserType.ENERGY_CONDENSER_MK2) {
-                    tick(location, state);
-                }
-            });
-        }, 0L, 1L);
+        plugin.getSchedulerAdapter()
+                .runTimer(
+                        () -> {
+                            tickCounter++;
+                            activeCondensers.forEach((location, state) -> {
+                                if (state.getType() == CondenserType.ENERGY_CONDENSER) {
+                                    if (tickCounter % 2 == 0) {
+                                        tick(location, state);
+                                    }
+                                } else if (state.getType() == CondenserType.ENERGY_CONDENSER_MK2) {
+                                    tick(location, state);
+                                }
+                            });
+                        },
+                        0L,
+                        1L);
     }
 
     public void addCondenser(Location location, UUID owner, CondenserType type, UUID armorStandId) {
@@ -233,7 +260,8 @@ public class CondenserManager {
                     for (HumanEntity viewer : new ArrayList<>(inv.getViewers())) {
                         if (viewer instanceof Player) {
                             Player player = (Player) viewer;
-                            HashMap<Integer, ItemStack> remaining = player.getInventory().addItem(item);
+                            HashMap<Integer, ItemStack> remaining =
+                                    player.getInventory().addItem(item);
                             if (!remaining.isEmpty()) {
                                 for (ItemStack remainingItem : remaining.values()) {
                                     location.getWorld().dropItemNaturally(location, remainingItem);
@@ -262,7 +290,9 @@ public class CondenserManager {
             boolean stacked = false;
             for (int slot : availableSlots) {
                 ItemStack currentItem = state.getInventory().getItem(slot);
-                if (currentItem != null && currentItem.isSimilar(targetItem) && currentItem.getAmount() < currentItem.getMaxStackSize()) {
+                if (currentItem != null
+                        && currentItem.isSimilar(targetItem)
+                        && currentItem.getAmount() < currentItem.getMaxStackSize()) {
                     currentItem.setAmount(currentItem.getAmount() + 1);
                     state.removeEmc(targetEmc);
                     stacked = true;

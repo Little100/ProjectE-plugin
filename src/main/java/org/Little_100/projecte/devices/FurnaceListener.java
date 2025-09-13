@@ -31,7 +31,8 @@ public class FurnaceListener implements Listener {
         }
 
         Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null || (clickedBlock.getType() != Material.BARRIER && clickedBlock.getType() != Material.BEACON)) {
+        if (clickedBlock == null
+                || (clickedBlock.getType() != Material.BARRIER && clickedBlock.getType() != Material.BEACON)) {
             return;
         }
 
@@ -58,7 +59,8 @@ public class FurnaceListener implements Listener {
         }
 
         FurnaceManager.FurnaceState state = null;
-        for (FurnaceManager.FurnaceState furnaceState : furnaceManager.getActiveFurnaces().values()) {
+        for (FurnaceManager.FurnaceState furnaceState :
+                furnaceManager.getActiveFurnaces().values()) {
             if (furnaceState.getInventory().equals(clickedInventory)) {
                 state = furnaceState;
                 break;
@@ -77,7 +79,9 @@ public class FurnaceListener implements Listener {
 
         FurnaceManager.FurnaceType type = state.getType();
 
-        if (furnaceManager.isNonInteractive(type, slot) || furnaceManager.isArrowSlot(type, slot) || furnaceManager.isFuelIndicatorSlot(type, slot)) {
+        if (furnaceManager.isNonInteractive(type, slot)
+                || furnaceManager.isArrowSlot(type, slot)
+                || furnaceManager.isFuelIndicatorSlot(type, slot)) {
             event.setCancelled(true);
             return;
         }
