@@ -4,12 +4,16 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.Little_100.projecte.accessories.*;
 import org.Little_100.projecte.alchemicalbag.AlchemicalBagManager;
 import org.Little_100.projecte.armor.ArmorManager;
 import org.Little_100.projecte.command.CustomCommand;
 import org.Little_100.projecte.compatibility.*;
 import org.Little_100.projecte.compatibility.scheduler.SchedulerAdapter;
+import org.Little_100.projecte.compatibility.version.VersionAdapter;
 import org.Little_100.projecte.devices.*;
 import org.Little_100.projecte.gui.DiviningRodGUI;
 import org.Little_100.projecte.gui.GUIListener;
@@ -37,7 +41,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class ProjectE extends JavaPlugin {
 
     private static ProjectE instance;
-    private static SchedulerAdapter schedulerAdapter;
+    private static final SchedulerAdapter schedulerAdapter = SchedulerAdapter.getInstance();
 
     private ItemStack philosopherStone;
     private RecipeManager recipeManager;
@@ -99,7 +103,6 @@ public final class ProjectE extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        schedulerAdapter = SchedulerAdapter.getInstance();
 
         // 保存默认配置
         saveDefaultConfig();
@@ -124,17 +127,17 @@ public final class ProjectE extends JavaPlugin {
                 langFolder.mkdirs();
             }
 
-            java.util.zip.ZipInputStream zip = new java.util.zip.ZipInputStream(getClass()
+            ZipInputStream zip = new ZipInputStream(getClass()
                     .getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .openStream());
-            java.util.zip.ZipEntry entry;
+            ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 String name = entry.getName();
                 // 只释放 lang/ 目录下的 yml 文件
                 if (name.startsWith("lang/") && name.endsWith(".yml") && !entry.isDirectory()) {
-                    java.io.File outFile = new java.io.File(getDataFolder(), name);
+                    File outFile = new File(getDataFolder(), name);
                     if (!outFile.exists()) {
                         saveResource(name, false);
                         Map<String, String> placeholders = new HashMap<>();
@@ -145,14 +148,14 @@ public final class ProjectE extends JavaPlugin {
             }
             zip.close();
         } catch (Exception e) {
-            getLogger().warning("Error auto-releasing yml language files: " + e.getMessage());
+            getLogger().log(Level.WARNING, "Error auto-releasing yml language files", e);
         }
 
         // 初始化数据库
         databaseManager = new DatabaseManager(getDataFolder());
 
         // 初始化兼容性适配器
-        versionAdapter = VersionMatcher.getAdapter();
+        versionAdapter = VersionAdapter.getInstance();
         if (versionAdapter == null) {
             getLogger().severe("Failed to find a compatible version adapter. Disabling plugin.");
             getServer().getPluginManager().disablePlugin(this);

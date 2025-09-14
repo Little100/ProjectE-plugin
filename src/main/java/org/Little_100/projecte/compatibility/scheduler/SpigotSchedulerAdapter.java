@@ -11,7 +11,7 @@ public class SpigotSchedulerAdapter implements SchedulerAdapter {
 
     private final JavaPlugin plugin;
 
-    public SpigotSchedulerAdapter(JavaPlugin plugin) {
+    SpigotSchedulerAdapter(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

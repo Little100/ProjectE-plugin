@@ -1,10 +1,12 @@
 package org.Little_100.projecte;
 
+import java.io.File;
 import java.util.List;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -98,16 +100,15 @@ public class CovalenceDust {
     }
 
     public void setCovalenceDustEmcValues() {
-        var db = plugin.getDatabaseManager();
         var emcManager = plugin.getEmcManager();
-        java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
+        File configFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!configFile.exists()) {
             plugin.getLogger()
                     .warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");
             return;
         }
-        org.bukkit.configuration.file.YamlConfiguration config =
-                org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
         String lowKey = emcManager.getItemKey(getLowCovalenceDust());
         long lowEmc = config.getLong("low_covalence_dust", 1);

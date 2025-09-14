@@ -1,12 +1,10 @@
 package org.Little_100.projecte.managers;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.compatibility.VersionAdapter;
+import org.Little_100.projecte.compatibility.version.VersionAdapter;
 import org.Little_100.projecte.devices.*;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.util.Constants;
@@ -129,7 +127,7 @@ public class EmcManager {
 
         if (existingEmc <= 0) {
             databaseManager.setEmc(resultKey, newEmc);
-            java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+            Map<String, String> placeholders = new HashMap<>();
             placeholders.put("item", resultKey);
             placeholders.put("emc", String.valueOf(newEmc));
             Debug.log("debug.emc.item_emc_info", placeholders);
@@ -138,14 +136,14 @@ public class EmcManager {
             boolean updated = false;
             if ("lowest".equals(recipeConflictStrategy) && newEmc < existingEmc) {
                 databaseManager.setEmc(resultKey, newEmc);
-                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                Map<String, String> placeholders = new HashMap<>();
                 placeholders.put("item", resultKey);
                 placeholders.put("emc", String.valueOf(newEmc));
                 Debug.log("debug.emc.item_emc_info", placeholders);
                 updated = true;
             } else if ("highest".equals(recipeConflictStrategy) && newEmc > existingEmc) {
                 databaseManager.setEmc(resultKey, newEmc);
-                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                Map<String, String> placeholders = new HashMap<>();
                 placeholders.put("item", resultKey);
                 placeholders.put("emc", String.valueOf(newEmc));
                 Debug.log("debug.emc.item_emc_info", placeholders);

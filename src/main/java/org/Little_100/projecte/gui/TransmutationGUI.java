@@ -27,7 +27,6 @@ public class TransmutationGUI implements InventoryHolder {
     private final EmcManager emcManager;
     private final LanguageManager languageManager;
     private final SearchLanguageManager searchLanguageManager;
-    private long playerEmc;
     private GuiState currentState = GuiState.MAIN;
     private int page = 0;
     private String searchQuery = null;
@@ -46,7 +45,6 @@ public class TransmutationGUI implements InventoryHolder {
         this.emcManager = ProjectE.getInstance().getEmcManager();
         this.languageManager = ProjectE.getInstance().getLanguageManager();
         this.searchLanguageManager = ProjectE.getInstance().getSearchLanguageManager();
-        this.playerEmc = databaseManager.getPlayerEmc(player.getUniqueId());
         this.inventory = Bukkit.createInventory(this, 54, getTitle());
         initializeItems();
     }
@@ -61,7 +59,7 @@ public class TransmutationGUI implements InventoryHolder {
     }
 
     private String getTitle() {
-        String formattedEmc = String.format("%,d", playerEmc);
+        String formattedEmc = String.format("%,d", databaseManager.getPlayerEmc(player.getUniqueId()));
         Map<String, String> placeholders = new HashMap<>();
         placeholders.put("emc", formattedEmc);
 
@@ -122,15 +120,8 @@ public class TransmutationGUI implements InventoryHolder {
     }
 
     private void setupSellScreen() {
-        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
-        for (int i = 0; i < 54; i++) {
-            inventory.setItem(i, grayPane);
-        }
-        for (int i = 1; i < 5; i++) {
-            for (int j = 1; j < 8; j++) {
-                inventory.setItem(i * 9 + j, null);
-            }
-        }
+        setupCommon();
+
         ItemStack confirmButton = createGuiItem(
                 Material.EMERALD_BLOCK,
                 languageManager.get("clientside.transmutation_table.buttons.confirm_sell"),
@@ -139,6 +130,7 @@ public class TransmutationGUI implements InventoryHolder {
                 Material.BARRIER,
                 languageManager.get("clientside.transmutation_table.buttons.back"),
                 languageManager.get("clientside.transmutation_table.buttons.back_lore"));
+
         inventory.setItem(49, confirmButton);
         inventory.setItem(0, backButton);
     }
@@ -146,7 +138,7 @@ public class TransmutationGUI implements InventoryHolder {
     public void setupBuyScreen() {
         inventory.clear();
         // 创建边框
-        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
+        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ");
         for (int i = 0; i < 54; i++) {
             if (i < 9 || i > 44 || i % 9 == 0 || i % 9 == 8) {
                 inventory.setItem(i, grayPane);
@@ -298,15 +290,7 @@ public class TransmutationGUI implements InventoryHolder {
     }
 
     private void setupLearnScreen() {
-        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
-        for (int i = 0; i < 54; i++) {
-            inventory.setItem(i, grayPane);
-        }
-        for (int i = 1; i < 5; i++) {
-            for (int j = 1; j < 8; j++) {
-                inventory.setItem(i * 9 + j, null);
-            }
-        }
+        setupCommon();
         ItemStack confirmButton = createGuiItem(
                 Material.EMERALD_BLOCK,
                 languageManager.get("clientside.transmutation_table.buttons.confirm_learn"),
@@ -320,15 +304,8 @@ public class TransmutationGUI implements InventoryHolder {
     }
 
     private void setupChargeScreen() {
-        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "");
-        for (int i = 0; i < 54; i++) {
-            inventory.setItem(i, grayPane);
-        }
-        for (int i = 1; i < 5; i++) {
-            for (int j = 1; j < 8; j++) {
-                inventory.setItem(i * 9 + j, null);
-            }
-        }
+        setupCommon();
+
         ItemStack confirmButton = createGuiItem(
                 Material.EMERALD_BLOCK,
                 languageManager.get("clientside.transmutation_table.buttons.confirm_charge"),
@@ -339,6 +316,20 @@ public class TransmutationGUI implements InventoryHolder {
                 languageManager.get("clientside.transmutation_table.buttons.back_lore"));
         inventory.setItem(49, confirmButton);
         inventory.setItem(0, backButton);
+    }
+
+    private void setupCommon() {
+        ItemStack grayPane = createGuiItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ");
+
+        for (int i = 0; i < 54; i++) {
+            inventory.setItem(i, grayPane);
+        }
+
+        for (int i = 1; i < 5; i++) {
+            for (int j = 1; j < 8; j++) {
+                inventory.setItem(i * 9 + j, null);
+            }
+        }
     }
 
     public GuiState getCurrentState() {
@@ -358,6 +349,10 @@ public class TransmutationGUI implements InventoryHolder {
 
     public int getPage() {
         return page;
+    }
+
+    public String getSearchQuery() {
+        return searchQuery;
     }
 
     public void setSearchQuery(String query) {

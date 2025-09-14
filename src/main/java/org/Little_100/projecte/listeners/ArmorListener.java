@@ -7,6 +7,7 @@ import org.Little_100.projecte.armor.GemHelmet;
 import org.Little_100.projecte.gui.GemHelmetGUI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -230,7 +231,7 @@ public class ArmorListener implements Listener {
                     for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
                         if (entity instanceof LivingEntity
                                 && !entity.equals(player)
-                                && !(entity instanceof org.bukkit.entity.ArmorStand)) {
+                                && !(entity instanceof ArmorStand)) {
                             LivingEntity livingEntity = (LivingEntity) entity;
                             livingEntity.damage(damage, player);
                             Vector knockback = livingEntity

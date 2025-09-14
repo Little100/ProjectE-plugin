@@ -1,5 +1,7 @@
 package org.Little_100.projecte.listeners;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.Little_100.projecte.CovalenceDust;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
@@ -35,7 +37,7 @@ public class CovalenceDustListener implements Listener {
         String item2Key = plugin.getEmcManager().getItemKey(item2);
 
         if (!item1Key.contains("projecte_id") && !item2Key.contains("projecte_id")) {
-            java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+            Map<String, String> placeholders = new HashMap<>();
             placeholders.put("item", item1.getType().toString());
             Debug.log("debug.anvil.item_not_plugin_item", placeholders);
             placeholders.put("item", item2.getType().toString());
@@ -43,7 +45,7 @@ public class CovalenceDustListener implements Listener {
             return;
         }
 
-        java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+        Map<String, String> placeholders = new HashMap<>();
         placeholders.put("item1", item1.getType().toString());
         placeholders.put("item2", item2.getType().toString());
         placeholders.put("result", anvilResult != null ? anvilResult.getType().toString() : "null");
