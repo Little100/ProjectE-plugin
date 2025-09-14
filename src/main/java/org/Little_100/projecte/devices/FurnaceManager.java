@@ -3,6 +3,7 @@ package org.Little_100.projecte.devices;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,8 +48,6 @@ public class FurnaceManager {
 
     private final ProjectE plugin;
     private final Map<Location, FurnaceState> activeFurnaces = new ConcurrentHashMap<>();
-    private final NamespacedKey darkMatterFurnaceKey;
-    private final NamespacedKey redMatterFurnaceKey;
 
     private final Map<FurnaceType, ItemStack[]> guiLayouts = new EnumMap<>(FurnaceType.class);
     private final Map<FurnaceType, List<Integer>> inputSlots = new EnumMap<>(FurnaceType.class);
@@ -61,8 +60,6 @@ public class FurnaceManager {
 
     public FurnaceManager(ProjectE plugin) {
         this.plugin = plugin;
-        this.darkMatterFurnaceKey = new NamespacedKey(plugin, "dark_matter_furnace");
-        this.redMatterFurnaceKey = new NamespacedKey(plugin, "red_matter_furnace");
         loadGuiLayouts();
         startUpdateTask();
     }
@@ -462,9 +459,8 @@ public class FurnaceManager {
 
         if (item.hasItemMeta()) {
             PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-            NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
-            if (container.has(idKey, PersistentDataType.STRING)) {
-                String projecteId = container.get(idKey, PersistentDataType.STRING);
+            if (container.has(Constants.ID_KEY, PersistentDataType.STRING)) {
+                String projecteId = container.get(Constants.ID_KEY, PersistentDataType.STRING);
                 switch (projecteId) {
                     case "alchemical_coal":
                         return 320 * 20;

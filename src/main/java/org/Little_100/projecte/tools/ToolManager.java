@@ -117,7 +117,7 @@ public class ToolManager {
             meta.setDisplayName(plugin.getLanguageManager().get(displayNameKey));
 
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(Constants.ID_KEY, PersistentDataType.STRING, id);
             container.set(Constants.CHARGE_KEY, PersistentDataType.INTEGER, 0);
             container.set(new NamespacedKey(plugin, "projecte_mode"), PersistentDataType.STRING, "tall");
 
@@ -166,7 +166,7 @@ public class ToolManager {
 
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        String id = container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
+        String id = container.get(Constants.ID_KEY, PersistentDataType.STRING);
         if (id == null) return;
 
         List<String> loreKeys;
@@ -400,7 +400,7 @@ public class ToolManager {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return null;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
+        return container.get(Constants.ID_KEY, PersistentDataType.STRING);
     }
 
     public int getCharge(ItemStack item) {

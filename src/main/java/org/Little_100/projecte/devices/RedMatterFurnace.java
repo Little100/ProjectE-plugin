@@ -12,12 +12,12 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class RedMatterFurnace implements Listener {
 
+    public static final NamespacedKey KEY = new NamespacedKey(ProjectE.getInstance(), "red_matter_furnace");
+
     private final ProjectE plugin;
-    private final NamespacedKey furnaceKey;
 
     public RedMatterFurnace(ProjectE plugin) {
         this.plugin = plugin;
-        this.furnaceKey = new NamespacedKey(plugin, "red_matter_furnace");
     }
 
     public ItemStack getFurnaceItem() {
@@ -29,7 +29,7 @@ public class RedMatterFurnace implements Listener {
         item.setItemMeta(meta);
         item = CustomModelDataUtil.setCustomModelData(item, 2);
         ItemMeta newMeta = item.getItemMeta();
-        newMeta.getPersistentDataContainer().set(furnaceKey, PersistentDataType.BYTE, (byte) 1);
+        newMeta.getPersistentDataContainer().set(KEY, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(newMeta);
         return item;
     }
@@ -38,7 +38,7 @@ public class RedMatterFurnace implements Listener {
         if (item == null || !item.hasItemMeta()) {
             return false;
         }
-        return item.getItemMeta().getPersistentDataContainer().has(furnaceKey, PersistentDataType.BYTE);
+        return item.getItemMeta().getPersistentDataContainer().has(KEY, PersistentDataType.BYTE);
     }
 }
 

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.SearchLanguageManager;
+import org.Little_100.projecte.managers.SearchLanguageManager;
 import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.storage.DatabaseManager;

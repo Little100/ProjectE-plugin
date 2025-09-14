@@ -55,9 +55,8 @@ public class ToolChargeGUIListener implements Listener {
         if (toolMeta == null) return;
         PersistentDataContainer toolContainer = toolMeta.getPersistentDataContainer();
 
-        NamespacedKey chargeKey = new NamespacedKey(plugin, "charge_level");
-        if (clickedContainer.has(chargeKey, PersistentDataType.INTEGER)) {
-            int newCharge = clickedContainer.get(chargeKey, PersistentDataType.INTEGER);
+        if (clickedContainer.has(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER)) {
+            int newCharge = clickedContainer.getOrDefault(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, 0);
             int oldCharge = toolContainer.getOrDefault(Constants.CHARGE_KEY, PersistentDataType.INTEGER, 0);
 
             if (newCharge != oldCharge) {

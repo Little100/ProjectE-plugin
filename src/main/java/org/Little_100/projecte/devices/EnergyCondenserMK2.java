@@ -11,13 +11,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class EnergyCondenserMK2 implements Listener {
+    public static final NamespacedKey KEY = new NamespacedKey(ProjectE.getInstance(), "energy_condenser_mk2");;
 
     private final ProjectE plugin;
-    private final NamespacedKey condenserMK2Key;
 
     public EnergyCondenserMK2(ProjectE plugin) {
         this.plugin = plugin;
-        this.condenserMK2Key = new NamespacedKey(plugin, "energy_condenser_mk2");
     }
 
     public ItemStack getCondenserMK2Item() {
@@ -29,7 +28,7 @@ public class EnergyCondenserMK2 implements Listener {
         item.setItemMeta(meta);
         item = CustomModelDataUtil.setCustomModelData(item, 3);
         ItemMeta newMeta = item.getItemMeta();
-        newMeta.getPersistentDataContainer().set(condenserMK2Key, PersistentDataType.BYTE, (byte) 1);
+        newMeta.getPersistentDataContainer().set(KEY, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(newMeta);
         return item;
     }
@@ -38,6 +37,6 @@ public class EnergyCondenserMK2 implements Listener {
         if (item == null || !item.hasItemMeta()) {
             return false;
         }
-        return item.getItemMeta().getPersistentDataContainer().has(condenserMK2Key, PersistentDataType.BYTE);
+        return item.getItemMeta().getPersistentDataContainer().has(KEY, PersistentDataType.BYTE);
     }
 }

@@ -4,7 +4,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import org.Little_100.projecte.accessories.AccessoryRecipeManager;
+
+import org.Little_100.projecte.accessories.*;
 import org.Little_100.projecte.alchemicalbag.AlchemicalBagManager;
 import org.Little_100.projecte.armor.ArmorManager;
 import org.Little_100.projecte.command.CustomCommand;
@@ -19,6 +20,7 @@ import org.Little_100.projecte.listeners.GemHelmetGUIListener;
 import org.Little_100.projecte.listeners.TransmutationTabletBookListener;
 import org.Little_100.projecte.managers.*;
 import org.Little_100.projecte.storage.DatabaseManager;
+import org.Little_100.projecte.tome.TransmutationTabletBook;
 import org.Little_100.projecte.tools.*;
 import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
 import org.Little_100.projecte.util.CustomBlockArtUtil;
@@ -39,7 +41,6 @@ public final class ProjectE extends JavaPlugin {
     private static SchedulerAdapter schedulerAdapter = SchedulerAdapter.getInstance();
 
     private ItemStack philosopherStone;
-    private NamespacedKey philosopherStoneKey;
     private RecipeManager recipeManager;
     private DatabaseManager databaseManager;
     private AccessoryRecipeManager accessoryRecipeManager;
@@ -349,10 +350,6 @@ public final class ProjectE extends JavaPlugin {
         return item.getType() == Material.POPPED_CHORUS_FRUIT;
     }
 
-    public NamespacedKey getPhilosopherStoneKey() {
-        return philosopherStoneKey;
-    }
-
     private void createPhilosopherStone() {
         philosopherStone = new ItemStack(Material.POPPED_CHORUS_FRUIT);
     }
@@ -624,6 +621,7 @@ public final class ProjectE extends JavaPlugin {
 
         switch (key) {
             case "philosopher_stone":
+            case "transmutation_table":
                 return getPhilosopherStone();
             // Fuels
             case "alchemical_coal":
@@ -751,13 +749,13 @@ public final class ProjectE extends JavaPlugin {
 
             // Accessories
             case "body_stone":
-                return org.Little_100.projecte.accessories.BodyStone.createBodyStone();
+                return BodyStone.createBodyStone();
             case "soul_stone":
-                return org.Little_100.projecte.accessories.SoulStone.createSoulStone();
+                return SoulStone.createSoulStone();
             case "life_stone":
-                return org.Little_100.projecte.accessories.LifeStone.createLifeStone();
+                return LifeStone.createLifeStone();
             case "mind_stone":
-                return org.Little_100.projecte.accessories.MindStone.createMindStone();
+                return MindStone.createMindStone();
 
             // Devices
             case "dark_matter_furnace":
@@ -770,12 +768,10 @@ public final class ProjectE extends JavaPlugin {
                 return deviceManager.getEnergyCondenserItem();
             case "energy_condenser_mk2":
                 return deviceManager.getEnergyCondenserMK2Item();
-            case "transmutation_table":
-                return getPhilosopherStone();
             case "alchemical_bag":
                 return AlchemicalBagManager.getAlchemicalBag();
             case "transmutation_tablet_book":
-                return org.Little_100.projecte.tome.TransmutationTabletBook.createTransmutationTabletBook();
+                return TransmutationTabletBook.createTransmutationTabletBook();
 
             default:
                 // 尝试将剩余的键解析为原生Minecraft材料

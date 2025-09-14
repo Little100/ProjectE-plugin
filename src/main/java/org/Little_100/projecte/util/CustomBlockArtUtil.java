@@ -32,7 +32,6 @@ public class CustomBlockArtUtil implements Listener {
     private static ProjectE plugin;
     private static SchedulerAdapter scheduler;
     private static BlockDataManager blockDataManager;
-    private final NamespacedKey blockDataKey;
 
     public static double getYOffset() {
         return yOffset;
@@ -46,7 +45,6 @@ public class CustomBlockArtUtil implements Listener {
         CustomBlockArtUtil.plugin = plugin;
         CustomBlockArtUtil.scheduler = scheduler;
         CustomBlockArtUtil.blockDataManager = plugin.getBlockDataManager();
-        this.blockDataKey = new NamespacedKey(plugin, "custom_block_data");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 

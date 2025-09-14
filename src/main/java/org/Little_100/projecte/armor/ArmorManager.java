@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
@@ -165,7 +165,7 @@ public class ArmorManager {
             meta.setUnbreakable(true);
 
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(Constants.ID_KEY, PersistentDataType.STRING, id);
 
             if (armor > 0) {
                 AttributeModifier armorModifier = new AttributeModifier(
@@ -310,7 +310,7 @@ public class ArmorManager {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return null;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
+        return container.get(Constants.ID_KEY, PersistentDataType.STRING);
     }
 
     public boolean isArmor(String id) {

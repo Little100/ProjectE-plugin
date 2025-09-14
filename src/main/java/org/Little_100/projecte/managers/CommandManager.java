@@ -9,6 +9,7 @@ import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.tools.DiviningRod;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -74,14 +75,17 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         String commandName = command.getName().toLowerCase();
 
         if (openTableCommands.containsKey(commandName)) {
-            return handleOpenTable(sender, commandName);
+            handleOpenTable(sender, commandName);
+            return true;
         }
 
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 0) {
                 if (label.equalsIgnoreCase("po")) {
-                    return handleOpen(sender);
+                    handleOpen(sender);
+                    return true;
                 }
+
                 sendHelp(sender);
                 return true;
             }
@@ -90,50 +94,71 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             String fullCommand = "projecte " + subCommand;
             if (openTableCommands.containsKey(fullCommand)) {
-                return handleOpenTable(sender, fullCommand);
+                handleOpenTable(sender, fullCommand);
+                return true;
             }
 
             switch (subCommand) {
                 case "recalculate":
-                    return handleRecalculate(sender);
+                    handleRecalculate(sender);
+                    break;
                 case "reload":
-                    return handleReload(sender);
+                    handleReload(sender);
+                    break;
                 case "setemc":
-                    return handleSetEmc(sender, args);
+                    handleSetEmc(sender, args);
+                    break;
                 case "debug":
-                    return handleDebug(sender);
+                    handleDebug(sender);
+                    break;
                 case "pay":
-                    return handlePayEmc(sender, args);
+                    handlePayEmc(sender, args);
+                    break;
                 case "item":
-                    return handleGetItem(sender, args);
+                    handleGetItem(sender, args);
+                    break;
                 case "give":
-                    return handleGiveItem(sender, args);
+                    handleGiveItem(sender, args);
+                    break;
                 case "noemcitem":
-                    return handleNoEmcItem(sender);
+                    handleNoEmcItem(sender);
+                    break;
                 case "bag":
-                    return handleBag(sender, args);
+                    handleBag(sender, args);
+                    break;
                 case "lang":
-                    return handleLang(sender, args);
+                    handleLang(sender, args);
+                    break;
                 case "report":
-                    return handleReport(sender);
+                    handleReport(sender);
+                    break;
                 case "nbtdebug":
-                    return handleNbtDebug(sender);
+                    handleNbtDebug(sender);
+                    break;
                 case "o":
                 case "open":
-                    return handleOpen(sender);
+                    handleOpen(sender);
+                    break;
                 case "gui":
-                    return handleGui(sender, args);
+                    handleGui(sender, args);
+                    break;
                 case "table":
-                    return handleTableCommand(sender, args);
+                    handleTableCommand(sender, args);
+                    break;
                 case "gemhelmet":
-                    return handleGemHelmet(sender);
+                    handleGemHelmet(sender);
+                    break;
                 case "gemboots":
-                    return handleGemBoots(sender);
+                    handleGemBoots(sender);
+                    break;
                 default:
                     sendHelp(sender);
-                    return true;
+                    break;
             }
+
+            return true;
         }
+
         return false;
     }
 
@@ -141,18 +166,18 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return openGuiEditors;
     }
 
-    private boolean handleGui(CommandSender sender, String[] args) {
+    private void handleGui(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
         if (!sender.hasPermission("projecte.command.gui")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
         if (args.length != 2) {
             sender.sendMessage(languageManager.get("serverside.command.gui.usage"));
-            return true;
+            return;
         }
 
         String fileName = args[1];
@@ -171,27 +196,27 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         placeholders.put("file", fileName);
         player.sendMessage(languageManager.get("serverside.command.gui.opening_editor", placeholders));
 
-        return true;
     }
 
-    private boolean handleRecalculate(CommandSender sender) {
+    private void handleRecalculate(CommandSender sender) {
         if (!sender.hasPermission("projecte.command.recalculate")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         plugin.getSchedulerAdapter().runTaskAsynchronously(() -> {
             sender.sendMessage(languageManager.get("serverside.command.recalculate.start"));
             emcManager.calculateAndStoreEmcValues(true);
             sender.sendMessage(languageManager.get("serverside.command.recalculate.success"));
         });
-        return true;
     }
 
-    private boolean handleOpenTable(CommandSender sender, String commandName) {
+    private void handleOpenTable(CommandSender sender, String commandName) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         Map<String, String> commandData = openTableCommands.get(commandName);
         String permission = commandData.get("permission");
 
@@ -199,11 +224,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 && !player.hasPermission("projecte.command." + permission)
                 && !(permission.equalsIgnoreCase("op") && player.isOp())) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', commandData.get("permission-message")));
-            return true;
+            return;
         }
 
         new TransmutationGUI(player).open();
-        return true;
     }
 
     private void sendHelp(CommandSender sender) {
@@ -223,42 +247,44 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         // 移除 resourcepack 帮助信息
     }
 
-    private boolean handleReload(CommandSender sender) {
+    private void handleReload(CommandSender sender) {
         if (!sender.hasPermission("projecte.command.reload")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         plugin.reloadPlugin();
         sender.sendMessage(languageManager.get("serverside.command.reload_success"));
-        return true;
     }
 
-    private boolean handleSetEmc(CommandSender sender, String[] args) {
+    private void handleSetEmc(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.setemc")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         if (args.length != 2) {
             sender.sendMessage(languageManager.get("serverside.command.set_emc.usage"));
-            return true;
+            return;
         }
 
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
         if (itemInHand.getType().isAir()) {
             sender.sendMessage(languageManager.get("serverside.command.set_emc.hold_item"));
-            return true;
+            return;
         }
 
         try {
             long emc = Long.parseLong(args[1]);
             if (emc <= 0) {
                 sender.sendMessage(languageManager.get("serverside.command.set_emc.must_be_positive"));
-                return true;
+                return;
             }
 
             String itemKey = emcManager.getItemKey(itemInHand);
@@ -272,24 +298,24 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             placeholders.put("value", args[1]);
             sender.sendMessage(languageManager.get("serverside.command.set_emc.invalid_value", placeholders));
         }
-        return true;
     }
 
-    private boolean handleDebug(CommandSender sender) {
+    private void handleDebug(CommandSender sender) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.debug")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
 
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
         if (itemInHand.getType().isAir()) {
             sender.sendMessage(languageManager.get("serverside.command.set_emc.hold_item"));
-            return true;
+            return;
         }
 
         String itemKey = plugin.getVersionAdapter().getItemKey(itemInHand);
@@ -330,21 +356,22 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         sender.sendMessage(languageManager.get("serverside.command.debug.footer"));
 
-        return true;
     }
 
-    private boolean handlePayEmc(CommandSender sender, String[] args) {
+    private void handlePayEmc(CommandSender sender, String[] args) {
         if (!(sender instanceof Player senderPlayer)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.pay")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         if (args.length != 3) {
             sender.sendMessage(languageManager.get("serverside.command.pay_emc.usage"));
-            return true;
+            return;
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[1]);
@@ -353,12 +380,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("player", args[1]);
             sender.sendMessage(languageManager.get("serverside.command.pay_emc.player_not_found", placeholders));
-            return true;
+            return;
         }
 
         if (targetPlayer.equals(senderPlayer)) {
             sender.sendMessage(languageManager.get("serverside.command.pay_emc.cant_pay_self"));
-            return true;
+            return;
         }
 
         long amount;
@@ -366,13 +393,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             amount = Long.parseLong(args[2]);
             if (amount <= 0) {
                 sender.sendMessage(languageManager.get("serverside.command.pay_emc.must_be_positive"));
-                return true;
+                return;
             }
         } catch (NumberFormatException e) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("amount", args[2]);
             sender.sendMessage(languageManager.get("serverside.command.pay_emc.invalid_amount", placeholders));
-            return true;
+            return;
         }
 
         double feePercentage = plugin.getConfig().getDouble("gui.transfer-fee-percentage", 0.0);
@@ -386,7 +413,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             placeholders.put("total", String.valueOf(totalDeduction));
             placeholders.put("fee", String.valueOf(fee));
             sender.sendMessage(languageManager.get("serverside.command.pay_emc.not_enough_emc", placeholders));
-            return true;
+            return;
         }
 
         long targetEmc = databaseManager.getPlayerEmc(targetPlayer.getUniqueId());
@@ -404,22 +431,22 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         targetPlaceholders.put("player", senderPlayer.getName());
         targetPlaceholders.put("amount", String.valueOf(amount));
         targetPlayer.sendMessage(languageManager.get("serverside.command.pay_emc.receive_success", targetPlaceholders));
-
-        return true;
     }
 
-    private boolean handleGetItem(CommandSender sender, String[] args) {
+    private void handleGetItem(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.item")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         if (args.length < 2) {
             sender.sendMessage(languageManager.get("serverside.command.item.usage"));
-            return true;
+            return;
         }
 
         String itemId = args[1];
@@ -429,7 +456,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("item", itemId);
             sender.sendMessage(languageManager.get("serverside.command.item.not_found", placeholders));
-            return true;
+            return;
         }
 
         int amount = 1;
@@ -438,9 +465,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 amount = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
                 sender.sendMessage(languageManager.get("serverside.command.item.invalid_amount"));
-                return true;
+                return;
             }
         }
+
         item.setAmount(amount);
 
         player.getInventory().addItem(item);
@@ -449,17 +477,17 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         placeholders.put("item", itemId);
         placeholders.put("amount", String.valueOf(amount));
         sender.sendMessage(languageManager.get("serverside.command.item.success", placeholders));
-        return true;
     }
 
-    private boolean handleGiveItem(CommandSender sender, String[] args) {
+    private void handleGiveItem(CommandSender sender, String[] args) {
         if (!sender.hasPermission("projecte.command.give")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         if (args.length < 3) {
             sender.sendMessage(languageManager.get("serverside.command.give.usage"));
-            return true;
+            return;
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[1]);
@@ -467,7 +495,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("player", args[1]);
             sender.sendMessage(languageManager.get("serverside.command.give.player_not_found", placeholders));
-            return true;
+            return;
         }
 
         String itemId = args[2];
@@ -477,7 +505,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("item", itemId);
             sender.sendMessage(languageManager.get("serverside.command.give.item_not_found", placeholders));
-            return true;
+            return;
         }
 
         int amount = 1;
@@ -486,9 +514,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 amount = Integer.parseInt(args[3]);
             } catch (NumberFormatException e) {
                 sender.sendMessage(languageManager.get("serverside.command.give.invalid_amount"));
-                return true;
+                return;
             }
         }
+
         item.setAmount(amount);
 
         targetPlayer.getInventory().addItem(item);
@@ -498,17 +527,17 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         placeholders.put("item", itemId);
         placeholders.put("amount", String.valueOf(amount));
         sender.sendMessage(languageManager.get("serverside.command.give.success", placeholders));
-        return true;
     }
 
-    private boolean handleNoEmcItem(CommandSender sender) {
+    private void handleNoEmcItem(CommandSender sender) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.noemcitem")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
 
         List<ItemStack> noEmcItems = new ArrayList<>();
@@ -524,32 +553,33 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (noEmcItems.isEmpty()) {
             sender.sendMessage(languageManager.get("serverside.command.no_emc_item.all_have_emc"));
-            return true;
+            return;
         }
 
         new NoEmcItemGUI(noEmcItems, 0).openInventory(player);
-        return true;
     }
 
-    private boolean handleBag(CommandSender sender, String[] args) {
+    private void handleBag(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.bag")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
+
         if (args.length < 2 || !args[1].equalsIgnoreCase("list")) {
             sender.sendMessage(languageManager.get("serverside.command.bag.usage"));
-            return true;
+            return;
         }
 
         List<String> bagColors = databaseManager.getBagColors(player.getUniqueId());
 
         if (bagColors.isEmpty()) {
             sender.sendMessage(languageManager.get("serverside.command.bag.no_bags"));
-            return true;
+            return;
         }
 
         sender.sendMessage(languageManager.get("serverside.command.bag.list_header"));
@@ -561,18 +591,17 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.WHITE + "- " + colorName);
             }
         }
-        return true;
     }
 
-    private boolean handleLang(CommandSender sender, String[] args) {
+    private void handleLang(CommandSender sender, String[] args) {
         if (!sender.hasPermission("projecte.command.lang")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
 
         if (args.length < 2) {
             sender.sendMessage(languageManager.get("serverside.command.lang.usage"));
-            return true;
+            return;
         }
 
         String action = args[1].toLowerCase();
@@ -581,7 +610,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             File langFolder = new File(plugin.getDataFolder(), "lang");
             if (!langFolder.exists() || !langFolder.isDirectory()) {
                 sender.sendMessage(languageManager.get("serverside.command.lang.no_lang_folder"));
-                return true;
+                return;
             }
             File[] files = langFolder.listFiles((dir, name) -> name.endsWith(".yml"));
             if (files != null) {
@@ -589,13 +618,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     sender.sendMessage(ChatColor.YELLOW + "- " + file.getName().replace(".yml", ""));
                 }
             }
-            return true;
+            return;
         }
 
         if (action.equals("set")) {
             if (args.length < 3) {
                 sender.sendMessage(languageManager.get("serverside.command.lang.usage"));
-                return true;
+                return;
             }
             List<String> newLangs = new ArrayList<>(Arrays.asList(args).subList(2, args.length));
             for (String lang : newLangs) {
@@ -604,7 +633,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     Map<String, String> placeholders = new HashMap<>();
                     placeholders.put("file", lang + ".yml");
                     sender.sendMessage(languageManager.get("serverside.command.lang.file_not_found", placeholders));
-                    return true;
+                    return;
                 }
             }
 
@@ -614,27 +643,26 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("languages", String.join(", ", newLangs));
             sender.sendMessage(languageManager.get("serverside.command.lang.set_success", placeholders));
-            return true;
+            return;
         }
 
         sender.sendMessage(languageManager.get("serverside.command.lang.usage"));
-        return true;
     }
 
-    private boolean handleReport(CommandSender sender) {
+    private void handleReport(CommandSender sender) {
         sender.sendMessage(languageManager.get("serverside.command.report.message"));
-        return true;
     }
 
-    private boolean handleNbtDebug(CommandSender sender) {
+    private void handleNbtDebug(CommandSender sender) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
-            return true;
+            return;
         }
+
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.getType().isAir()) {
             sender.sendMessage(ChatColor.YELLOW + "Please hold an item in your hand to execute this command.");
-            return true;
+            return;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -675,26 +703,30 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 sb.append("None\n");
             } else {
                 sb.append("\n");
+
                 for (var key : keys) {
-                    sb.append("  - ").append(key.toString()).append(": ");
-                    if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.STRING, "String")) {
-                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.INTEGER, "Integer")) {
-                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.LONG, "Long")) {
-                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.DOUBLE, "Double")) {
-                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.FLOAT, "Float")) {
-                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.BYTE, "Byte")) {
-                    } else if (tryAppendPdcValue(sb, pdc, key, PersistentDataType.SHORT, "Short")) {
-                    } else {
+                    sb.append("  - ").append(key).append(": ");
+
+                    boolean matched = false;
+                    for (var entry : Constants.PDC_TYPES.entrySet()) {
+                        if (tryAppendPdcValue(sb, pdc, key, entry.getKey(), entry.getValue())) {
+                            matched = true;
+                            break;
+                        }
+                    }
+
+                    if (!matched) {
                         sb.append("Exists (unknown or complex type)");
                     }
+
                     sb.append("\n");
                 }
             }
         } else {
             sb.append(ChatColor.GRAY).append("No ItemMeta\n");
         }
+
         player.sendMessage(sb.toString());
-        return true;
     }
 
     private <T, Z> boolean tryAppendPdcValue(
@@ -716,28 +748,28 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    private boolean handleOpen(CommandSender sender) {
+    private void handleOpen(CommandSender sender) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
 
         try {
             Class.forName("org.geysermc.geyser.api.GeyserApi");
             if (!GeyserApi.api().isBedrockPlayer(player.getUniqueId())) {
                 player.sendMessage(languageManager.get("serverside.command.geyser_only"));
-                return true;
+                return;
             }
         } catch (ClassNotFoundException e) {
             player.sendMessage(languageManager.get("serverside.command.geyser_only"));
-            return true;
+            return;
         }
 
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
         if (plugin.isPhilosopherStone(itemInHand)) {
             new PhilosopherStoneGUI(plugin, player).open();
-            return true;
+            return;
         }
 
         DiviningRod diviningRod = plugin.getDiviningRod();
@@ -745,25 +777,26 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 || diviningRod.isMediumDiviningRod(itemInHand)
                 || diviningRod.isHighDiviningRod(itemInHand)) {
             plugin.getDiviningRodGUI().openGUI(player);
-            return true;
+            return;
         }
 
         player.sendMessage(languageManager.get("serverside.command.open.no_menu"));
-        return true;
     }
 
-    private boolean handleTableCommand(CommandSender sender, String[] args) {
+    private void handleTableCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (args.length < 2 || !args[1].equalsIgnoreCase("learn")) {
             sender.sendMessage(languageManager.get("serverside.command.table.learn.usage"));
-            return true;
+            return;
         }
+
         if (!sender.hasPermission("projecte.command.table.learn")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
-            return true;
+            return;
         }
 
         plugin.getSchedulerAdapter().runTaskAsynchronously(() -> {
@@ -783,63 +816,39 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             placeholders.put("count", String.valueOf(learnedCount));
             player.sendMessage(languageManager.get("serverside.command.table.learn.success", placeholders));
         });
-        return true;
     }
 
-    private boolean handleGemHelmet(CommandSender sender) {
+    private void handleGemHelmet(CommandSender sender) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (plugin.getArmorManager().isGemHelmet(player.getInventory().getHelmet())) {
             GemHelmetGUI.open(player);
         } else {
             player.sendMessage(languageManager.get("serverside.command.gem_helmet.not_wearing"));
         }
-        return true;
     }
 
-    private boolean handleGemBoots(CommandSender sender) {
+    private void handleGemBoots(CommandSender sender) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(languageManager.get("serverside.command.player_only"));
-            return true;
+            return;
         }
+
         if (plugin.getArmorManager().isGemBoots(player.getInventory().getBoots())) {
             player.sendMessage(languageManager.get("serverside.command.gem_boots.disabled_for_folia"));
         } else {
             player.sendMessage(languageManager.get("serverside.command.gem_boots.not_wearing"));
         }
-        return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
             if (args.length == 1) {
-                List<String> subCommands = new ArrayList<>(Arrays.asList(
-                        "recalculate",
-                        "reload",
-                        "setemc",
-                        "debug",
-                        "pay",
-                        "item",
-                        "give",
-                        "noemcitem",
-                        "bag",
-                        "lang",
-                        "report",
-                        "nbtdebug",
-                        "open",
-                        "o",
-                        "gui",
-                        "table",
-                        "gemhelmet",
-                        "gemboots"));
-                for (String cmd : openTableCommands.keySet()) {
-                    if (cmd.startsWith("projecte ")) {
-                        subCommands.add(cmd.split(" ")[1]);
-                    }
-                }
+                List<String> subCommands = getSubCommands();
                 return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
             }
         }
@@ -852,6 +861,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
                 return StringUtil.copyPartialMatches(args[1], playerNames, new ArrayList<>());
             }
+
             if (args[0].equalsIgnoreCase("item")) {
                 List<String> itemIds = new ArrayList<>(plugin.getRecipeManager().getRegisteredItemIds());
                 itemIds.addAll(Arrays.asList(
@@ -865,12 +875,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                         "red_matter_boots"));
                 return StringUtil.copyPartialMatches(args[1], itemIds, new ArrayList<>());
             }
+
             if (args[0].equalsIgnoreCase("bag")) {
                 return StringUtil.copyPartialMatches(args[1], Collections.singletonList("list"), new ArrayList<>());
             }
+
             if (args[0].equalsIgnoreCase("lang")) {
                 return StringUtil.copyPartialMatches(args[1], Arrays.asList("list", "set"), new ArrayList<>());
             }
+
             if (args[0].equalsIgnoreCase("gui")) {
                 File dataFolder = plugin.getDataFolder();
                 File[] files =
@@ -884,6 +897,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 return StringUtil.copyPartialMatches(args[1], guiFiles, new ArrayList<>());
             }
         }
+
         if (args.length == 2 && args[0].equalsIgnoreCase("table")) {
             return StringUtil.copyPartialMatches(args[1], Collections.singletonList("learn"), new ArrayList<>());
         }
@@ -916,6 +930,29 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
             return StringUtil.copyPartialMatches(args[args.length - 1], langFiles, new ArrayList<>());
         }
+
         return new ArrayList<>();
+    }
+
+    private List<String> getSubCommands() {
+        return new ArrayList<>(Arrays.asList(
+                "recalculate",
+                "reload",
+                "setemc",
+                "debug",
+                "pay",
+                "item",
+                "give",
+                "noemcitem",
+                "bag",
+                "lang",
+                "report",
+                "nbtdebug",
+                "open",
+                "o",
+                "gui",
+                "table",
+                "gemhelmet",
+                "gemboots"));
     }
 }

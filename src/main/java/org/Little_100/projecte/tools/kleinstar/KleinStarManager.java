@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,13 +22,11 @@ public class KleinStarManager {
     private final ProjectE plugin;
     private final Map<Integer, ItemStack> kleinStars = new HashMap<>();
     private final Map<Integer, Long> kleinStarCapacities = new HashMap<>();
-    private final NamespacedKey kleinStarKey;
     private final NamespacedKey storedEmcKey;
     private final NamespacedKey capacityKey;
 
     public KleinStarManager(ProjectE plugin) {
         this.plugin = plugin;
-        this.kleinStarKey = new NamespacedKey(plugin, "klein_star_level");
         this.storedEmcKey = new NamespacedKey(plugin, "stored_emc");
         this.capacityKey = new NamespacedKey(plugin, "emc_capacity");
         initializeCapacities();
@@ -77,7 +76,7 @@ public class KleinStarManager {
         if (finalMeta != null) {
             PersistentDataContainer container = finalMeta.getPersistentDataContainer();
             long capacity = kleinStarCapacities.getOrDefault(level, 0L);
-            container.set(kleinStarKey, PersistentDataType.INTEGER, level);
+            container.set(Constants.KLEIN_STAR_KEY, PersistentDataType.INTEGER, level);
             container.set(storedEmcKey, PersistentDataType.LONG, 0L);
             container.set(capacityKey, PersistentDataType.LONG, capacity);
             kleinStar.setItemMeta(finalMeta);
@@ -99,7 +98,7 @@ public class KleinStarManager {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return false;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(kleinStarKey, PersistentDataType.INTEGER);
+        return container.has(Constants.KLEIN_STAR_KEY, PersistentDataType.INTEGER);
     }
 
     public long getStoredEmc(ItemStack item) {
@@ -185,13 +184,12 @@ public class KleinStarManager {
 
     public int getKleinStarLevel(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return -1;
+
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return -1;
+
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        if (!container.has(kleinStarKey, PersistentDataType.INTEGER)) {
-            return -1;
-        }
-        return container.get(kleinStarKey, PersistentDataType.INTEGER);
+        return container.getOrDefault(Constants.KLEIN_STAR_KEY, PersistentDataType.INTEGER, -1);
     }
 
     public static boolean hasEnoughEMC(Player player, long amount) {
@@ -228,6 +226,7 @@ public class KleinStarManager {
                 return true;
             }
         }
+
         return false;
     }
 

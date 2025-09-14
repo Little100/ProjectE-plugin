@@ -2,6 +2,7 @@ package org.Little_100.projecte.gui;
 
 import java.util.*;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,9 +38,6 @@ public class PhilosopherStoneGUI {
     // 玻璃板槽位
     private static final int[] GLASS_PANE_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 17, 18, 19, 23, 24, 25, 26};
 
-    // 菜单属性数据键
-    private static final NamespacedKey GUI_ITEM_KEY = new NamespacedKey(ProjectE.getInstance(), "gui_item");
-    private static final NamespacedKey CHARGE_LEVEL_KEY = new NamespacedKey(ProjectE.getInstance(), "charge_level");
     private static final NamespacedKey CURRENT_MODE_KEY = new NamespacedKey(ProjectE.getInstance(), "current_mode");
 
     // 存储玩家当前充能等级和模式
@@ -150,7 +148,7 @@ public class PhilosopherStoneGUI {
         ItemStack emeraldItem = createGuiItem(Material.EMERALD_BLOCK, ChatColor.GOLD + chargeLevelText, emeraldLore);
         ItemMeta emeraldMeta = emeraldItem.getItemMeta();
         if (emeraldMeta != null) {
-            emeraldMeta.getPersistentDataContainer().set(CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, -1); // -1 表示绿宝石块
+            emeraldMeta.getPersistentDataContainer().set(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, -1); // -1 表示绿宝石块
             emeraldItem.setItemMeta(emeraldMeta);
         }
         inventory.setItem(EMERALD_SLOT, emeraldItem);
@@ -169,7 +167,7 @@ public class PhilosopherStoneGUI {
             ItemStack redstoneItem = createGuiItem(material, ChatColor.GOLD + progressText, redstoneLore);
             ItemMeta redstoneMeta = redstoneItem.getItemMeta();
             if (redstoneMeta != null) {
-                redstoneMeta.getPersistentDataContainer().set(CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, i + 1);
+                redstoneMeta.getPersistentDataContainer().set(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, i + 1);
                 redstoneItem.setItemMeta(redstoneMeta);
             }
 
@@ -266,7 +264,7 @@ public class PhilosopherStoneGUI {
             }
 
             // 标记为GUI物品
-            meta.getPersistentDataContainer().set(GUI_ITEM_KEY, PersistentDataType.BYTE, (byte) 1);
+            meta.getPersistentDataContainer().set(Constants.GUI_ITEM_KEY, PersistentDataType.BYTE, (byte) 1);
 
             item.setItemMeta(meta);
         }

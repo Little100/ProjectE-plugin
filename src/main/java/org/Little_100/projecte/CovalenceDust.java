@@ -1,6 +1,8 @@
 package org.Little_100.projecte;
 
 import java.util.List;
+
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -76,7 +78,7 @@ public class CovalenceDust {
 
             // 设置PDC
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(Constants.ID_KEY, PersistentDataType.STRING, id);
             container.set(key, PersistentDataType.BYTE, (byte) 1);
 
             item.setItemMeta(meta);

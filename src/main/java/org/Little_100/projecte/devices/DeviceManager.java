@@ -2,7 +2,6 @@ package org.Little_100.projecte.devices;
 
 import java.util.Collection;
 import org.Little_100.projecte.ProjectE;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -12,11 +11,6 @@ import org.bukkit.persistence.PersistentDataType;
 public class DeviceManager {
 
     private final ProjectE plugin;
-    private final NamespacedKey darkMatterFurnaceKey;
-    private final NamespacedKey redMatterFurnaceKey;
-    private final NamespacedKey alchemicalChestKey;
-    private final NamespacedKey energyCondenserKey;
-    private final NamespacedKey energyCondenserMK2Key;
     private DarkMatterFurnace darkMatterFurnace;
     private RedMatterFurnace redMatterFurnace;
     private AlchemicalChest alchemicalChest;
@@ -25,11 +19,6 @@ public class DeviceManager {
 
     public DeviceManager(ProjectE plugin) {
         this.plugin = plugin;
-        this.darkMatterFurnaceKey = new NamespacedKey(plugin, "dark_matter_furnace");
-        this.redMatterFurnaceKey = new NamespacedKey(plugin, "red_matter_furnace");
-        this.alchemicalChestKey = new NamespacedKey(plugin, "alchemical_chest");
-        this.energyCondenserKey = new NamespacedKey(plugin, "energy_condenser");
-        this.energyCondenserMK2Key = new NamespacedKey(plugin, "energy_condenser_mk2");
     }
 
     public boolean isDevice(Block block) {
@@ -40,11 +29,11 @@ public class DeviceManager {
                         block.getLocation().add(0.5, 0.5, 0.5), 0.5, 1.0, 0.5, entity -> entity instanceof ArmorStand);
 
         for (Entity entity : nearbyEntities) {
-            if (entity.getPersistentDataContainer().has(darkMatterFurnaceKey, PersistentDataType.BYTE)
-                    || entity.getPersistentDataContainer().has(redMatterFurnaceKey, PersistentDataType.BYTE)
-                    || entity.getPersistentDataContainer().has(alchemicalChestKey, PersistentDataType.BYTE)
-                    || entity.getPersistentDataContainer().has(energyCondenserKey, PersistentDataType.BYTE)
-                    || entity.getPersistentDataContainer().has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+            if (entity.getPersistentDataContainer().has(DarkMatterFurnace.KEY, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(RedMatterFurnace.KEY, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
                 return true;
             }
         }
@@ -69,15 +58,19 @@ public class DeviceManager {
         if (darkMatterFurnace != null) {
             darkMatterFurnace = new DarkMatterFurnace(plugin);
         }
+
         if (redMatterFurnace != null) {
             redMatterFurnace = new RedMatterFurnace(plugin);
         }
+
         if (alchemicalChest != null) {
             alchemicalChest = new AlchemicalChest(plugin);
         }
+
         if (energyCondenser != null) {
             energyCondenser = new EnergyCondenser(plugin);
         }
+
         if (energyCondenserMK2 != null) {
             energyCondenserMK2 = new EnergyCondenserMK2(plugin);
         }

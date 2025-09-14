@@ -2,6 +2,7 @@ package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.PhilosopherStoneGUI;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -20,8 +21,6 @@ public class PhilosopherStoneGUIListener implements Listener {
     private final ProjectE plugin;
 
     // 数据键
-    private static final NamespacedKey GUI_ITEM_KEY = new NamespacedKey(ProjectE.getInstance(), "gui_item");
-    private static final NamespacedKey CHARGE_LEVEL_KEY = new NamespacedKey(ProjectE.getInstance(), "charge_level");
     private static final NamespacedKey CURRENT_MODE_KEY = new NamespacedKey(ProjectE.getInstance(), "current_mode");
 
     public PhilosopherStoneGUIListener(ProjectE plugin) {
@@ -106,11 +105,11 @@ public class PhilosopherStoneGUIListener implements Listener {
         }
 
         ItemMeta meta = clickedItem.getItemMeta();
-        if (!meta.getPersistentDataContainer().has(CHARGE_LEVEL_KEY, PersistentDataType.INTEGER)) {
+        if (!meta.getPersistentDataContainer().has(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER)) {
             return;
         }
 
-        int clickedLevel = meta.getPersistentDataContainer().get(CHARGE_LEVEL_KEY, PersistentDataType.INTEGER);
+        int clickedLevel = meta.getPersistentDataContainer().get(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER);
         int newChargeLevel;
 
         if (clickedLevel == -1) {

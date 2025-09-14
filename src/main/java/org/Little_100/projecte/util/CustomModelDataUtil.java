@@ -144,7 +144,7 @@ public class CustomModelDataUtil {
             item.setItemMeta(meta);
         } catch (Exception e) {
             // 如果出现异常，记录并返回原物品
-            System.err.println("Failed to set new CustomModelData: " + e.getMessage());
+            ProjectE.getInstance().getLogger().warning("Failed to set new CustomModelData: " + e.getMessage());
         }
 
         return item;
@@ -169,7 +169,7 @@ public class CustomModelDataUtil {
             item.setItemMeta(meta);
         } catch (Exception e) {
             // 如果出现异常，记录并返回原物品
-            System.err.println("Failed to set old CustomModelData: " + e.getMessage());
+            ProjectE.getInstance().getLogger().warning("Failed to set old CustomModelData: " + e.getMessage());
         }
 
         return item;
@@ -215,7 +215,7 @@ public class CustomModelDataUtil {
             try {
                 meta.setCustomModelData(intValue);
             } catch (Exception e) {
-                System.err.println("[CMD] 设置整数值时出错: " + e.getMessage());
+                ProjectE.getInstance().getLogger().warning("[CMD] 设置整数值时出错: " + e.getMessage());
             }
         }
 
@@ -224,21 +224,13 @@ public class CustomModelDataUtil {
             try {
                 // 获取组件，如果不存在则创建一个新的。
                 CustomModelDataComponent component = meta.getCustomModelDataComponent();
-                if (component == null) {
-                    // 无法直接实例化 CustomModelDataComponent，因为它是一个接口。
-                    // 我们必须通过ItemFactory或类似方式来创建，但目前没有公共API。
-                    // 然而，在调用 meta.setCustomModelData(int) 之后，Paper/Spigot应该已经为我们创建了组件。
-                    // 如果它仍然是null，说明服务器实现不支持这种方式，我们无法安全地继续。
-                    System.err.println("[CMD警告] 无法获取或创建CustomModelDataComponent。字符串ID将不会被设置。");
-                } else {
-                    // 为组件设置字符串值。
-                    // 使用整数值的字符串形式，而不是modelId
-                    component.setStrings(Collections.singletonList(String.valueOf(intValue)));
-                    // 将修改后的组件应用回ItemMeta。
-                    meta.setCustomModelDataComponent(component);
-                }
+                // 为组件设置字符串值。
+                // 使用整数值的字符串形式，而不是modelId
+                component.setStrings(Collections.singletonList(String.valueOf(intValue)));
+                // 将修改后的组件应用回ItemMeta。
+                meta.setCustomModelDataComponent(component);
             } catch (Throwable e) {
-                System.err.println("[CMD] 设置字符串组件时出错: " + e.getMessage());
+                ProjectE.getInstance().getLogger().warning("[CMD] 设置字符串组件时出错: " + e.getMessage());
             }
         }
 
@@ -321,7 +313,7 @@ public class CustomModelDataUtil {
                 }
             } catch (Exception e) {
                 // 忽略错误，记录日志但继续执行
-                System.err.println("Warning: Failed to get CustomModelDataInt: " + e.getMessage());
+                ProjectE.getInstance().getLogger().warning("Warning: Failed to get CustomModelDataInt: " + e.getMessage());
             }
         }
 

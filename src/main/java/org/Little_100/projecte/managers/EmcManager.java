@@ -7,7 +7,9 @@ import java.util.Set;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.compatibility.VersionAdapter;
+import org.Little_100.projecte.devices.*;
 import org.Little_100.projecte.storage.DatabaseManager;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.*;
@@ -233,9 +235,8 @@ public class EmcManager {
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
                 PersistentDataContainer container = meta.getPersistentDataContainer();
-                NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
-                if (container.has(idKey, PersistentDataType.STRING)) {
-                    String projecteId = container.get(idKey, PersistentDataType.STRING);
+                if (container.has(Constants.ID_KEY, PersistentDataType.STRING)) {
+                    String projecteId = container.get(Constants.ID_KEY, PersistentDataType.STRING);
                     if ("transmutation_tablet_book".equals(projecteId)) {
                         // Check for CustomModelData to be more specific
                         if (meta.hasCustomModelData() && meta.getCustomModelData() == 1) {
@@ -246,9 +247,8 @@ public class EmcManager {
                     }
                 }
 
-                NamespacedKey kleinStarKey = new NamespacedKey(plugin, "klein_star_level");
-                if (container.has(kleinStarKey, PersistentDataType.INTEGER)) {
-                    int level = container.get(kleinStarKey, PersistentDataType.INTEGER);
+                if (container.has(Constants.KLEIN_STAR_KEY, PersistentDataType.INTEGER)) {
+                    int level = container.get(Constants.KLEIN_STAR_KEY, PersistentDataType.INTEGER);
                     if (level > 0) {
                         String levelName = getLevelName(level);
                         if (levelName != null) {
@@ -257,25 +257,19 @@ public class EmcManager {
                     }
                 }
 
-                NamespacedKey darkMatterFurnaceKey = new NamespacedKey(plugin, "dark_matter_furnace");
-                NamespacedKey redMatterFurnaceKey = new NamespacedKey(plugin, "red_matter_furnace");
-                NamespacedKey alchemicalChestKey = new NamespacedKey(plugin, "alchemical_chest");
-                NamespacedKey energyCondenserKey = new NamespacedKey(plugin, "energy_condenser");
-                NamespacedKey energyCondenserMK2Key = new NamespacedKey(plugin, "energy_condenser_mk2");
-
-                if (container.has(darkMatterFurnaceKey, PersistentDataType.BYTE)) {
+                if (container.has(DarkMatterFurnace.KEY, PersistentDataType.BYTE)) {
                     return "projecte:dark_matter_furnace";
                 }
-                if (container.has(redMatterFurnaceKey, PersistentDataType.BYTE)) {
+                if (container.has(RedMatterFurnace.KEY, PersistentDataType.BYTE)) {
                     return "projecte:red_matter_furnace";
                 }
-                if (container.has(alchemicalChestKey, PersistentDataType.BYTE)) {
+                if (container.has(AlchemicalChest.KEY, PersistentDataType.BYTE)) {
                     return "projecte:alchemical_chest";
                 }
-                if (container.has(energyCondenserKey, PersistentDataType.BYTE)) {
+                if (container.has(EnergyCondenser.KEY, PersistentDataType.BYTE)) {
                     return "projecte:energy_condenser";
                 }
-                if (container.has(energyCondenserMK2Key, PersistentDataType.BYTE)) {
+                if (container.has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
                     return "projecte:energy_condenser_mk2";
                 }
             }
@@ -303,7 +297,7 @@ public class EmcManager {
             return false;
         }
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
+        NamespacedKey idKey = Constants.ID_KEY;
         return container.has(idKey, PersistentDataType.STRING);
     }
 
@@ -340,7 +334,7 @@ public class EmcManager {
             return null;
         }
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        NamespacedKey idKey = new NamespacedKey(plugin, "projecte_id");
+        NamespacedKey idKey = Constants.ID_KEY;
         return container.get(idKey, PersistentDataType.STRING);
     }
 

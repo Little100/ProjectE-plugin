@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -208,7 +209,7 @@ public class FuelManager implements Listener {
         if (meta != null) {
             PersistentDataContainer container = meta.getPersistentDataContainer();
             container.set(key, PersistentDataType.BYTE, value);
-            container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(Constants.ID_KEY, PersistentDataType.STRING, id);
             item.setItemMeta(meta);
         }
     }
@@ -398,15 +399,15 @@ public class FuelManager implements Listener {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
 
-        return container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING)
-                && fuelType.equals(container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING));
+        return container.has(Constants.ID_KEY, PersistentDataType.STRING)
+                && fuelType.equals(container.get(Constants.ID_KEY, PersistentDataType.STRING));
     }
 
     private boolean isFuelItem(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return false;
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        return container.has(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
+        return container.has(Constants.ID_KEY, PersistentDataType.STRING);
     }
 
     // 获取特殊燃料的NBT标签信息以供材质包使用

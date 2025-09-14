@@ -2,8 +2,8 @@ package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.TransmutationGUI;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,13 +16,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.logging.Level;
+
 public class TransmutationTabletBookListener implements Listener {
 
-    private final NamespacedKey projecteIdKey;
-
-    public TransmutationTabletBookListener() {
-        this.projecteIdKey = new NamespacedKey(ProjectE.getInstance(), "projecte_id");
-    }
+    public TransmutationTabletBookListener() {}
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -35,8 +33,7 @@ public class TransmutationTabletBookListener implements Listener {
                     new TransmutationGUI(player).open();
                     event.setCancelled(true);
                 } catch (Exception e) {
-                    ProjectE.getInstance().getLogger().warning("打开转换工具GUI时失败: " + e.getMessage());
-                    e.printStackTrace();
+                    ProjectE.getInstance().getLogger().log(Level.WARNING, "打开转换工具GUI时失败", e);
                 }
             }
         }
@@ -80,8 +77,8 @@ public class TransmutationTabletBookListener implements Listener {
         if (meta == null) {
             return false;
         }
-        if (meta.getPersistentDataContainer().has(projecteIdKey, PersistentDataType.STRING)) {
-            String id = meta.getPersistentDataContainer().get(projecteIdKey, PersistentDataType.STRING);
+        if (meta.getPersistentDataContainer().has(Constants.ID_KEY, PersistentDataType.STRING)) {
+            String id = meta.getPersistentDataContainer().get(Constants.ID_KEY, PersistentDataType.STRING);
             return "transmutation_tablet_book".equals(id);
         }
         return false;

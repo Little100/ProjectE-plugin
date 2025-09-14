@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -75,7 +76,7 @@ public class AccessoryListener implements Listener {
         if (meta == null) return null;
 
         PersistentDataContainer data = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(ProjectE.getInstance(), "projecte_id");
+        NamespacedKey key = Constants.ID_KEY;
 
         if (data.has(key, PersistentDataType.STRING)) {
             String id = data.get(key, PersistentDataType.STRING);
