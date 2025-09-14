@@ -41,6 +41,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class ProjectE extends JavaPlugin {
 
     private static ProjectE instance;
+    private static SchedulerAdapter schedulerAdapter;
 
     private ItemStack philosopherStone;
     private RecipeManager recipeManager;
@@ -102,7 +103,7 @@ public final class ProjectE extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        SchedulerAdapter.init(this);
+        schedulerAdapter = SchedulerAdapter.getInstance();
 
         // 保存默认配置
         saveDefaultConfig();

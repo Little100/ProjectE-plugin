@@ -473,16 +473,7 @@ public class GUIListener implements Listener {
                 ItemStack item = inventory.getItem(i);
                 World world = player.getWorld();
                 if (item != null && !item.getType().isAir()) {
-                    if (inventory.firstEmpty() != -1) {
-                        HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
-                        if (!remainingItems.isEmpty()) {
-                            for (ItemStack remaining : remainingItems.values()) {
-                                world.dropItemNaturally(player.getLocation(), remaining);
-                            }
-                        }
-                    } else {
-                        world.dropItemNaturally(player.getLocation(), item);
-                    }
+                    player.getInventory().addItem(item);
                     inventory.setItem(i, null);
                 }
             }
@@ -678,14 +669,9 @@ public class GUIListener implements Listener {
             ItemStack updatedKleinStar = kleinStarManager.setStoredEmc(kleinStarItem, storedEmc + amountToCharge);
 
             inventory.setItem(kleinStarSlot, null);
-            HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(updatedKleinStar);
-            if (!remainingItems.isEmpty()) {
-                for (ItemStack remaining : remainingItems.values()) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), remaining);
-                }
-            }
+            player.getInventory().addItem(updatedKleinStar);
 
-            refreshGui(player, gui);
+            refreshGui(player, TransmutationGUI.GuiState.CHARGE, gui.getPage());
 
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("emc", String.format("%,d", amountToCharge));
