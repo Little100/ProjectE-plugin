@@ -41,7 +41,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class ProjectE extends JavaPlugin {
 
     private static ProjectE instance;
-
     private static final SchedulerAdapter schedulerAdapter = SchedulerAdapter.getInstance();
 
     private ItemStack philosopherStone;
