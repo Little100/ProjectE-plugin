@@ -8,3 +8,7 @@
 
 ## 自定义方块
   - 由 [_海曦](https://space.bilibili.com/57513157) 提供方向
+
+## 大量优化
+ - [lijinhong11](https://github.com/lijinhong11)
+> https://github.com/Little100/ProjectE-plugin/pull/5

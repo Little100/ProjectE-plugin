@@ -106,10 +106,10 @@ public class LegacyAdapter implements VersionAdapter {
         org.bukkit.configuration.file.FileConfiguration config =
                 ProjectE.getInstance().getConfig();
         org.bukkit.configuration.ConfigurationSection emcSection =
-                config.getConfigurationSection("gui.EMC.ImportantItems");
+                config.getConfigurationSection("TransmutationTable.EMC.ImportantItems");
 
         if (emcSection == null) {
-            ProjectE.getInstance().getLogger().warning("EMC section 'gui.EMC.ImportantItems' not found in config.yml");
+            ProjectE.getInstance().getLogger().warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
