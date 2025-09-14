@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class MindStone {
@@ -26,16 +28,14 @@ public class MindStone {
                     "item.mind_stone.lore1", "item.mind_stone.lore2", "item.mind_stone.lore3", "item.mind_stone.lore4");
             List<String> lore = loreKeys.stream().map(languageManager::get).collect(Collectors.toList());
             meta.setLore(lore);
-            org.bukkit.persistence.PersistentDataContainer data = meta.getPersistentDataContainer();
-            data.set(
-                    new org.bukkit.NamespacedKey(ProjectE.getInstance(), "projecte_id"),
-                    org.bukkit.persistence.PersistentDataType.STRING,
-                    "mind_stone");
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            data.set(Constants.ID_KEY, PersistentDataType.STRING, "mind_stone");
             data.set(STORED_XP_KEY, PersistentDataType.INTEGER, 0);
             item.setItemMeta(meta);
             CustomModelDataUtil.setCustomModelDataBoth(item, "mind_stone", 4);
             updateLore(item);
         }
+
         return item;
     }
 
@@ -92,14 +92,17 @@ public class MindStone {
         if (item == null || !item.hasItemMeta()) {
             return;
         }
+
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return;
         }
+
         List<String> lore = meta.getLore();
         if (lore == null || lore.size() < 4) {
             return;
         }
+
         int storedXp = getStoredXp(item);
         LanguageManager languageManager = ProjectE.getInstance().getLanguageManager();
         String lore4Template = languageManager.get("item.mind_stone.lore4");

@@ -313,7 +313,9 @@ public class CustomModelDataUtil {
                 }
             } catch (Exception e) {
                 // 忽略错误，记录日志但继续执行
-                ProjectE.getInstance().getLogger().warning("Warning: Failed to get CustomModelDataInt: " + e.getMessage());
+                ProjectE.getInstance()
+                        .getLogger()
+                        .warning("Warning: Failed to get CustomModelDataInt: " + e.getMessage());
             }
         }
 

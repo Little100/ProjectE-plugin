@@ -109,7 +109,8 @@ public class PhilosopherStoneGUIListener implements Listener {
             return;
         }
 
-        int clickedLevel = meta.getPersistentDataContainer().get(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER);
+        int clickedLevel =
+                meta.getPersistentDataContainer().get(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER);
         int newChargeLevel;
 
         if (clickedLevel == -1) {

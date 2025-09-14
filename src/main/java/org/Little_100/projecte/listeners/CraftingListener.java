@@ -1,6 +1,8 @@
 package org.Little_100.projecte.listeners;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -30,15 +32,12 @@ public class CraftingListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         Recipe recipe = event.getRecipe();
-        if (recipe == null) {
-            return;
-        }
 
         CraftingInventory inventory = event.getInventory();
 
         boolean hasPhilosopherStone = false;
         for (ItemStack item : inventory.getMatrix()) {
-            if (item != null && plugin.isPhilosopherStone(item)) {
+            if (plugin.isPhilosopherStone(item)) {
                 hasPhilosopherStone = true;
                 break;
             }
@@ -51,39 +50,37 @@ public class CraftingListener implements Listener {
         event.setCancelled(true);
 
         ItemStack result = recipe.getResult().clone();
-        plugin.getLogger().info("贤者之石合成: " + result.getType() + " x" + result.getAmount());
+        Debug.log("贤者之石合成: " + result.getType() + " x" + result.getAmount());
 
         if (event.isShiftClick()) {
             int maxCrafts = calculateMaxCrafts(inventory);
-            plugin.getLogger().info("批量合成，最大次数: " + maxCrafts);
+            Debug.log("批量合成，最大次数: " + maxCrafts);
 
             if (maxCrafts <= 0) {
-                plugin.getLogger().info("无法进行批量合成: 材料不足");
+                Debug.log("无法进行批量合成: 材料不足");
                 return;
             }
 
             int totalAmount = result.getAmount() * maxCrafts;
             result.setAmount(totalAmount);
-            plugin.getLogger().info("合成总量: " + totalAmount);
+            Debug.log("合成总量: " + totalAmount);
 
             consumeIngredients(inventory, maxCrafts);
         } else {
-            plugin.getLogger().info("单次合成: " + result.getType());
+            Debug.log("单次合成: " + result.getType());
 
             consumeIngredients(inventory, 1);
         }
 
-        plugin.getLogger().info("将物品添加到玩家背包: " + result.getType() + " x" + result.getAmount());
+        Debug.log("将物品添加到玩家背包: " + result.getType() + " x" + result.getAmount());
         HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(result);
 
         if (!leftover.isEmpty()) {
-            plugin.getLogger().info("背包已满，部分物品掉落在地上");
+            Debug.log("背包已满，部分物品掉落在地上");
             for (ItemStack item : leftover.values()) {
                 player.getWorld().dropItemNaturally(player.getLocation(), item);
             }
         }
-
-        player.updateInventory();
     }
 
     private void consumeIngredients(CraftingInventory inventory, int times) {
@@ -94,7 +91,7 @@ public class CraftingListener implements Listener {
 
         ItemStack[] matrix = inventory.getMatrix();
 
-        plugin.getLogger().info("消耗材料，次数: " + times);
+        Debug.log("消耗材料，次数: " + times);
 
         StringBuilder before = new StringBuilder("消耗前材料: ");
         for (ItemStack item : matrix) {
@@ -107,7 +104,7 @@ public class CraftingListener implements Listener {
                 before.append("空, ");
             }
         }
-        plugin.getLogger().info(before.toString());
+        Debug.log(before.toString());
 
         for (int i = 0; i < matrix.length; i++) {
             ItemStack item = matrix[i];
@@ -117,7 +114,7 @@ public class CraftingListener implements Listener {
 
             // 保留贤者之石
             if (plugin.isPhilosopherStone(item)) {
-                plugin.getLogger().info("保留贤者之石在位置 " + i);
+                Debug.log("保留贤者之石在位置 " + i);
                 continue;
             }
 
@@ -144,14 +141,13 @@ public class CraftingListener implements Listener {
                 after.append("空, ");
             }
         }
-        plugin.getLogger().info(after.toString());
+        Debug.log(after.toString());
 
         try {
             inventory.setMatrix(matrix);
-            plugin.getLogger().info("合成格已更新");
+            Debug.log("合成格已更新");
         } catch (Exception e) {
-            plugin.getLogger().severe("更新合成格失败: " + e.getMessage());
-            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "更新合成格失败", e);
         }
     }
 

@@ -2,8 +2,6 @@ package org.Little_100.projecte.managers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.Little_100.projecte.ProjectE;
-
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Type;
@@ -11,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import org.Little_100.projecte.ProjectE;
 
 public class SearchLanguageManager {
 
@@ -63,8 +63,7 @@ public class SearchLanguageManager {
 
             plugin.getLogger().info("成功加载 " + idToNameMap.size() + " 个物品名称映射");
         } catch (Exception e) {
-            plugin.getLogger().severe("无法加载搜索语言文件: " + fileName);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "无法加载搜索语言文件: " + fileName, e);
         }
     }
 

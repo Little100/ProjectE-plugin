@@ -3,7 +3,6 @@ package org.Little_100.projecte.accessories;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;

@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
+import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class BodyStone {
     public static ItemStack createBodyStone() {
@@ -23,14 +26,12 @@ public class BodyStone {
             List<String> loreKeys = Arrays.asList("item.body_stone.lore1", "item.body_stone.lore2");
             List<String> lore = loreKeys.stream().map(languageManager::get).collect(Collectors.toList());
             meta.setLore(lore);
-            org.bukkit.persistence.PersistentDataContainer data = meta.getPersistentDataContainer();
-            data.set(
-                    new org.bukkit.NamespacedKey(ProjectE.getInstance(), "projecte_id"),
-                    org.bukkit.persistence.PersistentDataType.STRING,
-                    "body_stone");
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            data.set(Constants.ID_KEY, PersistentDataType.STRING, "body_stone");
             item.setItemMeta(meta);
             CustomModelDataUtil.setCustomModelDataBoth(item, "body_stone", 1);
         }
+
         return item;
     }
 

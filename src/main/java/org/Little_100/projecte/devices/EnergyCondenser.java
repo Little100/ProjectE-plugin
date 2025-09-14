@@ -11,7 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class EnergyCondenser implements Listener {
-    public static final NamespacedKey KEY = new NamespacedKey(ProjectE.getInstance(), "energy_condenser");;
+    public static final NamespacedKey KEY = new NamespacedKey(ProjectE.getInstance(), "energy_condenser");
+    ;
 
     private final ProjectE plugin;
 

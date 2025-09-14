@@ -2,11 +2,9 @@ package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.compatibility.GeyserAdapter;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.geysermc.geyser.api.GeyserApi;
 
 public class GeyserPlayerJoinListener implements Listener {
 
@@ -20,6 +18,8 @@ public class GeyserPlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        // 这里的log真的有用吗
+        /*
         if (geyserAdapter == null || !geyserAdapter.isGeyserApiAvailable()) {
             return;
         }
@@ -30,5 +30,6 @@ public class GeyserPlayerJoinListener implements Listener {
             // This listener can be used for other Geyser-specific logic on player join.
             plugin.getLogger().info("Geyser player " + player.getName() + " has joined.");
         }
+         */
     }
 }

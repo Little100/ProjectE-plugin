@@ -4,21 +4,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.tools.ToolManager;
+import org.Little_100.projecte.util.Constants;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 public class ToolAbilityListener implements Listener {
@@ -95,17 +96,15 @@ public class ToolAbilityListener implements Listener {
     private void handleKatarShear(Player player, ItemStack katar) {
         int range = 50;
 
-        List<org.bukkit.entity.Sheep> sheepList =
-                player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
-                        .filter(sheep ->
-                                !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
-                        .collect(java.util.stream.Collectors.toList());
+        List<Sheep> sheepList = player.getWorld().getEntitiesByClass(Sheep.class).stream()
+                .filter(sheep -> !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
+                .collect(Collectors.toList());
 
         if (!sheepList.isEmpty()) {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_SHEEP_SHEAR, 1.0f, 1.0f);
         }
 
-        for (org.bukkit.entity.Sheep sheep : sheepList) {
+        for (Sheep sheep : sheepList) {
             sheep.setSheared(true);
             int woolAmount = 1 + new java.util.Random().nextInt(3);
             Material woolType = getWoolMaterial(sheep.getColor());
@@ -128,12 +127,9 @@ public class ToolAbilityListener implements Listener {
         }
 
         if (!katar.hasItemMeta()) return;
-        org.bukkit.inventory.meta.ItemMeta meta = katar.getItemMeta();
-        org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
-        int currentMode = container.getOrDefault(
-                new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"),
-                org.bukkit.persistence.PersistentDataType.INTEGER,
-                0);
+        ItemMeta meta = katar.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        int currentMode = container.getOrDefault(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, 0);
 
         // 检查配置是否允许全部模式伤害
         boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
@@ -145,8 +141,7 @@ public class ToolAbilityListener implements Listener {
                 player.getWorld().getNearbyEntities(player.getLocation(), range, range, range);
 
         List<LivingEntity> targets = nearbyEntities.stream()
-                .filter(e ->
-                        e instanceof LivingEntity && !e.equals(player) && !(e instanceof org.bukkit.entity.ArmorStand))
+                .filter(e -> e instanceof LivingEntity && !e.equals(player) && !(e instanceof ArmorStand))
                 .filter(e -> {
                     // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
                     if (!attackAllModeEnabled || currentMode == 1) {
@@ -364,7 +359,7 @@ public class ToolAbilityListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof org.bukkit.entity.ArmorStand) {
+        if (event.getEntity() instanceof ArmorStand) {
             if (event.getDamager() instanceof Player) {
                 Player player = (Player) event.getDamager();
                 if (toolManager.isRedMatterKatar(player.getInventory().getItemInMainHand())) {
@@ -382,12 +377,9 @@ public class ToolAbilityListener implements Listener {
         if (!toolManager.isRedMatterKatar(itemInHand)) return;
 
         if (!itemInHand.hasItemMeta()) return;
-        org.bukkit.inventory.meta.ItemMeta meta = itemInHand.getItemMeta();
-        org.bukkit.persistence.PersistentDataContainer container = meta.getPersistentDataContainer();
-        int currentMode = container.getOrDefault(
-                new org.bukkit.NamespacedKey(plugin, "projecte_katar_mode"),
-                org.bukkit.persistence.PersistentDataType.INTEGER,
-                0);
+        ItemMeta meta = itemInHand.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        int currentMode = container.getOrDefault(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, 0);
 
         // 检查配置是否允许全部模式伤害
         boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
@@ -415,17 +407,15 @@ public class ToolAbilityListener implements Listener {
 
         if (range == 0) return;
 
-        List<org.bukkit.entity.Sheep> sheepList =
-                player.getWorld().getEntitiesByClass(org.bukkit.entity.Sheep.class).stream()
-                        .filter(sheep ->
-                                !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
-                        .collect(java.util.stream.Collectors.toList());
+        List<Sheep> sheepList = player.getWorld().getEntitiesByClass(Sheep.class).stream()
+                .filter(sheep -> !sheep.isSheared() && sheep.getLocation().distance(player.getLocation()) <= range)
+                .collect(java.util.stream.Collectors.toList());
 
         if (!sheepList.isEmpty()) {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_SHEEP_SHEAR, 1.0f, 1.0f);
         }
 
-        for (org.bukkit.entity.Sheep sheep : sheepList) {
+        for (Sheep sheep : sheepList) {
             sheep.setSheared(true);
             int woolAmount = 1 + new java.util.Random().nextInt(3);
             Material woolType = getWoolMaterial(sheep.getColor());

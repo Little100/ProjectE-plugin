@@ -4,7 +4,6 @@ import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.ToolChargeGUI;
 import org.Little_100.projecte.tools.ToolManager;
 import org.Little_100.projecte.util.Constants;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -148,7 +148,9 @@ public class PhilosopherStoneGUI {
         ItemStack emeraldItem = createGuiItem(Material.EMERALD_BLOCK, ChatColor.GOLD + chargeLevelText, emeraldLore);
         ItemMeta emeraldMeta = emeraldItem.getItemMeta();
         if (emeraldMeta != null) {
-            emeraldMeta.getPersistentDataContainer().set(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, -1); // -1 表示绿宝石块
+            emeraldMeta
+                    .getPersistentDataContainer()
+                    .set(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, -1); // -1 表示绿宝石块
             emeraldItem.setItemMeta(emeraldMeta);
         }
         inventory.setItem(EMERALD_SLOT, emeraldItem);
@@ -167,7 +169,9 @@ public class PhilosopherStoneGUI {
             ItemStack redstoneItem = createGuiItem(material, ChatColor.GOLD + progressText, redstoneLore);
             ItemMeta redstoneMeta = redstoneItem.getItemMeta();
             if (redstoneMeta != null) {
-                redstoneMeta.getPersistentDataContainer().set(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, i + 1);
+                redstoneMeta
+                        .getPersistentDataContainer()
+                        .set(Constants.CHARGE_LEVEL_KEY, PersistentDataType.INTEGER, i + 1);
                 redstoneItem.setItemMeta(redstoneMeta);
             }
 

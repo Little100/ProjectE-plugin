@@ -62,7 +62,6 @@ public class CovalenceDustCraftListener implements Listener {
         // 如果成功合成了至少一个，则消耗原料
         if (numCrafted > 0) {
             consumeIngredients(inv, numCrafted);
-            player.updateInventory();
         }
     }
 

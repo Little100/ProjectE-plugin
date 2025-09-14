@@ -1,7 +1,6 @@
 package org.Little_100.projecte.tome;
 
 import java.util.Collections;
-
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
@@ -43,7 +42,10 @@ public class TransmutationTabletBook {
             }
 
             meta.getPersistentDataContainer()
-                    .set(Constants.ID_KEY, org.bukkit.persistence.PersistentDataType.STRING, "transmutation_tablet_book");
+                    .set(
+                            Constants.ID_KEY,
+                            org.bukkit.persistence.PersistentDataType.STRING,
+                            "transmutation_tablet_book");
             Debug.log("设置PersistentDataContainer: transmutation_tablet_book");
 
             tome.setItemMeta(meta);

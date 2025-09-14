@@ -378,10 +378,12 @@ public class ArmorListener implements Listener {
                 event.setResult(null);
                 return;
             }
+
             if (second != null && second.getType() == org.bukkit.Material.ENCHANTED_BOOK) {
                 event.setResult(null);
                 return;
             }
+
             if (second != null) {
                 event.setResult(null);
             }

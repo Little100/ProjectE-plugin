@@ -184,8 +184,8 @@ public class PhilosopherStoneListener implements Listener {
         inventory.setMatrix(matrix);
 
         // 检查玩家光标是否为空
-        if (player.getItemOnCursor() != null
-                && !player.getItemOnCursor().getType().isAir()) {
+        player.getItemOnCursor();
+        if (!player.getItemOnCursor().getType().isAir()) {
             event.setCancelled(true);
             return;
         }
@@ -210,7 +210,7 @@ public class PhilosopherStoneListener implements Listener {
         int transformedCount = 0;
         for (Block block : blocksToTransform) {
             Material blockMaterial = block.getType();
-            Material newMaterial = null;
+            Material newMaterial;
 
             if (isShiftClick) {
                 newMaterial = getShiftRightClickTransformation(blockMaterial);

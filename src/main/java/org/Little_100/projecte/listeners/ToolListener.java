@@ -42,7 +42,6 @@ public class ToolListener implements Listener {
     @EventHandler
     public void onItemDamage(PlayerItemDamageEvent event) {
         ItemStack item = event.getItem();
-        Player player = event.getPlayer();
 
         if (toolManager.isProjectETool(item)) {
             event.setCancelled(true);

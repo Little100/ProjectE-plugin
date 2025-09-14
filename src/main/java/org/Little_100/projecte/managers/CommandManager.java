@@ -195,7 +195,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         Map<String, String> placeholders = new HashMap<>();
         placeholders.put("file", fileName);
         player.sendMessage(languageManager.get("serverside.command.gui.opening_editor", placeholders));
-
     }
 
     private void handleRecalculate(CommandSender sender) {
@@ -355,7 +354,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         sender.sendMessage(languageManager.get("serverside.command.debug.footer"));
-
     }
 
     private void handlePayEmc(CommandSender sender, String[] args) {

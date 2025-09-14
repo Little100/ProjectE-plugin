@@ -111,11 +111,11 @@ public class CovalenceDustListener implements Listener {
             }
         }
 
-        if (tool == null || dust == null || dustCount != 1) {
+        if (tool == null || dust == null) {
             return;
         }
 
-        if (tool == null || dust == null) {
+        if (dustCount != 1) {
             return;
         }
 
