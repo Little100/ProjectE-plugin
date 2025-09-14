@@ -99,9 +99,8 @@ public class CovalenceDust {
     }
 
     public void setCovalenceDustEmcValues() {
-        var db = plugin.getDatabaseManager();
         var emcManager = plugin.getEmcManager();
-        java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
+        File configFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!configFile.exists()) {
             plugin.getLogger()
                     .warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");

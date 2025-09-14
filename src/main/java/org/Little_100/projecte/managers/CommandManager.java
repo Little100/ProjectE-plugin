@@ -346,8 +346,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 String divisionStrategy = plugin.getConfig()
                         .getString("gui.EMC.divisionStrategy", "floor")
                         .toLowerCase();
-                java.util.List<String> debugInfo =
-                        plugin.getVersionAdapter().getRecipeDebugInfo(recipe, divisionStrategy);
+                List<String> debugInfo = plugin.getVersionAdapter().getRecipeDebugInfo(recipe, divisionStrategy);
                 for (String line : debugInfo) {
                     sender.sendMessage(ChatColor.GRAY + "  " + line);
                 }

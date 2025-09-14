@@ -1,9 +1,6 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
@@ -29,8 +26,8 @@ public class PhilosopherStoneListener implements Listener {
     private final ProjectE plugin;
 
     // 持续粒子效果系统
-    private final Map<java.util.UUID, Long> playerCooldowns = new HashMap<>();
-    private final java.util.Set<java.util.UUID> interactedThisTick = new java.util.HashSet<>();
+    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private final Set<UUID> interactedThisTick = new HashSet<>();
 
     private static final Material[] MATERIALS_CYCLE = {
         Material.COBBLESTONE, Material.STONE, Material.GRAVEL, Material.SAND
@@ -445,8 +442,7 @@ public class PhilosopherStoneListener implements Listener {
         return blocks;
     }
 
-    private List<Block> getBlocksInPlaneByFace(
-            Block center, int width, int height, BlockFace clickedFace) {
+    private List<Block> getBlocksInPlaneByFace(Block center, int width, int height, BlockFace clickedFace) {
         List<Block> blocks = new ArrayList<>();
 
         Vector right, up;

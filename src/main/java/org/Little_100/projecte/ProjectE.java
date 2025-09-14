@@ -138,7 +138,7 @@ public final class ProjectE extends JavaPlugin {
                 String name = entry.getName();
                 // 只释放 lang/ 目录下的 yml 文件
                 if (name.startsWith("lang/") && name.endsWith(".yml") && !entry.isDirectory()) {
-                    java.io.File outFile = new java.io.File(getDataFolder(), name);
+                    File outFile = new File(getDataFolder(), name);
                     if (!outFile.exists()) {
                         saveResource(name, false);
                         Map<String, String> placeholders = new HashMap<>();

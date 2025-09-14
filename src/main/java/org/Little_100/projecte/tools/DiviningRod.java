@@ -1,5 +1,6 @@
 package org.Little_100.projecte.tools;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
@@ -91,7 +92,7 @@ public class DiviningRod {
 
     public void setDiviningRodEmcValues() {
         var emcManager = plugin.getEmcManager();
-        java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
+        File configFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!configFile.exists()) {
             plugin.getLogger()
                     .warning("custommoditememc.yml not found, custom divining rod EMC values will not be loaded.");

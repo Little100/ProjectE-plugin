@@ -1,5 +1,6 @@
 package org.Little_100.projecte.devices;
 
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.Little_100.projecte.ProjectE;
@@ -137,7 +138,7 @@ public class FurnaceManager {
                     plugin.getLogger().severe("GUI layout file not found in JAR: " + fileName);
                     continue;
                 }
-                YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(is));
+                YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(is));
                 int size = config.getInt("size", 54);
                 ItemStack[] layout = new ItemStack[size];
                 List<Integer> currentInput = new ArrayList<>();

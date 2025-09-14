@@ -179,7 +179,7 @@ public class FuelManager implements Listener {
             Material material,
             String displayNameKey,
             int customModelData,
-            java.util.List<String> loreKeys,
+            List<String> loreKeys,
             NamespacedKey key,
             byte value,
             String id) {
@@ -189,7 +189,7 @@ public class FuelManager implements Listener {
             meta.setDisplayName(plugin.getLanguageManager().get(displayNameKey));
             List<String> translatedLore = loreKeys.stream()
                     .map(loreKey -> plugin.getLanguageManager().get(loreKey))
-                    .collect(java.util.stream.Collectors.toList());
+                    .collect(Collectors.toList());
             meta.setLore(translatedLore);
 
             item.setItemMeta(meta);
