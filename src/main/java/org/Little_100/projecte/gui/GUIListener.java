@@ -303,7 +303,7 @@ public class GUIListener implements Listener {
                     placeholders.put("item", displayName);
                     player.sendMessage(lang.get("serverside.command.generic.buy_success", placeholders));
 
-                    refreshGui(player, TransmutationGUI.GuiState.BUY, gui.getPage());
+                    refreshGui(player, gui);
 
                 } else {
                     player.sendMessage(ProjectE.getInstance()
@@ -411,7 +411,7 @@ public class GUIListener implements Listener {
             }
         }
 
-        refreshGui(player, TransmutationGUI.GuiState.SELL, 0);
+        refreshGui(player, gui);
     }
 
     private void handleLearnScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
@@ -471,18 +471,21 @@ public class GUIListener implements Listener {
         player.closeInventory();
     }
 
-    private void refreshGui(Player player, TransmutationGUI.GuiState state, int page) {
+    private void refreshGui(Player player, TransmutationGUI oldGui) {
+        final TransmutationGUI.GuiState state = oldGui.getCurrentState();
+        final int page = oldGui.getPage();
+        final String searchQuery = oldGui.getSearchQuery();
+
         player.closeInventory();
-        ProjectE.getInstance()
-                .getSchedulerAdapter()
-                .runTaskLater(
-                        () -> {
-                            TransmutationGUI newGui = new TransmutationGUI(player);
-                            newGui.setState(state);
-                            newGui.setPage(page);
-                            newGui.open();
-                        },
-                        1L);
+        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
+            TransmutationGUI newGui = new TransmutationGUI(player);
+            newGui.setState(state);
+            newGui.setPage(page);
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                newGui.setSearchQuery(searchQuery);
+            }
+            newGui.open();
+        }, 1L);
     }
 
     @EventHandler
@@ -652,7 +655,7 @@ public class GUIListener implements Listener {
             inventory.setItem(kleinStarSlot, null);
             player.getInventory().addItem(updatedKleinStar);
 
-            refreshGui(player, TransmutationGUI.GuiState.CHARGE, gui.getPage());
+            refreshGui(player, gui);
 
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("emc", String.format("%,d", amountToCharge));

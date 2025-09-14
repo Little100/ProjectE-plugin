@@ -351,6 +351,10 @@ public class TransmutationGUI implements InventoryHolder {
         return page;
     }
 
+    public String getSearchQuery() {
+        return searchQuery;
+    }
+
     public void setSearchQuery(String query) {
         this.searchQuery = query;
         this.page = 0;
