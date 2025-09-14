@@ -1,5 +1,6 @@
 package org.Little_100.projecte;
 
+import java.io.File;
 import java.util.List;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.ItemUtils;

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.util.Constants;
