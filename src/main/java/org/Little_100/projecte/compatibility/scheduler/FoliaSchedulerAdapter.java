@@ -11,7 +11,7 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
 
     private final JavaPlugin plugin;
 
-    public FoliaSchedulerAdapter(JavaPlugin plugin) {
+    FoliaSchedulerAdapter(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

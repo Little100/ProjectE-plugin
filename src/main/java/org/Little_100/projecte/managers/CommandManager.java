@@ -23,6 +23,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -331,14 +332,14 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         placeholders.put("learned", learned ? "Yes" : "No");
         sender.sendMessage(languageManager.get("serverside.command.debug.is_learned", placeholders));
 
-        java.util.List<org.bukkit.inventory.Recipe> recipes = org.bukkit.Bukkit.getRecipesFor(itemInHand);
+        List<Recipe> recipes = Bukkit.getRecipesFor(itemInHand);
         if (recipes.isEmpty()) {
             sender.sendMessage(languageManager.get("serverside.command.debug.no_recipe"));
         } else {
             placeholders.put("count", String.valueOf(recipes.size()));
             sender.sendMessage(languageManager.get("serverside.command.debug.recipe_found", placeholders));
             for (int i = 0; i < recipes.size(); i++) {
-                org.bukkit.inventory.Recipe recipe = recipes.get(i);
+                Recipe recipe = recipes.get(i);
                 Map<String, String> recipePlaceholders = new HashMap<>();
                 recipePlaceholders.put("index", String.valueOf(i + 1));
                 sender.sendMessage(languageManager.get("serverside.command.debug.recipe_header", recipePlaceholders));

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.compatibility.VersionAdapter;
+import org.Little_100.projecte.compatibility.version.VersionAdapter;
 import org.Little_100.projecte.devices.*;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.util.Constants;

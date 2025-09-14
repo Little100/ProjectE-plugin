@@ -1,5 +1,6 @@
 package org.Little_100.projecte.managers;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.Little_100.projecte.util.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -473,11 +475,11 @@ public class FuelManager implements Listener {
         DatabaseManager db = plugin.getDatabaseManager();
 
         // 尝试加载自定义EMC配置文件
-        java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
-        org.bukkit.configuration.file.YamlConfiguration config = null;
+        File configFile = new File(plugin.getDataFolder(), "custommoditememc.yml");
+        YamlConfiguration config = null;
 
         if (configFile.exists()) {
-            config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+            config = YamlConfiguration.loadConfiguration(configFile);
             plugin.getLogger().info("Loaded custom EMC values from custommoditememc.yml");
         } else {
             plugin.getLogger().info("custommoditememc.yml not found, using default EMC values");
