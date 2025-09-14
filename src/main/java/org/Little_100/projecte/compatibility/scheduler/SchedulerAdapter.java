@@ -1,9 +1,15 @@
 package org.Little_100.projecte.compatibility.scheduler;
 
+import org.Little_100.projecte.ProjectE;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 public interface SchedulerAdapter {
+
+    static void init(ProjectE plugin) {
+        SchedulerMatcher.init(plugin);
+    }
+
     static SchedulerAdapter getInstance() {
         return SchedulerMatcher.getSchedulerAdapter();
     }
@@ -11,7 +17,6 @@ public interface SchedulerAdapter {
     void runTask(Runnable task);
 
     void runTaskAsynchronously(Runnable task);
-
     void runTaskLater(Runnable task, long delay);
 
     void runTaskAt(Location location, Runnable task);

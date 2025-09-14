@@ -3,9 +3,12 @@ package org.Little_100.projecte.compatibility.scheduler;
 import org.Little_100.projecte.ProjectE;
 
 class SchedulerMatcher {
-    private static final SchedulerAdapter adapter;
+    private static SchedulerAdapter adapter;
 
-    static {
+    public static void init(ProjectE plugin) {
+        if (adapter != null) {
+            return;
+        }
         boolean folia = false;
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
@@ -15,13 +18,16 @@ class SchedulerMatcher {
         }
 
         if (folia) {
-            adapter = new FoliaSchedulerAdapter(ProjectE.getInstance());
+            adapter = new FoliaSchedulerAdapter(plugin);
         } else {
-            adapter = new SpigotSchedulerAdapter(ProjectE.getInstance());
+            adapter = new SpigotSchedulerAdapter(plugin);
         }
     }
 
     public static SchedulerAdapter getSchedulerAdapter() {
+        if (adapter == null) {
+            throw new IllegalStateException("SchedulerAdapter has not been initialized yet!");
+        }
         return adapter;
     }
 }

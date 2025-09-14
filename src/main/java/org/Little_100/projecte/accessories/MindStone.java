@@ -1,7 +1,9 @@
 package org.Little_100.projecte.accessories;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
@@ -49,7 +51,7 @@ public class MindStone {
                 player.setExp(0f);
                 storeXp(item, getStoredXp(item) + xpToStore);
                 LanguageManager languageManager = ProjectE.getInstance().getLanguageManager();
-                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                Map<String, String> placeholders = new HashMap<>();
                 placeholders.put("xp", String.valueOf(xpToStore));
                 player.sendMessage(languageManager.get("serverside.message.mind_stone.absorbed_xp", placeholders));
             }
@@ -62,7 +64,7 @@ public class MindStone {
                 player.giveExp(amountToGive);
                 storeXp(item, storedXp - amountToGive);
                 LanguageManager languageManager = ProjectE.getInstance().getLanguageManager();
-                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                Map<String, String> placeholders = new HashMap<>();
                 placeholders.put("xp", String.valueOf(amountToGive));
                 player.sendMessage(languageManager.get("serverside.message.mind_stone.retrieved_xp", placeholders));
             }

@@ -10,7 +10,9 @@ import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
 import org.Little_100.projecte.util.ShulkerBoxUtil;
+import org.bukkit.World;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -286,7 +288,12 @@ public class GUIListener implements Listener {
                         }
                     }
 
-                    player.getInventory().addItem(purchasedItem);
+                    HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(purchasedItem);
+                    if (!remainingItems.isEmpty()) {
+                        for (ItemStack remaining : remainingItems.values()) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+                        }
+                    }
 
                     String displayName;
                     ItemMeta meta = purchasedItem.getItemMeta();
@@ -301,7 +308,7 @@ public class GUIListener implements Listener {
                     placeholders.put("item", displayName);
                     player.sendMessage(lang.get("serverside.command.generic.buy_success", placeholders));
 
-                    refreshGui(player, TransmutationGUI.GuiState.BUY, gui.getPage());
+                    refreshGui(player, gui);
 
                 } else {
                     player.sendMessage(ProjectE.getInstance()
@@ -312,7 +319,7 @@ public class GUIListener implements Listener {
         }
     }
 
-    private void handleTransaction(org.bukkit.entity.HumanEntity humanEntity, TransmutationGUI gui) {
+    private void handleTransaction(HumanEntity humanEntity, TransmutationGUI gui) {
         Player player = (Player) humanEntity;
         Inventory inventory = gui.getInventory();
         long totalEmcChange = 0;
@@ -345,7 +352,12 @@ public class GUIListener implements Listener {
                                             : itemWithoutEmc.getType().name());
                             player.sendMessage(lang.get("serverside.command.generic.shulker_box_no_emc", placeholders));
 
-                            player.getInventory().addItem(item);
+                            HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+                            if (!remainingItems.isEmpty()) {
+                                for (ItemStack remaining : remainingItems.values()) {
+                                    player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+                                }
+                            }
                             inventory.setItem(i, null);
                             transactionValid = false;
                             continue; // 继续检查下一个物品
@@ -378,7 +390,12 @@ public class GUIListener implements Listener {
                         }
                     } else {
                         handleNoEmcItem(player, item);
-                        player.getInventory().addItem(item);
+                        HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+                        if (!remainingItems.isEmpty()) {
+                            for (ItemStack remaining : remainingItems.values()) {
+                                player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+                            }
+                        }
                         inventory.setItem(i, null);
                         transactionValid = false;
                     }
@@ -409,7 +426,7 @@ public class GUIListener implements Listener {
             }
         }
 
-        refreshGui(player, TransmutationGUI.GuiState.SELL, 0);
+        refreshGui(player, gui);
     }
 
     private void handleLearnScreenClick(InventoryClickEvent event, TransmutationGUI gui) {
@@ -425,7 +442,7 @@ public class GUIListener implements Listener {
         }
     }
 
-    private void handleLearn(org.bukkit.entity.HumanEntity humanEntity, TransmutationGUI gui) {
+    private void handleLearn(HumanEntity humanEntity, TransmutationGUI gui) {
         Player player = (Player) humanEntity;
         Inventory inventory = gui.getInventory();
         boolean learnedSomething = false;
@@ -454,27 +471,41 @@ public class GUIListener implements Listener {
         for (int i = 0; i < 54; i++) {
             if (isTransactionArea(i)) {
                 ItemStack item = inventory.getItem(i);
+                World world = player.getWorld();
                 if (item != null && !item.getType().isAir()) {
-                    player.getInventory().addItem(item);
+                    if (inventory.firstEmpty() != -1) {
+                        HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+                        if (!remainingItems.isEmpty()) {
+                            for (ItemStack remaining : remainingItems.values()) {
+                                world.dropItemNaturally(player.getLocation(), remaining);
+                            }
+                        }
+                    } else {
+                        world.dropItemNaturally(player.getLocation(), item);
+                    }
                     inventory.setItem(i, null);
                 }
             }
         }
+
         player.closeInventory();
     }
 
-    private void refreshGui(Player player, TransmutationGUI.GuiState state, int page) {
+    private void refreshGui(Player player, TransmutationGUI oldGui) {
+        final TransmutationGUI.GuiState state = oldGui.getCurrentState();
+        final int page = oldGui.getPage();
+        final String searchQuery = oldGui.getSearchQuery();
+
         player.closeInventory();
-        ProjectE.getInstance()
-                .getSchedulerAdapter()
-                .runTaskLater(
-                        () -> {
-                            TransmutationGUI newGui = new TransmutationGUI(player);
-                            newGui.setState(state);
-                            newGui.setPage(page);
-                            newGui.open();
-                        },
-                        1L);
+        ProjectE.getInstance().getSchedulerAdapter().runTaskLater(() -> {
+            TransmutationGUI newGui = new TransmutationGUI(player);
+            newGui.setState(state);
+            newGui.setPage(page);
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                newGui.setSearchQuery(searchQuery);
+            }
+            newGui.open();
+        }, 1L);
     }
 
     @EventHandler
@@ -523,7 +554,12 @@ public class GUIListener implements Listener {
                 if (isTransactionArea(i)) {
                     ItemStack item = inventory.getItem(i);
                     if (item != null && !item.getType().isAir()) {
-                        player.getInventory().addItem(item);
+                        HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+                        if (!remainingItems.isEmpty()) {
+                            for (ItemStack remaining : remainingItems.values()) {
+                                player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+                            }
+                        }
                     }
                 }
             }
@@ -642,9 +678,14 @@ public class GUIListener implements Listener {
             ItemStack updatedKleinStar = kleinStarManager.setStoredEmc(kleinStarItem, storedEmc + amountToCharge);
 
             inventory.setItem(kleinStarSlot, null);
-            player.getInventory().addItem(updatedKleinStar);
+            HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(updatedKleinStar);
+            if (!remainingItems.isEmpty()) {
+                for (ItemStack remaining : remainingItems.values()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+                }
+            }
 
-            refreshGui(player, TransmutationGUI.GuiState.CHARGE, gui.getPage());
+            refreshGui(player, gui);
 
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("emc", String.format("%,d", amountToCharge));

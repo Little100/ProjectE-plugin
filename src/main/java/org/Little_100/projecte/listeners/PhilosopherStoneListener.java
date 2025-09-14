@@ -1,9 +1,6 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
@@ -11,6 +8,8 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -26,8 +26,8 @@ public class PhilosopherStoneListener implements Listener {
     private final ProjectE plugin;
 
     // 持续粒子效果系统
-    private final Map<java.util.UUID, Long> playerCooldowns = new HashMap<>();
-    private final java.util.Set<java.util.UUID> interactedThisTick = new java.util.HashSet<>();
+    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private final Set<UUID> interactedThisTick = new HashSet<>();
 
     private static final Material[] MATERIALS_CYCLE = {
         Material.COBBLESTONE, Material.STONE, Material.GRAVEL, Material.SAND
@@ -51,7 +51,7 @@ public class PhilosopherStoneListener implements Listener {
         Player player = event.getPlayer();
 
         // 只处理主手事件
-        if (event.getHand() != org.bukkit.inventory.EquipmentSlot.HAND) {
+        if (event.getHand() != EquipmentSlot.HAND) {
             return;
         }
 
@@ -407,7 +407,7 @@ public class PhilosopherStoneListener implements Listener {
         return null;
     }
 
-    private boolean hasPhilosopherStone(org.bukkit.entity.HumanEntity player) {
+    private boolean hasPhilosopherStone(HumanEntity player) {
         for (ItemStack item : player.getInventory().getContents()) {
             if (plugin.isPhilosopherStone(item)) {
                 return true;
@@ -417,7 +417,7 @@ public class PhilosopherStoneListener implements Listener {
     }
 
     private List<Block> getBlocksInAreaByClickedFace(
-            Block center, PhilosopherStoneGUI.TransformationArea area, org.bukkit.block.BlockFace clickedFace) {
+            Block center, PhilosopherStoneGUI.TransformationArea area, BlockFace clickedFace) {
         List<Block> blocks = new ArrayList<>();
 
         int width = area.getWidth();
@@ -442,8 +442,7 @@ public class PhilosopherStoneListener implements Listener {
         return blocks;
     }
 
-    private List<Block> getBlocksInPlaneByFace(
-            Block center, int width, int height, org.bukkit.block.BlockFace clickedFace) {
+    private List<Block> getBlocksInPlaneByFace(Block center, int width, int height, BlockFace clickedFace) {
         List<Block> blocks = new ArrayList<>();
 
         Vector right, up;
@@ -485,7 +484,7 @@ public class PhilosopherStoneListener implements Listener {
         return blocks;
     }
 
-    private List<Block> getBlocksInLineByFace(Block center, int length, org.bukkit.block.BlockFace clickedFace) {
+    private List<Block> getBlocksInLineByFace(Block center, int length, BlockFace clickedFace) {
         List<Block> blocks = new ArrayList<>();
 
         Vector lineDirection;
@@ -537,7 +536,7 @@ public class PhilosopherStoneListener implements Listener {
     }
 
     private void spawnParticleOutline(Player player, List<Block> blocks) {
-        org.bukkit.configuration.file.FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = plugin.getConfig();
         String particleName = config.getString("philosopher_stone.particle.particle-name", "END_ROD")
                 .toUpperCase();
         Particle particle;

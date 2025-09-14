@@ -130,7 +130,7 @@ public class RecipeManager {
             }
         }
 
-        java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+        Map<String, String> placeholders = new HashMap<>();
         placeholders.put("recipe", id);
         Debug.log("debug.recipe.loading_recipe", placeholders);
 
