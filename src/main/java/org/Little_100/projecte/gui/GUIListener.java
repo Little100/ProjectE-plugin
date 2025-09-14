@@ -671,7 +671,7 @@ public class GUIListener implements Listener {
             inventory.setItem(kleinStarSlot, null);
             player.getInventory().addItem(updatedKleinStar);
 
-            refreshGui(player, TransmutationGUI.GuiState.CHARGE, gui.getPage());
+            refreshGui(player, gui);
 
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("emc", String.format("%,d", amountToCharge));
