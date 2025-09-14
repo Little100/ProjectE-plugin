@@ -1,5 +1,6 @@
 package org.Little_100.projecte.devices;
 
+import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -7,15 +8,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Map;
-
 public class CondenserListener implements Listener {
 
-    private final ProjectE plugin;
     private final CondenserManager condenserManager;
 
     public CondenserListener(ProjectE plugin) {
-        this.plugin = plugin;
         this.condenserManager = plugin.getCondenserManager();
     }
 
@@ -25,7 +22,8 @@ public class CondenserListener implements Listener {
         if (clickedInventory == null) return;
 
         CondenserManager.CondenserState condenserState = null;
-        for (Map.Entry<Location, CondenserManager.CondenserState> entry : condenserManager.getActiveCondensers().entrySet()) {
+        for (Map.Entry<Location, CondenserManager.CondenserState> entry :
+                condenserManager.getActiveCondensers().entrySet()) {
             if (entry.getValue().getInventory().equals(clickedInventory)) {
                 condenserState = entry.getValue();
                 break;
@@ -41,8 +39,7 @@ public class CondenserListener implements Listener {
                     event.setCancelled(true);
                 }
 
-                if (!condenserManager.isTargetSlot(type, slot) && event.getCursor() != null) {
-                }
+                if (!condenserManager.isTargetSlot(type, slot) && event.getCursor() != null) {}
             }
         }
     }

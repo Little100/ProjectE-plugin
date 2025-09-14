@@ -1,18 +1,19 @@
 package org.Little_100.projecte.compatibility;
 
-import org.Little_100.projecte.EmcManager;
-import org.Little_100.projecte.ProjectE;
-import org.Little_100.projecte.storage.DatabaseManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.*;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.managers.EmcManager;
+import org.Little_100.projecte.storage.DatabaseManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.*;
 
 public class ModernAdapter implements VersionAdapter {
 
@@ -55,21 +56,17 @@ public class ModernAdapter implements VersionAdapter {
         if (recipe instanceof ShapedRecipe) {
             ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
             for (RecipeChoice choice : shapedRecipe.getChoiceMap().values()) {
-                if (choice == null)
-                    continue;
+                if (choice == null) continue;
                 long ingredientEmc = getChoiceEmc(choice);
-                if (ingredientEmc == 0)
-                    return 0;
+                if (ingredientEmc == 0) return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof ShapelessRecipe) {
             ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
             for (RecipeChoice choice : shapelessRecipe.getChoiceList()) {
-                if (choice == null)
-                    continue;
+                if (choice == null) continue;
                 long ingredientEmc = getChoiceEmc(choice);
-                if (ingredientEmc == 0)
-                    return 0;
+                if (ingredientEmc == 0) return 0;
                 totalEmc += ingredientEmc;
             }
         } else if (recipe instanceof SmithingTransformRecipe) {
@@ -77,8 +74,7 @@ public class ModernAdapter implements VersionAdapter {
             long baseEmc = getChoiceEmc(smithingRecipe.getBase());
             long additionEmc = getChoiceEmc(smithingRecipe.getAddition());
             long templateEmc = getChoiceEmc(smithingRecipe.getTemplate());
-            if (baseEmc == 0 || additionEmc == 0 || templateEmc == 0)
-                return 0;
+            if (baseEmc == 0 || additionEmc == 0 || templateEmc == 0) return 0;
             totalEmc = baseEmc + additionEmc + templateEmc;
 
         } else if (recipe instanceof CookingRecipe) {
@@ -113,14 +109,12 @@ public class ModernAdapter implements VersionAdapter {
     }
 
     private long getIngredientEmc(ItemStack ingredient) {
-        if (ingredient == null)
-            return 0;
+        if (ingredient == null) return 0;
         return getEmcManager().getEmc(getItemKey(ingredient));
     }
 
     private long getChoiceEmc(RecipeChoice choice) {
-        if (choice == null)
-            return 0;
+        if (choice == null) return 0;
 
         long lowestEmc = -1;
 
@@ -149,17 +143,18 @@ public class ModernAdapter implements VersionAdapter {
 
     @Override
     public void loadInitialEmcValues() {
-        org.bukkit.configuration.file.FileConfiguration config = ProjectE.getInstance().getConfig();
-        org.bukkit.configuration.ConfigurationSection emcSection = config
-                .getConfigurationSection("TransmutationTable.EMC.ImportantItems");
+        org.bukkit.configuration.file.FileConfiguration config =
+                ProjectE.getInstance().getConfig();
+        org.bukkit.configuration.ConfigurationSection emcSection =
+                config.getConfigurationSection("gui.EMC.ImportantItems");
         if (emcSection == null) {
-            ProjectE.getInstance().getLogger()
-                    .warning("EMC section 'TransmutationTable.EMC.ImportantItems' not found in config.yml");
+            ProjectE.getInstance().getLogger().warning("EMC section 'gui.EMC.ImportantItems' not found in config.yml");
             return;
         }
 
         List<Map<?, ?>> items = emcSection.getMapList("default");
-        ProjectE.getInstance().getLogger()
+        ProjectE.getInstance()
+                .getLogger()
                 .info("Loading " + items.size() + " EMC entries from config's default list...");
 
         for (Map<?, ?> itemMap : items) {
@@ -172,7 +167,8 @@ public class ModernAdapter implements VersionAdapter {
                     String configKey = entry.getKey().toString();
 
                     if (!(entry.getValue() instanceof Number)) {
-                        ProjectE.getInstance().getLogger()
+                        ProjectE.getInstance()
+                                .getLogger()
                                 .warning("Invalid EMC value for '" + configKey + "': not a number. Skipping.");
                         continue;
                     }
@@ -209,7 +205,8 @@ public class ModernAdapter implements VersionAdapter {
 
         if (recipe instanceof ShapedRecipe) {
             debugInfo.add(" - 成分:");
-            for (Map.Entry<Character, ItemStack> entry : ((ShapedRecipe) recipe).getIngredientMap().entrySet()) {
+            for (Map.Entry<Character, ItemStack> entry :
+                    ((ShapedRecipe) recipe).getIngredientMap().entrySet()) {
                 if (entry.getValue() != null) {
                     String key = getItemKey(entry.getValue());
                     long emc = getIngredientEmc(entry.getValue());
@@ -249,14 +246,8 @@ public class ModernAdapter implements VersionAdapter {
             } catch (Exception e) {
                 debugInfo.add("   - (无法获取成分)");
             }
-
         }
         return debugInfo;
-    }
-
-    @Override
-    public boolean isModern() {
-        return true;
     }
 
     @Override
@@ -266,11 +257,7 @@ public class ModernAdapter implements VersionAdapter {
         ItemStack transmutationTable = new ItemStack(Material.PETRIFIED_OAK_SLAB);
 
         RecipeChoice stoneChoice = new RecipeChoice.MaterialChoice(
-                Material.STONE,
-                Material.COBBLESTONE,
-                Material.ANDESITE,
-                Material.DIORITE,
-                Material.GRANITE);
+                Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE);
 
         NamespacedKey key1 = new NamespacedKey(plugin, "transmutation_table_1");
         ShapedRecipe recipe1 = new ShapedRecipe(key1, transmutationTable);
@@ -294,7 +281,7 @@ public class ModernAdapter implements VersionAdapter {
     }
 
     @Override
-    public void openSign(org.bukkit.entity.Player player, org.bukkit.block.Sign sign) {
+    public void openSign(Player player, Sign sign) {
         player.openSign(sign);
     }
 }

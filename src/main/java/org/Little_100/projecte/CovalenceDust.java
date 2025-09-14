@@ -1,6 +1,8 @@
 package org.Little_100.projecte;
 
-import org.bukkit.Bukkit;
+import java.util.List;
+import org.Little_100.projecte.util.Constants;
+import org.Little_100.projecte.util.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -8,11 +10,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.List;
-
 public class CovalenceDust {
     private final ProjectE plugin;
-    private final boolean isModernVersion;
 
     private final NamespacedKey lowKey;
     private final NamespacedKey mediumKey;
@@ -24,36 +23,12 @@ public class CovalenceDust {
 
     public CovalenceDust(ProjectE plugin) {
         this.plugin = plugin;
-        this.isModernVersion = isVersion1_21_4OrNewer();
 
         this.lowKey = new NamespacedKey(plugin, "low_covalence_dust");
         this.mediumKey = new NamespacedKey(plugin, "medium_covalence_dust");
         this.highKey = new NamespacedKey(plugin, "high_covalence_dust");
 
         createCovalenceDustItems();
-    }
-
-
-    private boolean isVersion1_21_4OrNewer() {
-        try {
-            String version = Bukkit.getServer().getBukkitVersion().split("-")[0];
-            String[] versionParts = version.split("\\.");
-            if (versionParts.length >= 2) {
-                int major = Integer.parseInt(versionParts[0]);
-                int minor = Integer.parseInt(versionParts[1]);
-                if (major > 1)
-                    return true;
-                if (major == 1 && minor > 21)
-                    return true;
-                if (major == 1 && minor == 21 && versionParts.length >= 3) {
-                    int patch = Integer.parseInt(versionParts[2]);
-                    return patch >= 4;
-                }
-            }
-        } catch (Exception e) {
-            plugin.getLogger().warning("Could not parse version number, using legacy mode: " + e.getMessage());
-        }
-        return false;
     }
 
     private void createCovalenceDustItems() {
@@ -63,28 +38,30 @@ public class CovalenceDust {
                 1,
                 List.of("item.low_covalence_dust.lore1", "item.low_covalence_dust.lore2"),
                 lowKey,
-                "low_covalence_dust"
-        );
+                "low_covalence_dust");
         mediumCovalenceDust = createCovalenceDustItem(
                 Material.GLOWSTONE_DUST,
                 "item.medium_covalence_dust.name",
                 2,
                 List.of("item.medium_covalence_dust.lore1", "item.medium_covalence_dust.lore2"),
                 mediumKey,
-                "medium_covalence_dust"
-        );
+                "medium_covalence_dust");
         highCovalenceDust = createCovalenceDustItem(
                 Material.GLOWSTONE_DUST,
                 "item.high_covalence_dust.name",
                 3,
                 List.of("item.high_covalence_dust.lore1", "item.high_covalence_dust.lore2"),
                 highKey,
-                "high_covalence_dust"
-        );
+                "high_covalence_dust");
     }
 
-    private ItemStack createCovalenceDustItem(Material material, String displayNameKey, int customModelData,
-                                              List<String> loreKeys, NamespacedKey key, String id) {
+    private ItemStack createCovalenceDustItem(
+            Material material,
+            String displayNameKey,
+            int customModelData,
+            List<String> loreKeys,
+            NamespacedKey key,
+            String id) {
         ItemStack item = new ItemStack(material);
 
         // 统一用CustomModelDataUtil设置cmd，传数字字符串
@@ -94,14 +71,13 @@ public class CovalenceDust {
         if (meta != null) {
             // 设置显示名称和Lore
             meta.setDisplayName(plugin.getLanguageManager().get(displayNameKey));
-            List<String> translatedLore = loreKeys.stream()
-                    .map(plugin.getLanguageManager()::get)
-                    .toList();
+            List<String> translatedLore =
+                    loreKeys.stream().map(plugin.getLanguageManager()::get).toList();
             meta.setLore(translatedLore);
 
             // 设置PDC
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING, id);
+            container.set(Constants.ID_KEY, PersistentDataType.STRING, id);
             container.set(key, PersistentDataType.BYTE, (byte) 1);
 
             item.setItemMeta(meta);
@@ -126,10 +102,12 @@ public class CovalenceDust {
         var emcManager = plugin.getEmcManager();
         java.io.File configFile = new java.io.File(plugin.getDataFolder(), "custommoditememc.yml");
         if (!configFile.exists()) {
-            plugin.getLogger().warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");
+            plugin.getLogger()
+                    .warning("custommoditememc.yml not found, custom covalence dust EMC values will not be loaded.");
             return;
         }
-        org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+        org.bukkit.configuration.file.YamlConfiguration config =
+                org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
 
         String lowKey = emcManager.getItemKey(getLowCovalenceDust());
         long lowEmc = config.getLong("low_covalence_dust", 1);
@@ -145,23 +123,18 @@ public class CovalenceDust {
     }
 
     public boolean isLowCovalenceDust(ItemStack item) {
-        return isCovalenceDust(item, lowKey, "low_covalence_dust");
+        return isCovalenceDust(item, "low_covalence_dust");
     }
 
     public boolean isMediumCovalenceDust(ItemStack item) {
-        return isCovalenceDust(item, mediumKey, "medium_covalence_dust");
+        return isCovalenceDust(item, "medium_covalence_dust");
     }
 
     public boolean isHighCovalenceDust(ItemStack item) {
-        return isCovalenceDust(item, highKey, "high_covalence_dust");
+        return isCovalenceDust(item, "high_covalence_dust");
     }
 
-    private boolean isCovalenceDust(ItemStack item, NamespacedKey key, String id) {
-        if (item == null || !item.hasItemMeta()) return false;
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return false;
-        PersistentDataContainer container = meta.getPersistentDataContainer();
-        String foundId = container.get(new NamespacedKey(plugin, "projecte_id"), PersistentDataType.STRING);
-        return id.equals(foundId);
+    private boolean isCovalenceDust(ItemStack item, String id) {
+        return ItemUtils.isProjectEItem(item, id);
     }
 }

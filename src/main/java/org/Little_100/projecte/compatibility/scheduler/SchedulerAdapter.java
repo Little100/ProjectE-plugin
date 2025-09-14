@@ -1,0 +1,26 @@
+package org.Little_100.projecte.compatibility.scheduler;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+
+public interface SchedulerAdapter {
+    static SchedulerAdapter getInstance() {
+        return SchedulerMatcher.getSchedulerAdapter();
+    }
+
+    void runTask(Runnable task);
+
+    void runTaskAsynchronously(Runnable task);
+
+    void runTaskLater(Runnable task, long delay);
+
+    void runTaskAt(Location location, Runnable task);
+
+    void runTaskOnEntity(Entity entity, Runnable task);
+
+    void runTimer(Runnable task, long delay, long period);
+
+    void runTaskLaterAtLocation(Location location, Runnable task, long delay);
+
+    void runTaskLaterOnEntity(Entity entity, Runnable task, long delay);
+}

@@ -1,5 +1,6 @@
 package org.Little_100.projecte.devices;
 
+import java.util.Collections;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
@@ -9,27 +10,26 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Collections;
-
 public class EnergyCondenserMK2 implements Listener {
+    public static final NamespacedKey KEY = new NamespacedKey(ProjectE.getInstance(), "energy_condenser_mk2");
+    ;
 
     private final ProjectE plugin;
-    private final NamespacedKey condenserMK2Key;
 
     public EnergyCondenserMK2(ProjectE plugin) {
         this.plugin = plugin;
-        this.condenserMK2Key = new NamespacedKey(plugin, "energy_condenser_mk2");
     }
 
     public ItemStack getCondenserMK2Item() {
         ItemStack item = new ItemStack(Material.BARREL);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(plugin.getLanguageManager().get("item.projecte.energy_condenser_mk2.name"));
-        meta.setLore(Collections.singletonList(plugin.getLanguageManager().get("item.projecte.energy_condenser_mk2.lore1")));
+        meta.setLore(
+                Collections.singletonList(plugin.getLanguageManager().get("item.projecte.energy_condenser_mk2.lore1")));
         item.setItemMeta(meta);
         item = CustomModelDataUtil.setCustomModelData(item, 3);
         ItemMeta newMeta = item.getItemMeta();
-        newMeta.getPersistentDataContainer().set(condenserMK2Key, PersistentDataType.BYTE, (byte) 1);
+        newMeta.getPersistentDataContainer().set(KEY, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(newMeta);
         return item;
     }
@@ -38,6 +38,6 @@ public class EnergyCondenserMK2 implements Listener {
         if (item == null || !item.hasItemMeta()) {
             return false;
         }
-        return item.getItemMeta().getPersistentDataContainer().has(condenserMK2Key, PersistentDataType.BYTE);
+        return item.getItemMeta().getPersistentDataContainer().has(KEY, PersistentDataType.BYTE);
     }
 }

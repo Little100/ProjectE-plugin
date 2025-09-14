@@ -1,7 +1,8 @@
 package org.Little_100.projecte.compatibility;
 
+import java.util.logging.Level;
 import org.Little_100.projecte.ProjectE;
-import org.bukkit.Bukkit;
+import org.Little_100.projecte.util.VersionUtils;
 
 public class VersionMatcher {
 
@@ -10,39 +11,23 @@ public class VersionMatcher {
     public static VersionAdapter getAdapter() {
         if (adapter == null) {
             ProjectE plugin = ProjectE.getInstance();
-            String version = Bukkit.getServer().getBukkitVersion().split("-")[0];
-            plugin.getLogger().info("Detected Server Version: " + version);
+            plugin.getLogger().info("Detected Server Version: " + VersionUtils.getMCVersion());
 
             try {
-                if (isVersionOrNewer(version, "1.13")) {
+                if (VersionUtils.isVersionOrNewer("1.13")) {
                     adapter = new ModernAdapter();
                 } else {
-                    adapter = new LegacyAdapter();
+                    adapter = new LegacyAdapter(); // 为什么一个1.14+的插件要考虑这个？
                 }
-                plugin.getLogger().info("Loaded Compatibility Adapter: " + adapter.getClass().getSimpleName());
+                plugin.getLogger()
+                        .info("Loaded Compatibility Adapter: "
+                                + adapter.getClass().getSimpleName());
             } catch (Exception e) {
-                plugin.getLogger().severe("Could not find a compatible version adapter for your server version!");
+                plugin.getLogger()
+                        .log(Level.SEVERE, "Could not find a compatible version adapter for your server version!", e);
                 e.printStackTrace();
             }
         }
         return adapter;
-    }
-
-    private static boolean isVersionOrNewer(String serverVersion, String targetVersion) {
-        String[] serverParts = serverVersion.split("\\.");
-        String[] targetParts = targetVersion.split("\\.");
-
-        int length = Math.max(serverParts.length, targetParts.length);
-        for (int i = 0; i < length; i++) {
-            int serverPart = i < serverParts.length ? Integer.parseInt(serverParts[i]) : 0;
-            int targetPart = i < targetParts.length ? Integer.parseInt(targetParts[i]) : 0;
-            if (serverPart > targetPart) {
-                return true;
-            }
-            if (serverPart < targetPart) {
-                return false;
-            }
-        }
-        return true;
     }
 }
