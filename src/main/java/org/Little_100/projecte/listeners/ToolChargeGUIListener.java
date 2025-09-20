@@ -35,10 +35,12 @@ public class ToolChargeGUIListener implements Listener {
         if (clickedInventory == null || clickedItem == null || !clickedItem.hasItemMeta()) return;
 
         String expectedTitle = plugin.getLanguageManager().get("clientside.tool_charge_gui.title");
+        plugin.getLogger().info("[DEBUG] GUI点击事件触发，标题: " + event.getView().getTitle() + ", 期望: " + expectedTitle);
         if (!event.getView().getTitle().equals(expectedTitle)) {
             return;
         }
 
+        plugin.getLogger().info("[DEBUG] 确认是工具界面，取消事件");
         event.setCancelled(true);
 
         ItemMeta clickedMeta = clickedItem.getItemMeta();
@@ -48,7 +50,13 @@ public class ToolChargeGUIListener implements Listener {
         ItemStack tool = player.getInventory().getItemInMainHand();
         ToolManager toolManager = plugin.getToolManager();
 
-        if (!toolManager.isProjectETool(tool)) return;
+        plugin.getLogger().info("[DEBUG] 点击的物品meta keys: " + clickedContainer.getKeys());
+        plugin.getLogger().info("[DEBUG] 手持工具: " + (tool != null ? tool.getType() : "null"));
+        
+        if (!toolManager.isProjectETool(tool)) {
+            plugin.getLogger().info("[DEBUG] 手持物品不是ProjectE工具，跳过");
+            return;
+        }
 
         ItemMeta toolMeta = tool.getItemMeta();
         if (toolMeta == null) return;
@@ -92,17 +100,32 @@ public class ToolChargeGUIListener implements Listener {
             }
         }
 
+        plugin.getLogger().info("[DEBUG] 检查是否有KATAR_MODE_KEY: " + clickedContainer.has(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER));
+        plugin.getLogger().info("[DEBUG] 是否是拳剑: " + toolManager.isRedMatterKatar(tool));
+        
         if (clickedContainer.has(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER)) {
+            plugin.getLogger().info("[DEBUG] 检测到拳剑模式切换点击");
             int newMode = clickedContainer.get(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER);
             int oldMode = toolContainer.getOrDefault(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, 0);
+            plugin.getLogger().info("[DEBUG] 当前模式: " + oldMode + ", 新模式: " + newMode);
 
             if (newMode != oldMode) {
+                plugin.getLogger().info("[DEBUG] 模式不同，开始切换");
                 toolContainer.set(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, newMode);
                 tool.setItemMeta(toolMeta);
                 toolManager.updateLore(tool);
+                toolManager.updateKatarAttackDamage(tool);
 
                 player.getInventory().setItemInMainHand(tool);
-                player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, 1.5f);
+                
+                // 发送模式切换确认消息
+                String modeName = (newMode == 0) 
+                    ? plugin.getLanguageManager().get("clientside.red_matter_katar.mode_all")
+                    : plugin.getLanguageManager().get("clientside.red_matter_katar.mode_hostile");
+                player.sendMessage(plugin.getLanguageManager().get("clientside.red_matter_katar.mode_prefix") + " " + modeName);
+                
+                // 播放切换音效
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
 
                 new ToolChargeGUI(plugin, player, player.getInventory().getItemInMainHand()).open();
             }

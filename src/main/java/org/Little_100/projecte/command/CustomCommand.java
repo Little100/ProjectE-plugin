@@ -1,10 +1,11 @@
 package org.Little_100.projecte.command;
 
-import java.util.List;
 import org.Little_100.projecte.managers.CommandManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class CustomCommand extends BukkitCommand {
 

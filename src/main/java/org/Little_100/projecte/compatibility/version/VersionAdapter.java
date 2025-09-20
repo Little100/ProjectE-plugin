@@ -1,13 +1,14 @@
 package org.Little_100.projecte.compatibility.version;
 
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+
+import java.util.List;
+import java.util.Map;
 
 public interface VersionAdapter {
     static VersionAdapter getInstance() {

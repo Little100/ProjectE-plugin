@@ -1,8 +1,5 @@
 package org.Little_100.projecte.accessories;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
@@ -14,6 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SoulStone {
     public static ItemStack createSoulStone() {

@@ -1,7 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.Little_100.projecte.CovalenceDust;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
@@ -13,6 +11,9 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CovalenceDustListener implements Listener {
 

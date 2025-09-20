@@ -1,6 +1,5 @@
 package org.Little_100.projecte.gui;
 
-import java.util.Collections;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.armor.GemHelmet;
 import org.bukkit.Bukkit;
@@ -9,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Collections;
 
 public class GemHelmetGUI {
 

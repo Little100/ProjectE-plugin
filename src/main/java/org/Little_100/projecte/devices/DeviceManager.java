@@ -1,12 +1,13 @@
 package org.Little_100.projecte.devices;
 
-import java.util.Collection;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Collection;
 
 public class DeviceManager {
 

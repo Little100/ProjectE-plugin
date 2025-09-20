@@ -1,7 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.HashMap;
-import java.util.logging.Level;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
@@ -10,10 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
+
+import java.util.HashMap;
+import java.util.logging.Level;
 
 public class CraftingListener implements Listener {
 
@@ -24,17 +25,18 @@ public class CraftingListener implements Listener {
         Bukkit.getLogger().info("[ProjectE] CraftingListener initialized - Final Version");
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCraftItem(CraftItemEvent event) {
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCraftItem(InventoryClickEvent event) {
+        if (event.getSlotType() != InventoryType.SlotType.RESULT) return;
+        if (!(event.getInventory() instanceof CraftingInventory)) return;
         if (!(event.getWhoClicked() instanceof Player)) {
             return;
         }
 
         Player player = (Player) event.getWhoClicked();
-        Recipe recipe = event.getRecipe();
-
-        CraftingInventory inventory = event.getInventory();
-
+        CraftingInventory inventory = (CraftingInventory) event.getInventory();
+        
+        // 检查是否有贤者之石
         boolean hasPhilosopherStone = false;
         for (ItemStack item : inventory.getMatrix()) {
             if (plugin.isPhilosopherStone(item)) {
@@ -47,39 +49,85 @@ public class CraftingListener implements Listener {
             return;
         }
 
-        event.setCancelled(true);
-
-        ItemStack result = recipe.getResult().clone();
-        Debug.log("贤者之石合成: " + result.getType() + " x" + result.getAmount());
-
-        if (event.isShiftClick()) {
-            int maxCrafts = calculateMaxCrafts(inventory);
-            Debug.log("批量合成，最大次数: " + maxCrafts);
-
-            if (maxCrafts <= 0) {
-                Debug.log("无法进行批量合成: 材料不足");
-                return;
-            }
-
-            int totalAmount = result.getAmount() * maxCrafts;
-            result.setAmount(totalAmount);
-            Debug.log("合成总量: " + totalAmount);
-
-            consumeIngredients(inventory, maxCrafts);
-        } else {
-            Debug.log("单次合成: " + result.getType());
-
-            consumeIngredients(inventory, 1);
+        ItemStack result = inventory.getResult();
+        if (result == null || result.getType() == Material.AIR) {
+            return;
         }
 
-        Debug.log("将物品添加到玩家背包: " + result.getType() + " x" + result.getAmount());
-        HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(result);
+        result = result.clone();
+        Debug.log("贤者之石合成: " + result.getType() + " x" + result.getAmount());
+        
+        event.setCancelled(true);
 
-        if (!leftover.isEmpty()) {
+        if (event.isShiftClick()) {
+            handleShiftClick(player, inventory, result);
+        } else {
+            handleNormalClick(player, inventory, result);
+        }
+    }
+
+    private void handleShiftClick(Player player, CraftingInventory inventory, ItemStack result) {
+        int maxCrafts = calculateMaxCrafts(inventory);
+        Debug.log("批量合成，最大次数: " + maxCrafts);
+
+        if (maxCrafts <= 0) {
+            Debug.log("无法进行批量合成: 材料不足");
+            return;
+        }
+
+        // 复制结果物品并设置正确的数量
+        ItemStack resultStack = result.clone();
+        resultStack.setAmount(result.getAmount() * maxCrafts);
+        Debug.log("合成总量: " + resultStack.getAmount());
+
+        // 将合成的物品添加到玩家背包
+        HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(resultStack);
+
+        // 计算实际成功合成的数量
+        int craftedAmount = resultStack.getAmount();
+        if (!leftovers.isEmpty()) {
             Debug.log("背包已满，部分物品掉落在地上");
-            for (ItemStack item : leftover.values()) {
+            for (ItemStack item : leftovers.values()) {
                 player.getWorld().dropItemNaturally(player.getLocation(), item);
             }
+            craftedAmount -= leftovers.values().stream().mapToInt(ItemStack::getAmount).sum();
+        }
+        
+        int numCrafted = craftedAmount / result.getAmount();
+        Debug.log("实际合成次数: " + numCrafted);
+
+        // 根据实际成功合成的数量消耗原料
+        if (numCrafted > 0) {
+            consumeIngredients(inventory, numCrafted);
+        }
+    }
+
+    private void handleNormalClick(Player player, CraftingInventory inventory, ItemStack result) {
+        Debug.log("单次合成: " + result.getType() + " x" + result.getAmount());
+
+        ItemStack cursorItem = player.getItemOnCursor();
+
+        // 如果鼠标上没有物品，直接放置到鼠标上
+        if (cursorItem.getType() == Material.AIR) {
+            Debug.log("鼠标为空，将合成结果放置到鼠标上");
+            consumeIngredients(inventory, 1);
+            player.setItemOnCursor(result);
+        }
+        // 如果鼠标上有同类物品，并且可以堆叠
+        else if (cursorItem.isSimilar(result)) {
+            int canAdd = result.getMaxStackSize() - cursorItem.getAmount();
+            if (canAdd >= result.getAmount()) {
+                Debug.log("鼠标上有同类物品，堆叠到鼠标上");
+                consumeIngredients(inventory, 1);
+                cursorItem.setAmount(cursorItem.getAmount() + result.getAmount());
+                player.setItemOnCursor(cursorItem); // 更新鼠标上的物品
+            } else {
+                Debug.log("鼠标上的物品无法完全堆叠，不进行合成");
+                // 无法完全堆叠，不消耗材料，不进行合成
+            }
+        } else {
+            Debug.log("鼠标上有不同类型的物品，无法进行合成");
+            // 鼠标上有不同类型的物品，无法进行合成
         }
     }
 

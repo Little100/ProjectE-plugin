@@ -50,12 +50,12 @@ recipes:
     enabled: true
     type: "shaped"
     shape:
-      - "SDS"
-      - "DPD"
-      - "SDS"
+      - "SOS"
+      - "OPO"
+      - "SOS"
     ingredients:
       S: "STONE"
-      D: "projecte:dark_matter_block"
+      O: "OBSIDIAN"
       P: "POPPED_CHORUS_FRUIT"
     result:
       material: "PETRIFIED_OAK_SLAB"

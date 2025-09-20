@@ -1,11 +1,12 @@
 package org.Little_100.projecte.compatibility.scheduler;
 
-import java.lang.reflect.Method;
-import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 public class FoliaSchedulerAdapter implements SchedulerAdapter {
 

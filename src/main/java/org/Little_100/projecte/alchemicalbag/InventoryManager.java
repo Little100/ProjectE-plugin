@@ -1,8 +1,5 @@
 package org.Little_100.projecte.alchemicalbag;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,6 +11,10 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class InventoryManager implements Listener {
 

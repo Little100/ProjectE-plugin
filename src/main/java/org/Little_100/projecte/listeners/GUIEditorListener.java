@@ -1,10 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.CommandManager;
 import org.bukkit.ChatColor;
@@ -16,6 +11,12 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GUIEditorListener implements Listener {
 

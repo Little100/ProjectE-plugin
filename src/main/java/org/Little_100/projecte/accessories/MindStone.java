@@ -1,10 +1,5 @@
 package org.Little_100.projecte.accessories;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
 import org.Little_100.projecte.util.Constants;
@@ -16,6 +11,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MindStone {
     private static final NamespacedKey STORED_XP_KEY = new NamespacedKey(ProjectE.getInstance(), "stored_xp");

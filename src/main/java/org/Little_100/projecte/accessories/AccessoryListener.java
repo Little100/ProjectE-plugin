@@ -1,8 +1,5 @@
 package org.Little_100.projecte.accessories;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
@@ -15,6 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class AccessoryListener implements Listener {
 

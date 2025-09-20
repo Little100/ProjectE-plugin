@@ -1,9 +1,5 @@
 package org.Little_100.projecte.tools.kleinstar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
@@ -16,6 +12,11 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KleinStarManager {
 

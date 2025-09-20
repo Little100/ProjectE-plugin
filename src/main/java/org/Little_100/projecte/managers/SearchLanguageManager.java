@@ -2,6 +2,8 @@ package org.Little_100.projecte.managers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.Little_100.projecte.ProjectE;
+
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Type;
@@ -10,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import org.Little_100.projecte.ProjectE;
 
 public class SearchLanguageManager {
 

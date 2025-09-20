@@ -1,7 +1,5 @@
 package org.Little_100.projecte.devices;
 
-import java.io.InputStreamReader;
-import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,6 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class CondenserManager {
 

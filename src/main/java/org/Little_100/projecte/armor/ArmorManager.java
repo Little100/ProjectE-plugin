@@ -1,8 +1,5 @@
 package org.Little_100.projecte.armor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
@@ -14,6 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ArmorManager {
 
@@ -208,7 +209,11 @@ public class ArmorManager {
                 lore.add(plugin.getLanguageManager().get("item.gem_leggings.lore2"));
                 lore.add(plugin.getLanguageManager().get("item.gem_leggings.lore3"));
             } else if (id.equals("gem_boots")) {
-                // Lore will be added later
+                lore.add(plugin.getLanguageManager().get("item.gem_boots.lore1"));
+                lore.add(plugin.getLanguageManager().get("item.gem_boots.lore2"));
+                lore.add(plugin.getLanguageManager().get("item.gem_boots.lore3"));
+                lore.add(plugin.getLanguageManager().get("item.gem_boots.lore4"));
+                lore.add(plugin.getLanguageManager().get("item.gem_boots.lore5"));
             }
             meta.setLore(lore);
 

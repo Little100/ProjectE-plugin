@@ -1,6 +1,5 @@
 package org.Little_100.projecte.gui;
 
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +9,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class NoEmcItemGUI implements InventoryHolder {
     private final Inventory inventory;

@@ -1,6 +1,5 @@
 package org.Little_100.projecte.compatibility.version;
 
-import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.EmcManager;
 import org.Little_100.projecte.storage.DatabaseManager;
@@ -12,6 +11,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
+
+import java.util.*;
 
 public class LegacyAdapter implements VersionAdapter {
 

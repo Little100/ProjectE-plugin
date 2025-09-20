@@ -1,12 +1,13 @@
 package org.Little_100.projecte.devices;
 
-import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+
+import java.util.Map;
 
 public class CondenserListener implements Listener {
 

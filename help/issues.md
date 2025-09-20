@@ -10,6 +10,7 @@
     - Error recipe bug discovered by [AconHol](https://github.com/AconHol)
     - Wrong GUI operation bug discovered by [AconHol](https://github.com/AconHol)
     - Search GUI bug discovered by [duanjiayiznb](https://github.com/duanjiayiznb)
+    - issue 2 3
 
   - ## Optimization
     - EMC calculation causes slow startup by [AconHol](https://github.com/AconHol)
@@ -17,7 +18,8 @@
  - ## Idea
    - all done
  - ## Bug
-   - issue 2 3 4 by [balugaq](https://github.com/balugaq)
+   - issue 4 by [balugaq](https://github.com/balugaq)
+   > will not fix this issue explicitly
  - ## Optimization  
    - all done
 
@@ -33,6 +35,7 @@
     - [AconHol](https://github.com/AconHol)发现的配方错误
     - [AconHol](https://github.com/AconHol)发现的GUI操作错误
     - [duanjiayiznb](https://github.com/duanjiayiznb)发现的搜索GUI错误
+    - issue 2 3
 
   - ## 优化
     - [AconHol](https://github.com/AconHol)发现的EMC计算导致启动慢
@@ -40,6 +43,7 @@
   - ## 创意
     - 所有工作都已完成
   - ## 错误
-    - issue 2 3 4由[balugaq](https://github.com/balugaq)
+    - issue 4由[balugaq](https://github.com/balugaq)
+    > 明确不再修复此问题
   - ## 优化
     - 所有工作都已完成

@@ -1,12 +1,13 @@
 package org.Little_100.projecte.armor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class GemHelmet {
 

@@ -1,8 +1,5 @@
 package org.Little_100.projecte.gui;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.EmcManager;
@@ -25,6 +22,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GUIListener implements Listener {
 

@@ -1,7 +1,5 @@
 package org.Little_100.projecte.alchemicalbag;
 
-import java.util.HashMap;
-import java.util.Map;
 import net.md_5.bungee.api.ChatColor;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
@@ -19,6 +17,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerInteractListener implements Listener {
 

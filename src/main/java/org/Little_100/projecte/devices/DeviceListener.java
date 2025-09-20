@@ -1,7 +1,5 @@
 package org.Little_100.projecte.devices;
 
-import java.util.Collection;
-import java.util.List;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +19,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Collection;
+import java.util.List;
 
 public class DeviceListener implements Listener {
 

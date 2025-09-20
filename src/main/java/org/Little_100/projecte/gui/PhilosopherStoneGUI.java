@@ -1,6 +1,5 @@
 package org.Little_100.projecte.gui;
 
-import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.Bukkit;
@@ -12,6 +11,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.*;
 
 public class PhilosopherStoneGUI {
 

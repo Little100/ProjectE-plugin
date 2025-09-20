@@ -1,6 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
@@ -16,10 +15,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import java.util.*;
 
 public class PhilosopherStoneListener implements Listener {
 
@@ -131,67 +131,6 @@ public class PhilosopherStoneListener implements Listener {
 
     private void openPhilosopherStoneGUI(Player player) {
         new PhilosopherStoneGUI(plugin, player).open();
-    }
-
-    @EventHandler
-    public void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent event) {
-        if (!(event.getInventory() instanceof CraftingInventory)) {
-            return;
-        }
-
-        if (event.getSlotType() != org.bukkit.event.inventory.InventoryType.SlotType.RESULT) {
-            return;
-        }
-
-        CraftingInventory inventory = (CraftingInventory) event.getInventory();
-        ItemStack[] matrix = inventory.getMatrix();
-
-        boolean hasCatalyst = false;
-        ItemStack catalystItem = null;
-        int catalystSlot = -1;
-
-        for (int i = 0; i < matrix.length; i++) {
-            if (matrix[i] != null && matrix[i].getType() == Material.POPPED_CHORUS_FRUIT) {
-                hasCatalyst = true;
-                catalystItem = matrix[i].clone();
-                catalystSlot = i;
-                break;
-            }
-        }
-
-        if (!hasCatalyst) {
-            return;
-        }
-
-        ItemStack result = event.getCurrentItem();
-        if (result == null || result.getType().isAir()) {
-            return;
-        }
-
-        event.setCancelled(true);
-
-        Player player = (Player) event.getWhoClicked();
-
-        // 手动减少原料
-        for (int i = 0; i < matrix.length; i++) {
-            if (i == catalystSlot) {
-                continue;
-            }
-            if (matrix[i] != null) {
-                matrix[i].setAmount(matrix[i].getAmount() - 1);
-            }
-        }
-        inventory.setMatrix(matrix);
-
-        // 检查玩家光标是否为空
-        player.getItemOnCursor();
-        if (!player.getItemOnCursor().getType().isAir()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        // 将结果物品放到玩家光标上
-        player.setItemOnCursor(result);
     }
 
     private void handleBlockTransformation(

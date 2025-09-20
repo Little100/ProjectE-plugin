@@ -1,6 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.logging.Level;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.TransmutationGUI;
 import org.Little_100.projecte.util.Constants;
@@ -16,6 +15,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.logging.Level;
 
 public class TransmutationTabletBookListener implements Listener {
 

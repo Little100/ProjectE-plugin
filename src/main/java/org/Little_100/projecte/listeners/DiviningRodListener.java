@@ -1,8 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.tools.DiviningRod;
 import org.bukkit.Location;
@@ -16,6 +13,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class DiviningRodListener implements Listener {
 

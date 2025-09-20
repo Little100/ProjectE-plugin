@@ -1,6 +1,5 @@
 package org.Little_100.projecte.util;
 
-import java.util.Collection;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.compatibility.scheduler.SchedulerAdapter;
 import org.Little_100.projecte.managers.BlockDataManager;
@@ -26,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Collection;
 
 public class CustomBlockArtUtil implements Listener {
     private static double yOffset = -0.39;

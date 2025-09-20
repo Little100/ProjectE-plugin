@@ -1,12 +1,11 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.*;
-import java.util.stream.Collectors;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.tools.ToolManager;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,6 +20,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ToolAbilityListener implements Listener {
 
@@ -57,11 +59,14 @@ public class ToolAbilityListener implements Listener {
         }
 
         if (toolManager.isRedMatterKatar(itemInHand)) {
+            plugin.getLogger().info("[DEBUG] 检测到拳剑右键，动作: " + action + ", 蹲下: " + player.isSneaking());
             if (player.isSneaking()) {
+                plugin.getLogger().info("[DEBUG] 蹲下状态，执行剪切功能");
                 handleKatarShear(player, itemInHand);
                 event.setCancelled(true);
                 return;
             }
+            plugin.getLogger().info("[DEBUG] 非蹲下状态，调用handleKatarAbility");
             handleKatarAbility(player, itemInHand, event);
             return;
         }
@@ -119,17 +124,25 @@ public class ToolAbilityListener implements Listener {
     }
 
     private void handleKatarRightClickAir(Player player, ItemStack katar) {
+        plugin.getLogger().info("[DEBUG] handleKatarRightClickAir被调用 - 开始处理攻击");
+        
         long now = System.currentTimeMillis();
         long lastUsed = swordCooldowns.getOrDefault(player.getUniqueId(), 0L);
 
         if (now - lastUsed < SWORD_ABILITY_COOLDOWN) {
+            plugin.getLogger().info("[DEBUG] 冷却时间未到，跳过");
             return;
         }
 
-        if (!katar.hasItemMeta()) return;
+        if (!katar.hasItemMeta()) {
+            plugin.getLogger().info("[DEBUG] 拳剑没有meta，跳过");
+            return;
+        }
+        
         ItemMeta meta = katar.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         int currentMode = container.getOrDefault(Constants.KATAR_MODE_KEY, PersistentDataType.INTEGER, 0);
+        plugin.getLogger().info("[DEBUG] 当前拳剑模式: " + currentMode);
 
         // 检查配置是否允许全部模式伤害
         boolean attackAllModeEnabled = plugin.getConfig().getBoolean("Tools.katar_attack_all_mode_enabled", true);
@@ -143,25 +156,41 @@ public class ToolAbilityListener implements Listener {
         List<LivingEntity> targets = nearbyEntities.stream()
                 .filter(e -> e instanceof LivingEntity && !e.equals(player) && !(e instanceof ArmorStand))
                 .filter(e -> {
-                    // 如果配置禁用了全部模式伤害，或者模式是1(仅敌对)
-                    if (!attackAllModeEnabled || currentMode == 1) {
+                    // 模式0：攻击所有生物（如果配置允许）
+                    // 模式1：仅攻击敌对生物
+                    if (currentMode == 1) {
+                        // 仅敌对模式：只攻击敌对生物
                         return e instanceof Monster;
-                    } else { // 全部模式且配置允许
-                        return true;
+                    } else {
+                        // 全部模式：根据配置决定是否攻击所有生物
+                        if (attackAllModeEnabled) {
+                            // 攻击所有生物（除了玩家和盔甲架）
+                            return true;
+                        } else {
+                            // 如果配置禁用了全部模式，回退到仅敌对模式
+                            return e instanceof Monster;
+                        }
                     }
                 })
                 .map(e -> (LivingEntity) e)
                 .collect(Collectors.toList());
 
+        plugin.getLogger().info("[DEBUG] 找到目标数量: " + targets.size());
+        
+        // 如果没有目标，不执行攻击
         if (targets.isEmpty()) {
+            plugin.getLogger().info("[DEBUG] 没有目标，直接返回");
             return;
         }
 
+        // 执行攻击
+        plugin.getLogger().info("[DEBUG] 开始攻击目标");
         player.playSound(player.getLocation(), "projecte:custom.pecharge", 1.0f, 1.0f);
         for (LivingEntity target : targets) {
             target.setHealth(Math.max(0, target.getHealth() - damage));
         }
         swordCooldowns.put(player.getUniqueId(), now);
+        plugin.getLogger().info("[DEBUG] 攻击完成");
     }
 
     private void handleMorningstarAbility(Player player, ItemStack morningstar, Block clickedBlock) {
@@ -271,7 +300,9 @@ public class ToolAbilityListener implements Listener {
         Action action = event.getAction();
         Block clickedBlock = event.getClickedBlock();
 
+        plugin.getLogger().info("[DEBUG] handleKatarAbility被调用，动作: " + action);
         if (action == Action.RIGHT_CLICK_AIR) {
+            plugin.getLogger().info("[DEBUG] 右键空气，调用handleKatarRightClickAir");
             handleKatarRightClickAir(player, katar);
         } else if (action == Action.RIGHT_CLICK_BLOCK && clickedBlock != null) {
             Material type = clickedBlock.getType();

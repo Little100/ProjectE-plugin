@@ -1,7 +1,6 @@
 plugins {
     java
-    id("com.diffplug.spotless") version "7.2.1"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 group = "org.Little_100"
@@ -26,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT")
     compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("org.geysermc.geyser:api:2.8.3-SNAPSHOT")
@@ -42,16 +42,10 @@ spotless {
 }
 
 tasks {
-    runServer {
-        minecraftVersion("1.21.1")
-    }
-
     withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
 
-        if (JavaVersion.current().isJava10Compatible) {
-            options.release.set(21)
-        }
+        options.release.set(21)
     }
 
     processResources {
@@ -98,8 +92,7 @@ tasks {
 }
 
 java {
-    val javaVersion = JavaVersion.toVersion(21)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }

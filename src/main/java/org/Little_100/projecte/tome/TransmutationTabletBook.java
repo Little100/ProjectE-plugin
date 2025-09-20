@@ -1,6 +1,5 @@
 package org.Little_100.projecte.tome;
 
-import java.util.Collections;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.managers.LanguageManager;
@@ -11,6 +10,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Collections;
 
 public class TransmutationTabletBook {
 

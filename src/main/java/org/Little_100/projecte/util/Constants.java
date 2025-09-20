@@ -1,9 +1,10 @@
 package org.Little_100.projecte.util;
 
-import java.util.Map;
 import org.Little_100.projecte.ProjectE;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class Constants {
@@ -22,7 +23,7 @@ public class Constants {
     public static final NamespacedKey NAME_KEY = new NamespacedKey(ProjectE.getInstance(), "name");
     public static final NamespacedKey MODEL_KEY = new NamespacedKey(ProjectE.getInstance(), "cmd");
     public static final NamespacedKey MATERIAL_KEY = new NamespacedKey(ProjectE.getInstance(), "material");
-    public static final NamespacedKey KATAR_MODE_KEY = new NamespacedKey(ProjectE.getInstance(), "projecte_katar_mode");
+    public static final NamespacedKey KATAR_MODE_KEY = new NamespacedKey(ProjectE.getInstance(), "katar_mode");
     public static final NamespacedKey CHARGE_KEY = new NamespacedKey(ProjectE.getInstance(), "projecte_charge");
     public static final NamespacedKey BLOCK_DATA_KEY =
             new NamespacedKey(ProjectE.getInstance(), "custom_block_data"); // 目前未被使用

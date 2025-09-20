@@ -1,30 +1,23 @@
 package org.Little_100.projecte;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import org.Little_100.projecte.accessories.*;
 import org.Little_100.projecte.alchemicalbag.AlchemicalBagManager;
 import org.Little_100.projecte.armor.ArmorManager;
 import org.Little_100.projecte.command.CustomCommand;
-import org.Little_100.projecte.compatibility.*;
+import org.Little_100.projecte.compatibility.GeyserAdapter;
 import org.Little_100.projecte.compatibility.scheduler.SchedulerAdapter;
 import org.Little_100.projecte.compatibility.version.VersionAdapter;
 import org.Little_100.projecte.devices.*;
 import org.Little_100.projecte.gui.DiviningRodGUI;
 import org.Little_100.projecte.gui.GUIListener;
 import org.Little_100.projecte.listeners.*;
-import org.Little_100.projecte.listeners.ArmorListener;
-import org.Little_100.projecte.listeners.GemHelmetGUIListener;
-import org.Little_100.projecte.listeners.TransmutationTabletBookListener;
 import org.Little_100.projecte.managers.*;
 import org.Little_100.projecte.storage.DatabaseManager;
 import org.Little_100.projecte.tome.TransmutationTabletBook;
-import org.Little_100.projecte.tools.*;
+import org.Little_100.projecte.tools.DiviningRod;
+import org.Little_100.projecte.tools.RepairTalisman;
+import org.Little_100.projecte.tools.RepairTalismanTask;
+import org.Little_100.projecte.tools.ToolManager;
 import org.Little_100.projecte.tools.kleinstar.KleinStarManager;
 import org.Little_100.projecte.util.CustomBlockArtUtil;
 import org.bukkit.Bukkit;
@@ -37,6 +30,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public final class ProjectE extends JavaPlugin {
 
@@ -103,6 +104,9 @@ public final class ProjectE extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        
+        // 初始化调度器适配器
+        SchedulerAdapter.init(this);
         schedulerAdapter = SchedulerAdapter.getInstance();
 
         // 保存默认配置

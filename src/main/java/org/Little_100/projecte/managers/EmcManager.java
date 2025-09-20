@@ -1,7 +1,5 @@
 package org.Little_100.projecte.managers;
 
-import java.io.File;
-import java.util.*;
 import org.Little_100.projecte.Debug;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.compatibility.version.VersionAdapter;
@@ -14,6 +12,9 @@ import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.io.File;
+import java.util.*;
 
 public class EmcManager {
 

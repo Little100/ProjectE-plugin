@@ -1,5 +1,9 @@
 package org.Little_100.projecte.listeners;
 
+import org.Little_100.projecte.ProjectE;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,9 +12,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.Little_100.projecte.ProjectE;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 public class ResourcePackListener implements Listener {
 

@@ -1,6 +1,5 @@
 package org.Little_100.projecte.listeners;
 
-import java.util.*;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.armor.ArmorManager;
 import org.Little_100.projecte.armor.GemHelmet;
@@ -23,6 +22,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import java.util.*;
 
 public class ArmorListener implements Listener {
 
@@ -145,6 +146,9 @@ public class ArmorListener implements Listener {
             }
             player.setAllowFlight(true);
             player.setFlySpeed(0.2f);
+            
+            // 水上行走效果（类似冰霜行者）
+            handleWaterWalking(player);
         } else {
             if (player.getAllowFlight()
                     && !player.getGameMode().equals(GameMode.CREATIVE)
@@ -157,6 +161,68 @@ public class ArmorListener implements Listener {
                 PotionEffect slowFall = player.getPotionEffect(PotionEffectType.SLOW_FALLING);
                 if (slowFall != null && slowFall.isAmbient()) {
                     player.removePotionEffect(PotionEffectType.SLOW_FALLING);
+                }
+            }
+        }
+    }
+
+    private void handleWaterWalking(Player player) {
+        if (player.isSneaking()) return; // 潜行时不激活水上行走
+        
+        Location playerLoc = player.getLocation();
+        
+        // 检查玩家脚下和周围的水
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                // 检查脚下的位置
+                Block blockBelow = playerLoc.clone().add(x, -1, z).getBlock();
+                
+                // 检查是否为水
+                if (blockBelow.getType() == Material.WATER) {
+                    Location blockLoc = blockBelow.getLocation();
+                    
+                    // 避免重复处理同一个方块
+                    if (!temporaryBlocks.containsKey(blockLoc)) {
+                        // 记录原始方块类型
+                        temporaryBlocks.put(blockLoc, blockBelow.getType());
+                        
+                        // 将水变成冰
+                        blockBelow.setType(Material.FROSTED_ICE);
+                        
+                        // 3秒后恢复成水
+                        plugin.getSchedulerAdapter()
+                                .runTaskLaterAtLocation(
+                                        blockLoc,
+                                        () -> {
+                                            if (temporaryBlocks.containsKey(blockLoc) && 
+                                                blockBelow.getType() == Material.FROSTED_ICE) {
+                                                blockBelow.setType(temporaryBlocks.remove(blockLoc));
+                                            }
+                                        },
+                                        60L);
+                    }
+                }
+                
+                // 检查玩家当前位置的水
+                Block currentBlock = playerLoc.clone().add(x, 0, z).getBlock();
+                if (currentBlock.getType() == Material.WATER) {
+                    Location blockLoc = currentBlock.getLocation();
+                    
+                    if (!temporaryBlocks.containsKey(blockLoc)) {
+                        temporaryBlocks.put(blockLoc, currentBlock.getType());
+                        currentBlock.setType(Material.FROSTED_ICE);
+                        
+                        plugin.getSchedulerAdapter()
+                                .runTaskLaterAtLocation(
+                                        blockLoc,
+                                        () -> {
+                                            if (temporaryBlocks.containsKey(blockLoc) && 
+                                                currentBlock.getType() == Material.FROSTED_ICE) {
+                                                currentBlock.setType(temporaryBlocks.remove(blockLoc));
+                                            }
+                                        },
+                                        60L);
+                    }
                 }
             }
         }
@@ -325,6 +391,7 @@ public class ArmorListener implements Listener {
             return;
         }
 
+        // 岩浆转换为黑曜石
         if (armorManager.isGemChestplate(player.getInventory().getChestplate()) && !player.isSneaking()) {
             Location loc = player.getLocation();
             for (int x = -1; x <= 1; x++) {

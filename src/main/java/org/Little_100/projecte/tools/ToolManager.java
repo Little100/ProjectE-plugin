@@ -1,8 +1,5 @@
 package org.Little_100.projecte.tools;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
@@ -17,6 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ToolManager {
     private final ProjectE plugin;
