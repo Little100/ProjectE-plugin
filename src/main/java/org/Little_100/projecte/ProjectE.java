@@ -353,7 +353,9 @@ public final class ProjectE extends JavaPlugin {
     }
 
     public ItemStack getPhilosopherStone() {
-        return new ItemStack(Material.POPPED_CHORUS_FRUIT);
+        ItemStack stone = new ItemStack(Material.POPPED_CHORUS_FRUIT);
+        setMaxStackSize(stone, 1);
+        return stone;
     }
 
     public boolean isPhilosopherStone(ItemStack item) {
@@ -365,6 +367,23 @@ public final class ProjectE extends JavaPlugin {
 
     private void createPhilosopherStone() {
         philosopherStone = new ItemStack(Material.POPPED_CHORUS_FRUIT);
+        setMaxStackSize(philosopherStone, 1);
+    }
+    
+    private void setMaxStackSize(ItemStack item, int maxStackSize) {
+        if (item == null || !item.hasItemMeta()) {
+            if (item != null) {
+                item.setItemMeta(item.getItemMeta());
+            }
+        }
+        
+        try {
+            java.lang.reflect.Method setMaxStackSizeMethod = 
+                item.getItemMeta().getClass().getMethod("setMaxStackSize", Integer.class);
+            org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+            setMaxStackSizeMethod.invoke(meta, maxStackSize);
+            item.setItemMeta(meta);
+        } catch (Exception e) {}
     }
 
     private void removeVanillaRecipe() {
