@@ -29,11 +29,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
@@ -67,17 +69,17 @@ public final class ProjectE extends JavaPlugin {
     private ArmorManager armorManager;
     private ArmorListener armorListener;
     private GeyserAdapter geyserAdapter;
+    private org.Little_100.projecte.listeners.PdcItemDebugGUIListener pdcItemDebugGUIListener;
     private FileConfiguration devicesConfig;
     private FileConfiguration opItemConfig;
     private FurnaceManager furnaceManager;
     private DeviceManager deviceManager;
     private CondenserManager condenserManager;
 
-    private boolean excludePDC;
-    private boolean onlyMcItems;
 
     private final Map<Material, Material> upgradeMap = new HashMap<>();
     private final Map<Material, Material> downgradeMap = new HashMap<>();
+    private final Map<String, ItemStack> pdcItemCache = new HashMap<>();
 
     public FileConfiguration getDevicesConfig() {
         if (devicesConfig == null) {
@@ -267,13 +269,16 @@ public final class ProjectE extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ItemStackLimitListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new ToolChargeGUIListener(this), this);
+        pdcItemDebugGUIListener = new org.Little_100.projecte.listeners.PdcItemDebugGUIListener(this);
+        Bukkit.getPluginManager().registerEvents(pdcItemDebugGUIListener, this);
         Bukkit.getPluginManager().registerEvents(new ToolAbilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new CovalenceDustListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new CovalenceDustCraftListener(), this);
+        Bukkit.getPluginManager().registerEvents(new CovalenceDustCraftListener(this), this);
         Bukkit.getPluginManager().registerEvents(new DiviningRodListener(this), this);
         Bukkit.getPluginManager().registerEvents(new KleinStarListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ServerLoadListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CraftingListener(this), this);
         Bukkit.getPluginManager().registerEvents(new TransmutationTabletBookListener(), this);
         Bukkit.getPluginManager().registerEvents(new org.Little_100.projecte.accessories.AccessoryListener(), this);
@@ -553,16 +558,12 @@ public final class ProjectE extends JavaPlugin {
         return armorListener;
     }
 
-    public boolean isPdcExcluded() {
-        return excludePDC;
+    public org.Little_100.projecte.listeners.PdcItemDebugGUIListener getPdcItemDebugGUIListener() {
+        return pdcItemDebugGUIListener;
     }
 
     public BlockDataManager getBlockDataManager() {
         return blockDataManager;
-    }
-
-    public boolean isOnlyMcItems() {
-        return onlyMcItems;
     }
 
     public FurnaceManager getFurnaceManager() {
@@ -578,9 +579,8 @@ public final class ProjectE extends JavaPlugin {
     }
 
     private void loadConfigOptions() {
-        excludePDC = getConfig().getBoolean("TransmutationTable.EMC.Exclude_PDC.enabled", true);
-        onlyMcItems = getConfig().getBoolean("TransmutationTable.EMC.Exclude_PDC.only_mc_items", true);
-    }
+        // 不再控制pdc物品是否开关
+        }
 
     private void startContinuousParticleTask() {
         if (!getConfig().getBoolean("philosopher_stone.particle.enabled", true)) {
@@ -620,6 +620,9 @@ public final class ProjectE extends JavaPlugin {
     }
 
     public ItemStack getItemStackFromKey(String key) {
+        // 保存原始key用于PDC物品查找
+        String originalKey = key;
+        
         // 首先，规范化键，移除任何已知的命名空间前缀
         if (key.startsWith("projecte:")) {
             key = key.substring("projecte:".length());
@@ -786,6 +789,34 @@ public final class ProjectE extends JavaPlugin {
                 Material material = versionAdapter.getMaterial(key.toUpperCase());
                 if (material != null) {
                     return new ItemStack(material);
+                }
+                
+                // 尝试从配方中查找PDC物品
+                // 如果原始key包含:判断为其他插件的PDC物品
+                if (originalKey.contains(":") && !originalKey.startsWith("minecraft:")) {
+                    // 先检查缓存
+                    if (pdcItemCache.containsKey(originalKey)) {
+                        return pdcItemCache.get(originalKey).clone();
+                    }
+                    
+                    // 遍历所有配方查找
+                    Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
+                    while (recipeIterator.hasNext()) {
+                        try {
+                            Recipe recipe = recipeIterator.next();
+                            if (recipe.getResult() != null && !recipe.getResult().getType().isAir()) {
+                                ItemStack result = recipe.getResult();
+                                String resultKey = emcManager.getItemKey(result);
+                                if (resultKey.equals(originalKey)) {
+                                    // 找到匹配的PDC物品缓存并返回副本
+                                    pdcItemCache.put(originalKey, result.clone());
+                                    return result.clone();
+                                }
+                            }
+                        } catch (Exception e) {
+                            // 忽略损坏的配方
+                        }
+                    }
                 }
         }
         return null;

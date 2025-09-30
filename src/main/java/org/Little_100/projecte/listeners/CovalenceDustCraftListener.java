@@ -1,5 +1,6 @@
 package org.Little_100.projecte.listeners;
 
+import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,14 +16,24 @@ import java.util.HashMap;
 
 public class CovalenceDustCraftListener implements Listener {
 
+    private final ProjectE plugin;
+
+    public CovalenceDustCraftListener(ProjectE plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     public void onCraftItem(InventoryClickEvent event) {
         if (event.isCancelled()) {
-            System.out.println("[CovalenceDustCraftListener Debug] 事件已被取消，跳过处理");
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[CovalenceDustCraftListener Debug] 事件已被取消，跳过处理");
+            }
             return;
         }
         
-        System.out.println("[CovalenceDustCraftListener Debug] 监听器被触发");
+        if (plugin.getConfig().getBoolean("debug")) {
+            plugin.getLogger().info("[CovalenceDustCraftListener Debug] 监听器被触发");
+        }
         
         // 只处理工作台中的结果槽点击
         if (event.getSlotType() != InventoryType.SlotType.RESULT) return;
@@ -33,11 +44,15 @@ public class CovalenceDustCraftListener implements Listener {
 
         // 检查是否为共价粉配方
         if (!isCovalenceDust(result)) {
-            System.out.println("[CovalenceDustCraftListener Debug] 不是共价粉配方，跳过处理");
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[CovalenceDustCraftListener Debug] 不是共价粉配方，跳过处理");
+            }
             return;
         }
         
-        System.out.println("[CovalenceDustCraftListener Debug] 发现共价粉配方，开始处理");
+        if (plugin.getConfig().getBoolean("debug")) {
+            plugin.getLogger().info("[CovalenceDustCraftListener Debug] 发现共价粉配方，开始处理");
+        }
 
         // 取消默认的合成行为，我们自己处理
         event.setCancelled(true);

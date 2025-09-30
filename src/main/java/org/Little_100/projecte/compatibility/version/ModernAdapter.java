@@ -115,7 +115,8 @@ public class ModernAdapter implements VersionAdapter {
 
     private long getIngredientEmc(ItemStack ingredient) {
         if (ingredient == null) return 0;
-        return getEmcManager().getEmc(getItemKey(ingredient));
+        // 识别PDC物品
+        return getEmcManager().getEmc(getEmcManager().getItemKey(ingredient));
     }
 
     private long getChoiceEmc(RecipeChoice choice) {

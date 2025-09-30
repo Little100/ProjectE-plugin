@@ -102,7 +102,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             switch (subCommand) {
                 case "recalculate":
-                    handleRecalculate(sender);
+                    handleRecalculate(sender, args);
                     break;
                 case "reload":
                     handleReload(sender);
@@ -153,6 +153,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 case "gemboots":
                     handleGemBoots(sender);
                     break;
+                case "pdcitem":
+                case "pdcitems":
+                    handlePdcItems(sender);
+                    break;
                 default:
                     sendHelp(sender);
                     break;
@@ -199,16 +203,46 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         player.sendMessage(languageManager.get("serverside.command.gui.opening_editor", placeholders));
     }
 
-    private void handleRecalculate(CommandSender sender) {
+    private void handleRecalculate(CommandSender sender, String[] args) {
         if (!sender.hasPermission("projecte.command.recalculate")) {
             sender.sendMessage(languageManager.get("serverside.command.no_permission"));
             return;
         }
 
+        // 确定计算类型：all, default, pdc
+        String type = "all";
+        if (args.length >= 2) {
+            type = args[1].toLowerCase();
+            if (!type.equals("all") && !type.equals("default") && !type.equals("pdc")) {
+                sender.sendMessage(ChatColor.RED + "用法: /projecte recalculate <all|default|pdc>");
+                sender.sendMessage(ChatColor.YELLOW + "  all - 重新计算所有物品的EMC");
+                sender.sendMessage(ChatColor.YELLOW + "  default - 只计算原版物品的EMC");
+                sender.sendMessage(ChatColor.YELLOW + "  pdc - 只计算PDC物品的EMC");
+                return;
+            }
+        }
+
+        final String finalType = type;
         plugin.getSchedulerAdapter().runTaskAsynchronously(() -> {
-            sender.sendMessage(languageManager.get("serverside.command.recalculate.start"));
-            emcManager.calculateAndStoreEmcValues(true);
-            sender.sendMessage(languageManager.get("serverside.command.recalculate.success"));
+            switch (finalType) {
+                case "all":
+                    sender.sendMessage(ChatColor.GREEN + "开始重新计算所有物品的EMC...");
+                    emcManager.calculateAndStoreEmcValues(true);
+                    sender.sendMessage(ChatColor.GREEN + "所有物品EMC计算完成！");
+                    break;
+                    
+                case "default":
+                    sender.sendMessage(ChatColor.GREEN + "开始重新计算原版物品的EMC...");
+                    emcManager.recalculateDefaultEmcValues();
+                    sender.sendMessage(ChatColor.GREEN + "原版物品EMC计算完成！");
+                    break;
+                    
+                case "pdc":
+                    sender.sendMessage(ChatColor.GREEN + "开始重新计算PDC物品的EMC...");
+                    int calculated = emcManager.recalculatePdcEmcValues();
+                    sender.sendMessage(ChatColor.GREEN + "PDC物品EMC计算完成！计算了 " + calculated + " 个物品。");
+                    break;
+            }
         });
     }
 
@@ -843,6 +877,22 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
     }
 
+    private void handlePdcItems(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(languageManager.get("serverside.command.player_only"));
+            return;
+        }
+
+        if (!sender.hasPermission("projecte.command.pdcitem")) {
+            sender.sendMessage(languageManager.get("serverside.command.no_permission"));
+            return;
+        }
+
+        org.Little_100.projecte.gui.PdcItemDebugGUI gui = new org.Little_100.projecte.gui.PdcItemDebugGUI(plugin, player);
+        plugin.getPdcItemDebugGUIListener().registerGui(player, gui);
+        gui.open();
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("projecte")) {
@@ -853,6 +903,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("recalculate")) {
+                List<String> types = Arrays.asList("all", "default", "pdc");
+                return StringUtil.copyPartialMatches(args[1], types, new ArrayList<>());
+            }
+            
             if (args[0].equalsIgnoreCase("pay") || args[0].equalsIgnoreCase("give")) {
                 List<String> playerNames = new ArrayList<>();
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -952,6 +1007,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 "gui",
                 "table",
                 "gemhelmet",
-                "gemboots"));
+                "gemboots",
+                "pdcitem"));
     }
 }

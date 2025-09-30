@@ -59,13 +59,6 @@ TransmutationTable:
     # the following items are defined as basic items that cannot be calculated by the recipe
     # 插件在加载时会自动检查物品是否存在于当前游戏版本，如果不存在则会跳过。
     # the plugin will automatically check if the item exists in the current game version, and skip it if it doesn't.
-    Exclude_PDC:
-      enabled: true
-      # 是否排除PDC物品? true/false
-      # exclude PDC items? true/false
-      only_mc_items: true
-      # 仅计算原版物品? true/false
-      # only calculate MC items? true/false
     ImportantItems:
       # 此片段由gemini2.5pro提供 后续补充由Little100新增
       # this part is provided by gemini2.5pro, and will be continued to be added by Little100.
