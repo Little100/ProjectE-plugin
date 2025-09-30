@@ -11,6 +11,9 @@
     - Wrong GUI operation bug discovered by [AconHol](https://github.com/AconHol)
     - Search GUI bug discovered by [duanjiayiznb](https://github.com/duanjiayiznb)
     - issue 2 3
+    - QQ user [3896****72] 1.20.1 cannot load normally
+    - QQ user [3896****72] 1.20.1 GUI click error
+    - QQ user [3896****72] 1.20.6 pack error
 
   - ## Optimization
     - EMC calculation causes slow startup by [AconHol](https://github.com/AconHol)
@@ -36,6 +39,9 @@
     - [AconHol](https://github.com/AconHol)发现的GUI操作错误
     - [duanjiayiznb](https://github.com/duanjiayiznb)发现的搜索GUI错误
     - issue 2 3
+    - QQ用户[3896****72]1.20.1无法正常加载
+    - QQ用户[3896****72]1.20.1GUI点击错误
+    - QQ用户[3896****72]1.20.6材质错误
 
   - ## 优化
     - [AconHol](https://github.com/AconHol)发现的EMC计算导致启动慢

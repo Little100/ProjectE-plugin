@@ -1,6 +1,7 @@
 package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.InventoryViewHelper;
 import org.Little_100.projecte.tools.DiviningRod;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -69,7 +70,7 @@ public class DiviningRodListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.getView().getTitle().equals(plugin.getLanguageManager().get("clientside.divining_rod.gui.title"))) {
+        if (!InventoryViewHelper.getTitle(event).equals(plugin.getLanguageManager().get("clientside.divining_rod.gui.title"))) {
             return;
         }
 

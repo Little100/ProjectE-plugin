@@ -1,6 +1,7 @@
 package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.InventoryViewHelper;
 import org.Little_100.projecte.gui.PdcItemDebugGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public class PdcItemDebugGUIListener implements Listener {
         }
 
         Player player = (Player) event.getWhoClicked();
-        String title = event.getView().getTitle();
+        String title = InventoryViewHelper.getTitle(event);
 
         if (!title.startsWith(ChatColor.DARK_PURPLE + "PDC物品调试")) {
             return;

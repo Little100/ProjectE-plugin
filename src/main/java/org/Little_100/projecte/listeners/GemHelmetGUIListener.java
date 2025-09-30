@@ -1,6 +1,7 @@
 package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.InventoryViewHelper;
 import org.Little_100.projecte.armor.GemHelmet;
 import org.Little_100.projecte.gui.GemHelmetGUI;
 import org.bukkit.Material;
@@ -21,7 +22,7 @@ public class GemHelmetGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         String title = plugin.getLanguageManager().get("item.gem_helmet.gui.title");
-        if (!event.getView().getTitle().equals(title)) {
+        if (!InventoryViewHelper.getTitle(event).equals(title)) {
             return;
         }
 

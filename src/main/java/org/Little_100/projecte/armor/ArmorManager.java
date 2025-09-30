@@ -4,6 +4,8 @@ import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
@@ -169,27 +171,36 @@ public class ArmorManager {
             container.set(Constants.ID_KEY, PersistentDataType.STRING, id);
 
             if (armor > 0) {
-                AttributeModifier armorModifier = new AttributeModifier(
-                        UUID.randomUUID(), "generic.armor", armor, AttributeModifier.Operation.ADD_NUMBER, slot);
-                meta.addAttributeModifier(Attribute.valueOf("GENERIC_ARMOR"), armorModifier);
+                Attribute armorAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.armor"));
+                if (armorAttr != null) {
+                    AttributeModifier armorModifier = new AttributeModifier(
+                            UUID.randomUUID(), "generic.armor", armor, AttributeModifier.Operation.ADD_NUMBER, slot);
+                    meta.addAttributeModifier(armorAttr, armorModifier);
+                }
             }
             if (armorToughness > 0) {
-                AttributeModifier toughnessModifier = new AttributeModifier(
-                        UUID.randomUUID(),
-                        "generic.armor_toughness",
-                        armorToughness,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        slot);
-                meta.addAttributeModifier(Attribute.valueOf("GENERIC_ARMOR_TOUGHNESS"), toughnessModifier);
+                Attribute toughnessAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.armor_toughness"));
+                if (toughnessAttr != null) {
+                    AttributeModifier toughnessModifier = new AttributeModifier(
+                            UUID.randomUUID(),
+                            "generic.armor_toughness",
+                            armorToughness,
+                            AttributeModifier.Operation.ADD_NUMBER,
+                            slot);
+                    meta.addAttributeModifier(toughnessAttr, toughnessModifier);
+                }
             }
             if (id.equals("gem_boots")) {
-                AttributeModifier speedModifier = new AttributeModifier(
-                        UUID.randomUUID(),
-                        "generic.movement_speed",
-                        1.0,
-                        AttributeModifier.Operation.MULTIPLY_SCALAR_1,
-                        slot);
-                meta.addAttributeModifier(Attribute.valueOf("GENERIC_MOVEMENT_SPEED"), speedModifier);
+                Attribute speedAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.movement_speed"));
+                if (speedAttr != null) {
+                    AttributeModifier speedModifier = new AttributeModifier(
+                            UUID.randomUUID(),
+                            "generic.movement_speed",
+                            1.0,
+                            AttributeModifier.Operation.MULTIPLY_SCALAR_1,
+                            slot);
+                    meta.addAttributeModifier(speedAttr, speedModifier);
+                }
             }
 
             List<String> lore = new ArrayList<>();

@@ -52,6 +52,10 @@ public class DatapackManager {
 
             if (datapackFile.exists()) {
                 logger.info("ProjectE datapack already exists. Skipping installation.");
+                // 设置确认标记以避免重复提醒
+                plugin.getConfig().set("ConfrimDatapack", true);
+                plugin.saveConfig();
+                logger.info("Set 'ConfrimDatapack' to true in config.yml.");
                 return;
             }
 

@@ -17,12 +17,14 @@ CustomBlockPack:
 ConfrimDatapack: false
 
 philosopher_stone:
+  enabled: true # 启用贤者之石转换方块功能? true/false
+  # enable philosopher stone block transformation? true/false
   particle:
     enabled: true # 启用粒子效果? true/false
     # enable particle effect? true/false
     particle-name: "end_rod" # 粒子效果名称
     # the name of the particle effect
-    keep-alive: 5 # 粒子效果刷新时间 (秒) -1表示一直刷新
+    keep-alive: 3 # 粒子效果刷新时间 (秒) -1表示一直刷新
     # particle effect refresh time (seconds) -1 means always refresh
 
 AlchemicalBag:

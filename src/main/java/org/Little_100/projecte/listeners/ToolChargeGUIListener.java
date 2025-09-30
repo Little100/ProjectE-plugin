@@ -1,6 +1,7 @@
 package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.InventoryViewHelper;
 import org.Little_100.projecte.gui.ToolChargeGUI;
 import org.Little_100.projecte.tools.ToolManager;
 import org.Little_100.projecte.util.Constants;
@@ -36,9 +37,9 @@ public class ToolChargeGUIListener implements Listener {
 
         String expectedTitle = plugin.getLanguageManager().get("clientside.tool_charge_gui.title");
         if (plugin.getConfig().getBoolean("debug")) {
-            plugin.getLogger().info("[DEBUG] GUI点击事件触发，标题: " + event.getView().getTitle() + ", 期望: " + expectedTitle);
+            plugin.getLogger().info("[DEBUG] GUI点击事件触发，标题: " + InventoryViewHelper.getTitle(event) + ", 期望: " + expectedTitle);
         }
-        if (!event.getView().getTitle().equals(expectedTitle)) {
+        if (!InventoryViewHelper.getTitle(event).equals(expectedTitle)) {
             return;
         }
 

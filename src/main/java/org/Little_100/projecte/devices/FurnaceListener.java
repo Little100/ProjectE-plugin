@@ -1,6 +1,7 @@
 package org.Little_100.projecte.devices;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.InventoryViewHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -54,7 +55,7 @@ public class FurnaceListener implements Listener {
             return;
         }
 
-        if (!isCustomFurnaceGui(event.getView().getTitle())) {
+        if (!isCustomFurnaceGui(InventoryViewHelper.getTitle(event))) {
             return;
         }
 

@@ -1,6 +1,7 @@
 package org.Little_100.projecte.listeners;
 
 import org.Little_100.projecte.ProjectE;
+import org.Little_100.projecte.util.InventoryViewHelper;
 import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.util.Constants;
 import org.bukkit.ChatColor;
@@ -37,7 +38,7 @@ public class PhilosopherStoneGUIListener implements Listener {
         String guiTitle = plugin.getLanguageManager().get("clientside.philosopher_stone_gui.title");
 
         // 检查是否为贤者之石GUI
-        if (!event.getView().getTitle().equals(guiTitle)) {
+        if (!InventoryViewHelper.getTitle(event).equals(guiTitle)) {
             return;
         }
 
@@ -70,7 +71,7 @@ public class PhilosopherStoneGUIListener implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         String guiTitle = plugin.getLanguageManager().get("clientside.philosopher_stone_gui.title");
-        if (event.getView().getTitle().equals(guiTitle)) {
+        if (InventoryViewHelper.getTitle(event).equals(guiTitle)) {
             event.setCancelled(true);
         }
     }

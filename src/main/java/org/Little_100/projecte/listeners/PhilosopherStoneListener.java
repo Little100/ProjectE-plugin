@@ -3,6 +3,7 @@ package org.Little_100.projecte.listeners;
 import org.Little_100.projecte.ProjectE;
 import org.Little_100.projecte.gui.PhilosopherStoneGUI;
 import org.Little_100.projecte.gui.TransmutationGUI;
+import org.Little_100.projecte.util.ParticleHelper;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -135,6 +136,11 @@ public class PhilosopherStoneListener implements Listener {
 
     private void handleBlockTransformation(
             Player player, boolean isShiftClick, Block clickedBlock, BlockFace clickedFace) {
+        // 检查贤者之石功能是否启用
+        if (!plugin.getConfig().getBoolean("philosopher_stone.enabled", true)) {
+            return;
+        }
+        
         if (clickedBlock == null) return;
 
         // 获取转换区域
@@ -476,20 +482,22 @@ public class PhilosopherStoneListener implements Listener {
 
     private void spawnParticleOutline(Player player, List<Block> blocks) {
         FileConfiguration config = plugin.getConfig();
-        String particleName = config.getString("philosopher_stone.particle.particle-name", "END_ROD")
-                .toUpperCase();
-        Particle particle;
-        try {
-            particle = Particle.valueOf(particleName);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger()
-                    .warning("Invalid particle name in config.yml: " + particleName + ". Defaulting to END_ROD.");
-            particle = Particle.END_ROD;
-        }
+        String particleName = config.getString("philosopher_stone.particle.particle-name", "end_rod")
+                .toLowerCase(); // 使用小写
 
         List<Location> outlineLocations = calculateOutlineLocations(blocks);
         for (Location loc : outlineLocations) {
-            player.spawnParticle(particle, loc.clone().add(0.5, 0.6, 0.5), 1, 0, 0, 0, 0);
+            // 使用兼容的ParticleHelper
+            ParticleHelper.spawnParticle(
+                player,
+                particleName,
+                loc.clone().add(0.5, 0.6, 0.5),
+                1,     // count
+                0,     // offsetX
+                0,     // offsetY
+                0,     // offsetZ
+                0      // extra (speed)
+            );
         }
     }
 

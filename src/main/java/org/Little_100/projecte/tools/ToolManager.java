@@ -5,6 +5,7 @@ import org.Little_100.projecte.util.Constants;
 import org.Little_100.projecte.util.CustomModelDataUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Tag;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -138,22 +139,28 @@ public class ToolManager {
             }
 
             if (attackDamage > 0) {
-                AttributeModifier damageModifier = new AttributeModifier(
-                        UUID.randomUUID(),
-                        "generic.attack_damage",
-                        attackDamage - 1,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlot.HAND);
-                meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
+                Attribute attackDamageAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.attack_damage"));
+                if (attackDamageAttr != null) {
+                    AttributeModifier damageModifier = new AttributeModifier(
+                            UUID.randomUUID(),
+                            "generic.attack_damage",
+                            attackDamage - 1,
+                            AttributeModifier.Operation.ADD_NUMBER,
+                            EquipmentSlot.HAND);
+                    meta.addAttributeModifier(attackDamageAttr, damageModifier);
+                }
             }
             if (attackSpeed > 0) {
-                AttributeModifier speedModifier = new AttributeModifier(
-                        UUID.randomUUID(),
-                        "generic.attack_speed",
-                        attackSpeed - 4,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlot.HAND);
-                meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_SPEED"), speedModifier);
+                Attribute attackSpeedAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.attack_speed"));
+                if (attackSpeedAttr != null) {
+                    AttributeModifier speedModifier = new AttributeModifier(
+                            UUID.randomUUID(),
+                            "generic.attack_speed",
+                            attackSpeed - 4,
+                            AttributeModifier.Operation.ADD_NUMBER,
+                            EquipmentSlot.HAND);
+                    meta.addAttributeModifier(attackSpeedAttr, speedModifier);
+                }
             }
 
             item.setItemMeta(meta);
@@ -502,19 +509,22 @@ public class ToolManager {
         ItemMeta meta = hammer.getItemMeta();
         if (meta == null) return;
 
-        meta.removeAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"));
+        Attribute attackDamageAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.attack_damage"));
+        if (attackDamageAttr != null) {
+            meta.removeAttributeModifier(attackDamageAttr);
 
-        int charge = getCharge(hammer);
-        double baseDamage = 15;
-        double newDamage = baseDamage + charge;
+            int charge = getCharge(hammer);
+            double baseDamage = 15;
+            double newDamage = baseDamage + charge;
 
-        AttributeModifier damageModifier = new AttributeModifier(
-                UUID.randomUUID(),
-                "generic.attack_damage",
-                newDamage - 1,
-                AttributeModifier.Operation.ADD_NUMBER,
-                EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
+            AttributeModifier damageModifier = new AttributeModifier(
+                    UUID.randomUUID(),
+                    "generic.attack_damage",
+                    newDamage - 1,
+                    AttributeModifier.Operation.ADD_NUMBER,
+                    EquipmentSlot.HAND);
+            meta.addAttributeModifier(attackDamageAttr, damageModifier);
+        }
 
         hammer.setItemMeta(meta);
     }
@@ -525,24 +535,27 @@ public class ToolManager {
         ItemMeta meta = sword.getItemMeta();
         if (meta == null) return;
 
-        meta.removeAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"));
+        Attribute attackDamageAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.attack_damage"));
+        if (attackDamageAttr != null) {
+            meta.removeAttributeModifier(attackDamageAttr);
 
-        int charge = getCharge(sword);
-        double baseDamage;
-        if (isDarkMatterSword(sword)) {
-            baseDamage = 13;
-        } else {
-            baseDamage = 14;
+            int charge = getCharge(sword);
+            double baseDamage;
+            if (isDarkMatterSword(sword)) {
+                baseDamage = 13;
+            } else {
+                baseDamage = 14;
+            }
+            double newDamage = baseDamage + charge;
+
+            AttributeModifier damageModifier = new AttributeModifier(
+                    UUID.randomUUID(),
+                    "generic.attack_damage",
+                    newDamage - 1,
+                    AttributeModifier.Operation.ADD_NUMBER,
+                    EquipmentSlot.HAND);
+            meta.addAttributeModifier(attackDamageAttr, damageModifier);
         }
-        double newDamage = baseDamage + charge;
-
-        AttributeModifier damageModifier = new AttributeModifier(
-                UUID.randomUUID(),
-                "generic.attack_damage",
-                newDamage - 1,
-                AttributeModifier.Operation.ADD_NUMBER,
-                EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
 
         sword.setItemMeta(meta);
     }
@@ -553,19 +566,22 @@ public class ToolManager {
         ItemMeta meta = katar.getItemMeta();
         if (meta == null) return;
 
-        meta.removeAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"));
+        Attribute attackDamageAttr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.attack_damage"));
+        if (attackDamageAttr != null) {
+            meta.removeAttributeModifier(attackDamageAttr);
 
-        int charge = getCharge(katar);
-        double baseDamage = 24;
-        double newDamage = baseDamage + charge;
+            int charge = getCharge(katar);
+            double baseDamage = 24;
+            double newDamage = baseDamage + charge;
 
-        AttributeModifier damageModifier = new AttributeModifier(
-                UUID.randomUUID(),
-                "generic.attack_damage",
-                newDamage - 1,
-                AttributeModifier.Operation.ADD_NUMBER,
-                EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.valueOf("GENERIC_ATTACK_DAMAGE"), damageModifier);
+            AttributeModifier damageModifier = new AttributeModifier(
+                    UUID.randomUUID(),
+                    "generic.attack_damage",
+                    newDamage - 1,
+                    AttributeModifier.Operation.ADD_NUMBER,
+                    EquipmentSlot.HAND);
+            meta.addAttributeModifier(attackDamageAttr, damageModifier);
+        }
 
         katar.setItemMeta(meta);
     }
