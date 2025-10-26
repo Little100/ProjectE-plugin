@@ -274,7 +274,6 @@ public final class ProjectE extends JavaPlugin {
         philosopherStoneListener = new PhilosopherStoneListener(this);
         Bukkit.getPluginManager().registerEvents(philosopherStoneListener, this);
         Bukkit.getPluginManager().registerEvents(new PhilosopherStoneGUIListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new ItemStackLimitListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new ToolChargeGUIListener(this), this);
         pdcItemDebugGUIListener = new org.Little_100.projecte.listeners.PdcItemDebugGUIListener(this);
@@ -381,22 +380,44 @@ public final class ProjectE extends JavaPlugin {
     private void createPhilosopherStone() {
         philosopherStone = new ItemStack(Material.POPPED_CHORUS_FRUIT);
         setMaxStackSize(philosopherStone, 1);
+        
+        // 使用 MaterialStackSizeModifier 设置 Material 本身的堆叠限制
+        try {
+            org.Little_100.projecte.util.MaterialStackSizeModifier modifier = 
+                new org.Little_100.projecte.util.MaterialStackSizeModifier(this);
+            modifier.setChorusFruitStackSize();
+        } catch (Exception e) {
+            getLogger().warning("使用 MaterialStackSizeModifier 设置堆叠限制失败: " + e.getMessage());
+        }
     }
     
     private void setMaxStackSize(ItemStack item, int maxStackSize) {
-        if (item == null || !item.hasItemMeta()) {
-            if (item != null) {
-                item.setItemMeta(item.getItemMeta());
-            }
+        if (item == null) {
+            return;
         }
         
         try {
-            java.lang.reflect.Method setMaxStackSizeMethod = 
-                item.getItemMeta().getClass().getMethod("setMaxStackSize", Integer.class);
             org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
-            setMaxStackSizeMethod.invoke(meta, maxStackSize);
-            item.setItemMeta(meta);
-        } catch (Exception e) {}
+            if (meta == null) {
+                meta = Bukkit.getItemFactory().getItemMeta(item.getType());
+                if (meta == null) {
+                    return;
+                }
+            }
+            
+            // 使用反射设置MaxStackSize (Minecraft 1.20.5+)
+            try {
+                java.lang.reflect.Method setMaxStackSizeMethod = 
+                    meta.getClass().getMethod("setMaxStackSize", Integer.class);
+                setMaxStackSizeMethod.invoke(meta, maxStackSize);
+                item.setItemMeta(meta);
+            } catch (NoSuchMethodException e) {
+                // 旧版本不支持 setMaxStackSize，尝试使用 max-stack-size
+                getLogger().warning("此版本不支持 setMaxStackSize 方法");
+            }
+        } catch (Exception e) {
+            getLogger().warning("设置物品堆叠限制失败: " + e.getMessage());
+        }
     }
 
     private void removeVanillaRecipe() {

@@ -268,6 +268,16 @@ public class EmcManager {
                 if (container.has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
                     return "projecte:energy_condenser_mk2";
                 }
+                // 检查能量收集器
+                if (container.has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)) {
+                    return "projecte:energy_collector_mk1";
+                }
+                if (container.has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)) {
+                    return "projecte:energy_collector_mk2";
+                }
+                if (container.has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
+                    return "projecte:energy_collector_mk3";
+                }
                 
                 // 检测其他插件的PDC
                 // Detect PDC from other plugins
@@ -528,6 +538,8 @@ public class EmcManager {
         for (int i = 0; i < 5; i++) {
             plugin.getLogger().info("PDC EMC calculation iteration " + (i + 1) + "...");
             boolean changed = false;
+            
+            currentlyCalculating.clear();
             
             recipeIterator = Bukkit.recipeIterator();
             while (recipeIterator.hasNext()) {

@@ -54,7 +54,22 @@ recipes:
       - "OPO"
       - "SOS"
     ingredients:
-      S: "STONE"
+      S: "any_stone"
+      O: "OBSIDIAN"
+      P: "POPPED_CHORUS_FRUIT"
+    result:
+      material: "PETRIFIED_OAK_SLAB"
+      display_name: "item.transmutation_table.name"
+
+  transmutation_table_another:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "OSO"
+      - "SPS"
+      - "OSO"
+    ingredients:
+      S: "any_stone"
       O: "OBSIDIAN"
       P: "POPPED_CHORUS_FRUIT"
     result:
@@ -69,7 +84,7 @@ recipes:
       - "DPD"
       - "SDS"
     ingredients:
-      S: "STONE"
+      S: "any_stone"
       D: "projecte:dark_matter_block"
       P: "POPPED_CHORUS_FRUIT"
     result:
@@ -364,7 +379,7 @@ recipes:
       - "DSD"
     ingredients:
       D: "projecte:dark_matter_block"
-      S: "STONE"
+      S: "any_stone"
       P: "PETRIFIED_OAK_SLAB" # 使用石化橡木台阶作为中心材料
     result:
       material: "ENCHANTED_BOOK"

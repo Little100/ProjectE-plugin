@@ -312,6 +312,31 @@ public class RecipeManager {
                     Material.ORANGE_DYE);
         }
 
+        if (ingredient.equalsIgnoreCase("any_stone")) {
+            if (plugin.getConfig().getBoolean("debug")) {
+                plugin.getLogger().info("[Debug] Matched special case: any_stone");
+            }
+            return new RecipeChoice.MaterialChoice(
+                    Material.STONE,
+                    Material.COBBLESTONE,
+                    Material.ANDESITE,
+                    Material.DIORITE,
+                    Material.GRANITE,
+                    Material.STONE_BRICKS,
+                    Material.COBBLESTONE_STAIRS,
+                    Material.STONE_STAIRS,
+                    Material.ANDESITE_STAIRS,
+                    Material.DIORITE_STAIRS,
+                    Material.GRANITE_STAIRS,
+                    Material.STONE_SLAB,
+                    Material.COBBLESTONE_SLAB,
+                    Material.ANDESITE_SLAB,
+                    Material.DIORITE_SLAB,
+                    Material.GRANITE_SLAB,
+                    Material.SMOOTH_STONE,
+                    Material.SMOOTH_STONE_SLAB);
+        }
+
         try {
             String materialName = ingredient;
             if (materialName.startsWith("minecraft:")) {

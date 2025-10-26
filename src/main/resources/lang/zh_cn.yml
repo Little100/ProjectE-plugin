@@ -531,6 +531,11 @@ gui:
     title: "§c能量收集器 MK3"
   energy_collector:
     emc_display: "§6存储EMC: %emc%"
+  projecte_give:
+    title: "§6ProjectE物品菜单 §7[第%page%/%total%页]"
+    prev_page: "§e◀ 上一页"
+    next_page: "§e下一页 ▶"
+    close: "§c关闭"
 
 no_lang_folder: "&c未找到语言文件夹 'lang'。"
 
