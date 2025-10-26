@@ -244,37 +244,36 @@ public class CondenserManager {
 
         ItemStack targetItem = inv.getItem(targetSlotIndex);
 
-        // Consume input items
-        int itemsToProcess = (type == CondenserType.ENERGY_CONDENSER) ? 1 : 6;
-        int itemsProcessed = 0;
-        for (int slot : inputSlots.getOrDefault(type, Collections.emptyList())) {
-            if (itemsProcessed >= itemsToProcess) break;
-            ItemStack item = inv.getItem(slot);
-            if (item != null && (targetItem == null || !item.isSimilar(targetItem))) {
-                long emc = plugin.getEmcManager().getEmc(item);
-                if (emc > 0) {
-                    state.addEmc(emc * item.getAmount());
-                    inv.setItem(slot, null);
-                    itemsProcessed += item.getAmount();
-                } else {
-                    inv.setItem(slot, null);
-                    for (HumanEntity viewer : new ArrayList<>(inv.getViewers())) {
-                        if (viewer instanceof Player) {
-                            Player player = (Player) viewer;
-                            HashMap<Integer, ItemStack> remaining =
-                                    player.getInventory().addItem(item);
-                            if (!remaining.isEmpty()) {
-                                for (ItemStack remainingItem : remaining.values()) {
-                                    location.getWorld().dropItemNaturally(location, remainingItem);
+        if (targetItem != null && targetItem.getAmount() > 0) {
+            int itemsToProcess = (type == CondenserType.ENERGY_CONDENSER) ? 1 : 6;
+            int itemsProcessed = 0;
+            for (int slot : inputSlots.getOrDefault(type, Collections.emptyList())) {
+                if (itemsProcessed >= itemsToProcess) break;
+                ItemStack item = inv.getItem(slot);
+                if (item != null && !item.isSimilar(targetItem)) {
+                    long emc = plugin.getEmcManager().getEmc(item);
+                    if (emc > 0) {
+                        state.addEmc(emc * item.getAmount());
+                        inv.setItem(slot, null);
+                        itemsProcessed += item.getAmount();
+                    } else {
+                        inv.setItem(slot, null);
+                        for (HumanEntity viewer : new ArrayList<>(inv.getViewers())) {
+                            if (viewer instanceof Player) {
+                                Player player = (Player) viewer;
+                                HashMap<Integer, ItemStack> remaining =
+                                        player.getInventory().addItem(item);
+                                if (!remaining.isEmpty()) {
+                                    for (ItemStack remainingItem : remaining.values()) {
+                                        location.getWorld().dropItemNaturally(location, remainingItem);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        if (targetItem != null && targetItem.getAmount() > 0) {
             long targetEmc = plugin.getEmcManager().getEmc(targetItem);
             if (targetEmc > 0 && state.getStoredEmc() >= targetEmc) {
                 produceItem(state, targetItem, targetEmc);

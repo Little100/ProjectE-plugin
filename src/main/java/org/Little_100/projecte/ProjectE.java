@@ -75,6 +75,8 @@ public final class ProjectE extends JavaPlugin {
     private FurnaceManager furnaceManager;
     private DeviceManager deviceManager;
     private CondenserManager condenserManager;
+    private AlchemicalChestManager alchemicalChestManager;
+    private EnergyCollectorManager energyCollectorManager;
 
 
     private final Map<Material, Material> upgradeMap = new HashMap<>();
@@ -249,6 +251,12 @@ public final class ProjectE extends JavaPlugin {
         // 初始化能量凝聚器管理器
         condenserManager = new CondenserManager(this);
 
+        // 初始化炼金术箱子管理器
+        alchemicalChestManager = new AlchemicalChestManager(this);
+
+        // 初始化能量收集器管理器
+        energyCollectorManager = new EnergyCollectorManager(this);
+
         // 注册事件监听器
         getServer().getPluginManager().registerEvents(new ToolListener(this), this);
 
@@ -338,6 +346,11 @@ public final class ProjectE extends JavaPlugin {
 
         if (alchemicalBagManager != null) {
             alchemicalBagManager.unregister();
+        }
+
+        // 关闭能量收集器管理器
+        if (energyCollectorManager != null) {
+            energyCollectorManager.shutdown();
         }
 
         // 关闭数据库连接
@@ -597,6 +610,14 @@ public final class ProjectE extends JavaPlugin {
         return condenserManager;
     }
 
+    public AlchemicalChestManager getAlchemicalChestManager() {
+        return alchemicalChestManager;
+    }
+
+    public EnergyCollectorManager getEnergyCollectorManager() {
+        return energyCollectorManager;
+    }
+
     private void loadConfigOptions() {
         // 不再控制pdc物品是否开关
         }
@@ -798,6 +819,12 @@ public final class ProjectE extends JavaPlugin {
                 return deviceManager.getEnergyCondenserItem();
             case "energy_condenser_mk2":
                 return deviceManager.getEnergyCondenserMK2Item();
+            case "energy_collector_mk1":
+                return deviceManager.getEnergyCollectorItem(EnergyCollector.TYPE_MK1);
+            case "energy_collector_mk2":
+                return deviceManager.getEnergyCollectorItem(EnergyCollector.TYPE_MK2);
+            case "energy_collector_mk3":
+                return deviceManager.getEnergyCollectorItem(EnergyCollector.TYPE_MK3);
             case "alchemical_bag":
                 return AlchemicalBagManager.getAlchemicalBag();
             case "transmutation_tablet_book":

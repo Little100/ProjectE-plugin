@@ -5,6 +5,7 @@
     - item in shulker box emc calculation by [AconHol](https://github.com/AconHol)
     - "文言" lang idea by insehuj_uic
     - Search function for ProjectE by [duanjiayiznb](https://github.com/duanjiayiznb)
+    - issue 8
 
   - ## Bug
     - Error recipe bug discovered by [AconHol](https://github.com/AconHol)
@@ -33,6 +34,7 @@
     - 潜影盒里的物品的EMC计算由[AconHol](https://github.com/AconHol)提供
     - "文言"语言想法insehuj_uic提供
     - ProjectE的搜索功能想法[duanjiayiznb](https://github.com/duanjiayiznb)提供
+    - issue 8
 
   - ## 错误
     - [AconHol](https://github.com/AconHol)发现的配方错误

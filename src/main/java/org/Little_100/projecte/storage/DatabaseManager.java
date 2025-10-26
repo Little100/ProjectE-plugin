@@ -57,6 +57,16 @@ public class DatabaseManager {
                     + "bag_color TEXT NOT NULL,"
                     + "inventory_contents TEXT,"
                     + "PRIMARY KEY (player_uuid, bag_color));");
+
+            statement.execute("CREATE TABLE IF NOT EXISTS alchemical_chests (" + "location TEXT PRIMARY KEY,"
+                    + "owner_uuid TEXT NOT NULL,"
+                    + "inventory_contents TEXT);");
+
+            statement.execute("CREATE TABLE IF NOT EXISTS energy_collectors (" + "location TEXT PRIMARY KEY,"
+                    + "owner_uuid TEXT NOT NULL,"
+                    + "collector_type INTEGER NOT NULL,"
+                    + "stored_emc BIGINT NOT NULL DEFAULT 0,"
+                    + "inventory_contents TEXT);");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -276,5 +286,172 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return bagColors;
+    }
+
+    public void saveChestInventory(String locationKey, UUID ownerUUID, ItemStack[] items) {
+        if (items == null) return;
+
+        String base64Data;
+        try {
+            base64Data = itemStackArrayToBase64(items);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String sql =
+                "INSERT OR REPLACE INTO alchemical_chests (location, owner_uuid, inventory_contents) VALUES (?, ?, ?);";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            pstmt.setString(2, ownerUUID.toString());
+            pstmt.setString(3, base64Data);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ItemStack[] loadChestInventory(String locationKey) {
+        String sql = "SELECT inventory_contents FROM alchemical_chests WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String base64Data = rs.getString("inventory_contents");
+                ItemStack[] items = itemStackArrayFromBase64(base64Data);
+                if (items.length < 104) {
+                    ItemStack[] resizedItems = new ItemStack[104];
+                    System.arraycopy(items, 0, resizedItems, 0, items.length);
+                    return resizedItems;
+                }
+                return items;
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return new ItemStack[104];
+    }
+
+    public void deleteChestInventory(String locationKey) {
+        String sql = "DELETE FROM alchemical_chests WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public UUID getChestOwner(String locationKey) {
+        String sql = "SELECT owner_uuid FROM alchemical_chests WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return UUID.fromString(rs.getString("owner_uuid"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveCollectorData(String locationKey, UUID ownerUUID, int collectorType, long storedEmc, ItemStack[] items) {
+        String base64Data = null;
+        if (items != null) {
+            try {
+                base64Data = itemStackArrayToBase64(items);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String sql =
+                "INSERT OR REPLACE INTO energy_collectors (location, owner_uuid, collector_type, stored_emc, inventory_contents) VALUES (?, ?, ?, ?, ?);";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            pstmt.setString(2, ownerUUID.toString());
+            pstmt.setInt(3, collectorType);
+            pstmt.setLong(4, storedEmc);
+            pstmt.setString(5, base64Data);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ItemStack[] loadCollectorInventory(String locationKey, int expectedSize) {
+        String sql = "SELECT inventory_contents FROM energy_collectors WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String base64Data = rs.getString("inventory_contents");
+                if (base64Data != null && !base64Data.isEmpty()) {
+                    ItemStack[] items = itemStackArrayFromBase64(base64Data);
+                    if (items.length < expectedSize) {
+                        ItemStack[] resizedItems = new ItemStack[expectedSize];
+                        System.arraycopy(items, 0, resizedItems, 0, items.length);
+                        return resizedItems;
+                    }
+                    return items;
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return new ItemStack[expectedSize];
+    }
+
+    public long loadCollectorEmc(String locationKey) {
+        String sql = "SELECT stored_emc FROM energy_collectors WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getLong("stored_emc");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int loadCollectorType(String locationKey) {
+        String sql = "SELECT collector_type FROM energy_collectors WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("collector_type");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    public void deleteCollectorData(String locationKey) {
+        String sql = "DELETE FROM energy_collectors WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public UUID getCollectorOwner(String locationKey) {
+        String sql = "SELECT owner_uuid FROM energy_collectors WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return UUID.fromString(rs.getString("owner_uuid"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

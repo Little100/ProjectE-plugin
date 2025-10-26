@@ -41,7 +41,10 @@ public class DeviceListener implements Listener {
                     || entity.getPersistentDataContainer().has(RedMatterFurnace.KEY, PersistentDataType.BYTE)
                     || entity.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)
                     || entity.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)
-                    || entity.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
+                    || entity.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
                 return true;
             }
         }
@@ -77,6 +80,7 @@ public class DeviceListener implements Listener {
 
         ItemMeta meta = itemInHand.getItemMeta();
         FurnaceManager.FurnaceType furnaceType = null;
+        Integer collectorType = null;
 
         if (meta.getPersistentDataContainer().has(DarkMatterFurnace.KEY, PersistentDataType.BYTE)) {
             furnaceType = FurnaceManager.FurnaceType.DARK_MATTER;
@@ -85,9 +89,16 @@ public class DeviceListener implements Listener {
         } else if (meta.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)) {
         } else if (meta.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)) {
         } else if (meta.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
+        } else if (meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)) {
+            collectorType = EnergyCollector.TYPE_MK1;
+        } else if (meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)) {
+            collectorType = EnergyCollector.TYPE_MK2;
+        } else if (meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
+            collectorType = EnergyCollector.TYPE_MK3;
         }
 
         if (furnaceType != null
+                || collectorType != null
                 || meta.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)
                 || meta.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)
                 || meta.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
@@ -95,6 +106,7 @@ public class DeviceListener implements Listener {
             Player player = event.getPlayer();
             Location location = block.getLocation();
             final FurnaceManager.FurnaceType finalFurnaceType = furnaceType;
+            final Integer finalCollectorType = collectorType;
 
             block.setType(Material.BEACON);
 
@@ -125,6 +137,8 @@ public class DeviceListener implements Listener {
                     key = EnergyCondenser.KEY;
                 } else if (meta.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
                     key = EnergyCondenserMK2.KEY;
+                } else if (finalCollectorType != null) {
+                    key = EnergyCollector.getKey(finalCollectorType);
                 }
 
                 if (key != null) {
@@ -134,6 +148,10 @@ public class DeviceListener implements Listener {
                 if (finalFurnaceType != null) {
                     plugin.getFurnaceManager()
                             .addFurnace(location, player.getUniqueId(), finalFurnaceType, armorStand.getUniqueId());
+                } else if (meta.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)) {
+                    plugin.getAlchemicalChestManager().addChest(location, player.getUniqueId());
+                } else if (finalCollectorType != null) {
+                    plugin.getEnergyCollectorManager().addCollector(location, player.getUniqueId(), finalCollectorType, armorStand.getUniqueId());
                 } else if (meta.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)) {
                     plugin.getCondenserManager()
                             .addCondenser(
@@ -172,12 +190,21 @@ public class DeviceListener implements Listener {
                             || meta.getPersistentDataContainer().has(RedMatterFurnace.KEY, PersistentDataType.BYTE)
                             || meta.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)
                             || meta.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)
-                            || meta.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
+                            || meta.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)
+                            || meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
 
                         if (meta.getPersistentDataContainer().has(DarkMatterFurnace.KEY, PersistentDataType.BYTE)
                                 || meta.getPersistentDataContainer()
                                         .has(RedMatterFurnace.KEY, PersistentDataType.BYTE)) {
                             plugin.getFurnaceManager().removeFurnace(block.getLocation());
+                        } else if (meta.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)) {
+                            plugin.getAlchemicalChestManager().removeChest(block.getLocation());
+                        } else if (meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)
+                                || meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)
+                                || meta.getPersistentDataContainer().has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
+                            plugin.getEnergyCollectorManager().removeCollector(block.getLocation());
                         } else if (meta.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)
                                 || meta.getPersistentDataContainer()
                                         .has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
@@ -217,8 +244,14 @@ public class DeviceListener implements Listener {
             if (entity.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)) {
                 event.setCancelled(true);
                 player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, 1.0f, 1.0f);
-                Inventory chestInventory = plugin.getServer().createInventory(null, 54, "Alchemical Chest");
-                player.openInventory(chestInventory);
+                plugin.getAlchemicalChestManager().openChestGUI(player, clickedBlock.getLocation());
+                return;
+            } else if (entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
+                event.setCancelled(true);
+                player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+                plugin.getEnergyCollectorManager().openCollectorGUI(player, clickedBlock.getLocation());
                 return;
             } else if (entity.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)) {
                 event.setCancelled(true);

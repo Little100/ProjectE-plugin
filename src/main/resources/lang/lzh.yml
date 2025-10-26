@@ -465,6 +465,18 @@ item:
   projecte.energy_condenser_mk2:
     name: "§c能量凝聚器 MK2"
     lore1: "§6一更強大之能量凝聚器"
+  projecte.energy_collector_mk1:
+    name: "§e能量收集器 MK1"
+    lore1: "§6每秒產生 4 EMC（最高效率）"
+    lore2: "§7受上方方塊亮度影響"
+  projecte.energy_collector_mk2:
+    name: "§b能量收集器 MK2"
+    lore1: "§6每秒產生 10 EMC（最高效率）"
+    lore2: "§7受上方方塊亮度影響"
+  projecte.energy_collector_mk3:
+    name: "§c能量收集器 MK3"
+    lore1: "§6每秒產生 40 EMC（最高效率）"
+    lore2: "§7受上方方塊亮度影響"
 
 # 插件相關
 plugin:
@@ -500,8 +512,24 @@ gui:
   condenser:
     title: "§e能量凝聚器"
     emc_display: "§6EMC: {emc}"
+    target_emc: "§6目標EMC: {value}"
+    remaining_emc: "§e剩餘EMC: {value}"
+    progress: "§a進度: {value}"
   condenser_mk2:
     title: "§c能量凝聚器 MK2"
+  alchemical_chest:
+    title: "§e煉金術箱 §7(第%page%/%total%頁)"
+    prev_page: "§a← 上頁"
+    next_page: "§a下頁 →"
+    page_info: "§e第%page%頁 / 共%total%頁"
+  energy_collector_mk1:
+    title: "§e能量收集器 MK1"
+  energy_collector_mk2:
+    title: "§b能量收集器 MK2"
+  energy_collector_mk3:
+    title: "§c能量收集器 MK3"
+  energy_collector:
+    emc_display: "§6存儲EMC: %emc%"
 
 no_lang_folder: "&c未尋獲語言文件夾 'lang'。"
 

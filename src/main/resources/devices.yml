@@ -43,7 +43,7 @@ devices:
       S: "minecraft:stone"
       D: "minecraft:diamond"
       I: "minecraft:iron_ingot"
-      C: "minecraft:barrel"
+      C: "minecraft:chest"
     result:
       projecte_id: "projecte:alchemical_chest"
       custom_model_data: 1
@@ -74,4 +74,47 @@ devices:
       E: "projecte:energy_condenser"
     result:
       projecte_id: "projecte:energy_condenser_mk2"
+      custom_model_data: 3
+  Energy_Collector_MK1:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "GSG"
+      - "GDG"
+      - "GFG"
+    ingredients:
+      G: "minecraft:glowstone"
+      S: "minecraft:glass"
+      D: "minecraft:diamond_block"
+      F: "minecraft:furnace"
+    result:
+      projecte_id: "projecte:energy_collector_mk1"
+      custom_model_data: 1
+  Energy_Collector_MK2:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "GDG"
+      - "GEG"
+      - "GGG"
+    ingredients:
+      G: "minecraft:glowstone"
+      D: "projecte:dark_matter"
+      E: "projecte:energy_collector_mk1"
+    result:
+      projecte_id: "projecte:energy_collector_mk2"
+      custom_model_data: 2
+  Energy_Collector_MK3:
+    enabled: true
+    type: "shaped"
+    shape:
+      - "GRG"
+      - "GEG"
+      - "GGG"
+    ingredients:
+      G: "minecraft:glowstone"
+      R: "projecte:red_matter"
+      E: "projecte:energy_collector_mk2"
+    result:
+      projecte_id: "projecte:energy_collector_mk3"
       custom_model_data: 3

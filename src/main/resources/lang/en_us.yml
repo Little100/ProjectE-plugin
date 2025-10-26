@@ -470,6 +470,18 @@ item:
   projecte.energy_condenser_mk2:
     name: "§cEnergy Condenser MK2"
     lore1: "§6A more powerful energy condenser"
+  projecte.energy_collector_mk1:
+    name: "§eEnergy Collector MK1"
+    lore1: "§6Generates 4 EMC/s (max efficiency)"
+    lore2: "§7Affected by light level above"
+  projecte.energy_collector_mk2:
+    name: "§bEnergy Collector MK2"
+    lore1: "§6Generates 10 EMC/s (max efficiency)"
+    lore2: "§7Affected by light level above"
+  projecte.energy_collector_mk3:
+    name: "§cEnergy Collector MK3"
+    lore1: "§6Generates 40 EMC/s (max efficiency)"
+    lore2: "§7Affected by light level above"
 
 # Plugin related
 plugin:
@@ -504,8 +516,24 @@ gui:
   condenser:
     title: "§eEnergy Condenser"
     emc_display: "§6EMC: {emc}"
+    target_emc: "§6Target EMC: {value}"
+    remaining_emc: "§eRemaining EMC: {value}"
+    progress: "§aProgress: {value}"
   condenser_mk2:
     title: "§cEnergy Condenser MK2"
+  alchemical_chest:
+    title: "§eAlchemical Chest §7(Page %page%/%total%)"
+    prev_page: "§a← Previous Page"
+    next_page: "§aNext Page →"
+    page_info: "§ePage %page% / %total%"
+  energy_collector_mk1:
+    title: "§eEnergy Collector MK1"
+  energy_collector_mk2:
+    title: "§bEnergy Collector MK2"
+  energy_collector_mk3:
+    title: "§cEnergy Collector MK3"
+  energy_collector:
+    emc_display: "§6Stored EMC: %emc%"
 
 no_lang_folder: "&cLanguage folder 'lang' not found."
 

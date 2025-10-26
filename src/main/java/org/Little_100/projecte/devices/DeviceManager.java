@@ -17,6 +17,7 @@ public class DeviceManager {
     private AlchemicalChest alchemicalChest;
     private EnergyCondenser energyCondenser;
     private EnergyCondenserMK2 energyCondenserMK2;
+    private EnergyCollector energyCollector;
 
     public DeviceManager(ProjectE plugin) {
         this.plugin = plugin;
@@ -34,7 +35,10 @@ public class DeviceManager {
                     || entity.getPersistentDataContainer().has(RedMatterFurnace.KEY, PersistentDataType.BYTE)
                     || entity.getPersistentDataContainer().has(AlchemicalChest.KEY, PersistentDataType.BYTE)
                     || entity.getPersistentDataContainer().has(EnergyCondenser.KEY, PersistentDataType.BYTE)
-                    || entity.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)) {
+                    || entity.getPersistentDataContainer().has(EnergyCondenserMK2.KEY, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK1, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK2, PersistentDataType.BYTE)
+                    || entity.getPersistentDataContainer().has(EnergyCollector.KEY_MK3, PersistentDataType.BYTE)) {
                 return true;
             }
         }
@@ -47,12 +51,14 @@ public class DeviceManager {
         alchemicalChest = new AlchemicalChest(plugin);
         energyCondenser = new EnergyCondenser(plugin);
         energyCondenserMK2 = new EnergyCondenserMK2(plugin);
+        energyCollector = new EnergyCollector(plugin);
 
         plugin.getServer().getPluginManager().registerEvents(darkMatterFurnace, plugin);
         plugin.getServer().getPluginManager().registerEvents(redMatterFurnace, plugin);
         plugin.getServer().getPluginManager().registerEvents(alchemicalChest, plugin);
         plugin.getServer().getPluginManager().registerEvents(energyCondenser, plugin);
         plugin.getServer().getPluginManager().registerEvents(energyCondenserMK2, plugin);
+        plugin.getServer().getPluginManager().registerEvents(energyCollector, plugin);
     }
 
     public void reloadDeviceItems() {
@@ -74,6 +80,10 @@ public class DeviceManager {
 
         if (energyCondenserMK2 != null) {
             energyCondenserMK2 = new EnergyCondenserMK2(plugin);
+        }
+
+        if (energyCollector != null) {
+            energyCollector = new EnergyCollector(plugin);
         }
     }
 
@@ -130,5 +140,16 @@ public class DeviceManager {
 
     public EnergyCondenserMK2 getEnergyCondenserMK2() {
         return energyCondenserMK2;
+    }
+
+    public ItemStack getEnergyCollectorItem(int type) {
+        if (energyCollector == null) {
+            return null;
+        }
+        return energyCollector.getCollectorItem(type);
+    }
+
+    public EnergyCollector getEnergyCollector() {
+        return energyCollector;
     }
 }
