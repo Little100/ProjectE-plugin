@@ -20,6 +20,9 @@ public class AlchemicalChestManager {
     public void addChest(Location location, UUID ownerUUID) {
         String locationKey = getLocationKey(location);
         chestOwners.put(locationKey, ownerUUID);
+        
+        ItemStack[] existingContents = plugin.getDatabaseManager().loadChestInventory(locationKey);
+        plugin.getDatabaseManager().saveChestInventory(locationKey, ownerUUID, existingContents);
     }
 
     public void removeChest(Location location) {

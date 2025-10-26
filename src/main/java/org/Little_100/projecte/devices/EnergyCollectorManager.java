@@ -50,6 +50,10 @@ public class EnergyCollectorManager {
         data.inventory = savedInventory;
 
         collectors.put(locationKey, data);
+        
+        // 立即保存初始数据到数据库
+        plugin.getDatabaseManager().saveCollectorData(
+                locationKey, ownerUUID, type, data.storedEmc, data.inventory);
     }
 
     public void removeCollector(Location location) {

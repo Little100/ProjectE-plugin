@@ -67,6 +67,13 @@ public class DatabaseManager {
                     + "collector_type INTEGER NOT NULL,"
                     + "stored_emc BIGINT NOT NULL DEFAULT 0,"
                     + "inventory_contents TEXT);");
+            
+            statement.execute("CREATE TABLE IF NOT EXISTS energy_condensers (" + "location TEXT PRIMARY KEY,"
+                    + "owner_uuid TEXT NOT NULL,"
+                    + "condenser_type INTEGER NOT NULL,"
+                    + "inventory_contents TEXT,"
+                    + "target_item TEXT,"
+                    + "stored_emc BIGINT NOT NULL DEFAULT 0);");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -248,6 +255,28 @@ public class DatabaseManager {
             return Base64Coder.encodeLines(outputStream.toByteArray());
         } catch (IOException e) {
             throw new IllegalStateException("Could not serialize ItemStack[] to Base64!", e);
+        }
+    }
+
+    private String itemStackToBase64(ItemStack item) throws IllegalStateException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+            dataOutput.writeObject(item);
+            return Base64Coder.encodeLines(outputStream.toByteArray());
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to serialize ItemStack", e);
+        }
+    }
+
+    private ItemStack itemStackFromBase64(String data) throws IOException {
+        if (data == null || data.isEmpty()) {
+            return null;
+        }
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+                BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+            return (ItemStack) dataInput.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Unable to deserialize ItemStack", e);
         }
     }
 
@@ -443,6 +472,133 @@ public class DatabaseManager {
 
     public UUID getCollectorOwner(String locationKey) {
         String sql = "SELECT owner_uuid FROM energy_collectors WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return UUID.fromString(rs.getString("owner_uuid"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void saveCondenserData(String locationKey, UUID ownerUUID, int condenserType, 
+            ItemStack[] inventoryContents, ItemStack targetItem, long storedEmc) {
+        String base64Inventory = "";
+        if (inventoryContents != null) {
+            try {
+                base64Inventory = itemStackArrayToBase64(inventoryContents);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        String base64Target = "";
+        if (targetItem != null && !targetItem.getType().isAir()) {
+            try {
+                base64Target = itemStackToBase64(targetItem);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String sql = "INSERT OR REPLACE INTO energy_condensers (location, owner_uuid, condenser_type, "
+                + "inventory_contents, target_item, stored_emc) VALUES (?, ?, ?, ?, ?, ?);";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            pstmt.setString(2, ownerUUID.toString());
+            pstmt.setInt(3, condenserType);
+            pstmt.setString(4, base64Inventory);
+            pstmt.setString(5, base64Target);
+            pstmt.setLong(6, storedEmc);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ItemStack[] loadCondenserInventory(String locationKey, int expectedSize) {
+        String sql = "SELECT inventory_contents FROM energy_condensers WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String base64Data = rs.getString("inventory_contents");
+                if (base64Data != null && !base64Data.isEmpty()) {
+                    ItemStack[] items = itemStackArrayFromBase64(base64Data);
+                    if (items.length < expectedSize) {
+                        ItemStack[] resizedItems = new ItemStack[expectedSize];
+                        System.arraycopy(items, 0, resizedItems, 0, items.length);
+                        return resizedItems;
+                    }
+                    return items;
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return new ItemStack[expectedSize];
+    }
+
+    public ItemStack loadCondenserTargetItem(String locationKey) {
+        String sql = "SELECT target_item FROM energy_condensers WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String base64Data = rs.getString("target_item");
+                if (base64Data != null && !base64Data.isEmpty()) {
+                    return itemStackFromBase64(base64Data);
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public long loadCondenserEmc(String locationKey) {
+        String sql = "SELECT stored_emc FROM energy_condensers WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getLong("stored_emc");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int loadCondenserType(String locationKey) {
+        String sql = "SELECT condenser_type FROM energy_condensers WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("condenser_type");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    public void deleteCondenserData(String locationKey) {
+        String sql = "DELETE FROM energy_condensers WHERE location = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, locationKey);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public UUID getCondenserOwner(String locationKey) {
+        String sql = "SELECT owner_uuid FROM energy_condensers WHERE location = ?;";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, locationKey);
             ResultSet rs = pstmt.executeQuery();

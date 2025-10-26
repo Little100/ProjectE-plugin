@@ -117,6 +117,8 @@ public class GUIListener implements Listener {
         int slot = event.getSlot();
 
         if (slot == 0) {
+            // 返回按钮：返还玩家手持的物品到背包
+            returnCursorItemToPlayer(event);
             gui.setState(TransmutationGUI.GuiState.MAIN);
         } else if (slot == 49) {
             handleTransaction(event.getWhoClicked(), gui);
@@ -207,6 +209,8 @@ public class GUIListener implements Listener {
 
         // 处理导航和边框点击
         if (slot == 0) { // 返回按钮
+            // 返还玩家手持的物品到背包
+            returnCursorItemToPlayer(event);
             gui.setState(TransmutationGUI.GuiState.MAIN);
             return;
         } else if (slot == 4) { // 搜索按钮
@@ -435,6 +439,8 @@ public class GUIListener implements Listener {
         if (event.getClickedInventory() != gui.getInventory()) return;
 
         if (slot == 0) {
+            // 返回按钮：返还玩家手持的物品到背包
+            returnCursorItemToPlayer(event);
             gui.setState(TransmutationGUI.GuiState.MAIN);
         } else if (slot == 49) {
             handleLearn(event.getWhoClicked(), gui);
@@ -589,9 +595,10 @@ public class GUIListener implements Listener {
         if (event.getClickedInventory() != gui.getInventory()) return;
 
         if (slot == 0) {
+            // 返回按钮：返还玩家手持的物品到背包
+            returnCursorItemToPlayer(event);
             gui.setState(TransmutationGUI.GuiState.MAIN);
         } else if (slot == 49) {
-            // The entire charge logic is now here
             Player player = (Player) event.getWhoClicked();
             Inventory inventory = gui.getInventory();
             DatabaseManager databaseManager = ProjectE.getInstance().getDatabaseManager();
@@ -696,5 +703,22 @@ public class GUIListener implements Listener {
 
         placeholders.put("item", displayName);
         player.sendMessage(lang.get("serverside.command.generic.no_emc_value_trade", placeholders));
+    }
+
+    private void returnCursorItemToPlayer(InventoryClickEvent event) {
+        ItemStack cursorItem = event.getCursor();
+        if (cursorItem != null && !cursorItem.getType().isAir()) {
+            Player player = (Player) event.getWhoClicked();
+            // 尝试将物品添加到玩家背包
+            HashMap<Integer, ItemStack> remaining = player.getInventory().addItem(cursorItem);
+            // 如果背包满了，掉落到地上
+            if (!remaining.isEmpty()) {
+                for (ItemStack item : remaining.values()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), item);
+                }
+            }
+            // 清空光标
+            event.setCursor(null);
+        }
     }
 }
