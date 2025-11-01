@@ -144,15 +144,20 @@ public class ArmorListener implements Listener {
             if (!player.isFlying()) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 10, 0, true, false));
             }
-            player.setAllowFlight(true);
+            // 只在玩家没有飞行权限时才设置
+            if (!player.getAllowFlight()) {
+                player.setAllowFlight(true);
+            }
             player.setFlySpeed(0.2f);
             
             // 水上行走效果（类似冰霜行者）
             handleWaterWalking(player);
         } else {
+            // 兼容其他允许飞行的情况 比如ess插件的/fly
             if (player.getAllowFlight()
                     && !player.getGameMode().equals(GameMode.CREATIVE)
-                    && !player.getGameMode().equals(GameMode.SPECTATOR)) {
+                    && !player.getGameMode().equals(GameMode.SPECTATOR)
+                    && player.getFlySpeed() == 0.2f) {
                 player.setAllowFlight(false);
                 player.setFlying(false);
                 player.setFlySpeed(0.1f);
