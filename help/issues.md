@@ -16,6 +16,7 @@
     - QQ user [3896****72] 1.20.1 GUI click error
     - QQ user [3896****72] 1.20.6 pack error
     - issue 9
+    - issue 10
 
   - ## Optimization
     - EMC calculation causes slow startup by [AconHol](https://github.com/AconHol)
@@ -46,6 +47,7 @@
     - QQ用户[3896****72]1.20.1GUI点击错误
     - QQ用户[3896****72]1.20.6材质错误
     - issue 9 
+    - issue 10
 
   - ## 优化
     - [AconHol](https://github.com/AconHol)发现的EMC计算导致启动慢

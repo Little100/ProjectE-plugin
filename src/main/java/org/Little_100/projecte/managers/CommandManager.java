@@ -536,23 +536,32 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return;
         }
 
-        List<ItemStack> noEmcItems = new ArrayList<>();
-        for (Material material : Material.values()) {
-            if (material.isItem() && !material.isAir() && !material.name().startsWith("LEGACY_")) {
-                ItemStack item = new ItemStack(material);
-                String itemKey = plugin.getVersionAdapter().getItemKey(item);
-                if (emcManager.getEmc(itemKey) == 0) {
-                    noEmcItems.add(item);
+        sender.sendMessage(ChatColor.YELLOW + "正在查询没有EMC值的物品,请稍候...");
+        
+        // 异步执行以避免阻塞主线程
+        plugin.getSchedulerAdapter().runTaskAsynchronously(() -> {
+            List<ItemStack> noEmcItems = new ArrayList<>();
+            for (Material material : Material.values()) {
+                if (material.isItem() && !material.isAir() && !material.name().startsWith("LEGACY_")) {
+                    ItemStack item = new ItemStack(material);
+                    String itemKey = plugin.getVersionAdapter().getItemKey(item);
+                    // 直接从数据库查询,避免触发递归计算
+                    if (databaseManager.getEmc(itemKey) == 0) {
+                        noEmcItems.add(item);
+                    }
                 }
             }
-        }
 
-        if (noEmcItems.isEmpty()) {
-            sender.sendMessage(languageManager.get("serverside.command.no_emc_item.all_have_emc"));
-            return;
-        }
+            // 回到主线程打开GUI
+            plugin.getSchedulerAdapter().runTask(() -> {
+                if (noEmcItems.isEmpty()) {
+                    sender.sendMessage(languageManager.get("serverside.command.no_emc_item.all_have_emc"));
+                    return;
+                }
 
-        new NoEmcItemGUI(noEmcItems, 0).openInventory(player);
+                new NoEmcItemGUI(noEmcItems, 0).openInventory(player);
+            });
+        });
     }
 
     private void handleBag(CommandSender sender, String[] args) {
