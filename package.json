@@ -3,9 +3,9 @@
   "version": "1.2.4",
   "description": "ProjectE Plugin Documentation",
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
-    "docs:clean": "rimraf docs/.vuepress/.cache docs/.vuepress/.temp"
+    "docs:dev": "vuepress dev docsvue",
+    "docs:build": "vuepress build docsvue",
+    "docs:clean": "rimraf docsvue/.vuepress/.cache docsvue/.vuepress/.temp"
   },
   "keywords": [
     "minecraft",
