@@ -21,8 +21,7 @@ InventoryStacks/
 
 # VuePress
 node_modules/
-docs/.vuepress/.cache/
-docs/.vuepress/.temp/
+docs/.vuepress/
 
 # npm/yarn
 package-lock.json
