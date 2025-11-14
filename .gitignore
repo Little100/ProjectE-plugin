@@ -1,12 +1,49 @@
+# IDE
 .idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Gradle
 .gradle/
 build/
 gradle/
+bin/
+out/
+
+# Minecraft/Plugin
+run/
 ProjectE Resourcepack/
 ProjectE Resourcepack 1.21.4+/
-run/
-.vscode/
-bin/
+ProjectE Datapack/
+InventoryStacks/
+
+# VuePress
+node_modules/
+docs/.vuepress/.cache/
+docs/.vuepress/.temp/
+docs/.vuepress/dist/
+
+# npm/yarn
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
 custommodeldata1.21.4.md
-ProjectE Datapack
-InventoryStacks

@@ -1,0 +1,28 @@
+{
+  "name": "projecte-plugin-docs",
+  "version": "1.2.4",
+  "description": "ProjectE Plugin Documentation",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
+    "docs:clean": "rimraf docs/.vuepress/.cache docs/.vuepress/.temp"
+  },
+  "keywords": [
+    "minecraft",
+    "spigot",
+    "plugin",
+    "projecte",
+    "documentation"
+  ],
+  "author": "Little_100",
+  "license": "MIT",
+  "devDependencies": {
+    "@vuepress/bundler-vite": "2.0.0-rc.17",
+    "@vuepress/plugin-search": "2.0.0-rc.52",
+    "@vuepress/theme-default": "2.0.0-rc.52",
+    "rimraf": "^5.0.5",
+    "sass-embedded": "^1.83.0",
+    "vuepress": "2.0.0-rc.17",
+    "vue": "^3.4.0"
+  }
+}
