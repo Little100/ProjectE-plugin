@@ -30,7 +30,7 @@
 
 从以下渠道下载最新版本的 ProjectE 插件：
 
-- [GitHub Releases](https://github.com/yourusername/ProjectE-plugin/releases)
+- [GitHub Releases](https://github.com/Little100/ProjectE-plugin/releases)
 - [SpigotMC](https://www.spigotmc.org/)
 - [Modrinth](https://modrinth.com/)
 
@@ -269,5 +269,5 @@ resource-pack:
 
 1. 查看控制台的完整错误日志
 2. 检查 [常见问题](./faq.md)
-3. 在 [GitHub Issues](https://github.com/yourusername/ProjectE-plugin/issues) 提问
+3. 在 [GitHub Issues](https://github.com/Little100/ProjectE-plugin/issues) 提问
 4. 加入我们的社区讨论

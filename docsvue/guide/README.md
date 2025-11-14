@@ -104,7 +104,7 @@ EMC 是 ProjectE 系统的核心货币。每个物品都有其对应的 EMC 值�
 
 1. 查看本文档的相关章节
 2. 查看 [常见问题](./faq.md)
-3. 在 GitHub 上提交 [Issue](https://github.com/yourusername/ProjectE-plugin/issues)
+3. 在 GitHub 上提交 [Issue](https://github.com/Little100/ProjectE-plugin/issues)
 4. 加入我们的社区讨论
 
 ## 贡献
@@ -117,4 +117,4 @@ ProjectE 是一个开源项目，我们欢迎任何形式的贡献：
 - 完善文档
 - 翻译到其他语言
 
-查看 [贡献指南](https://github.com/yourusername/ProjectE-plugin/blob/main/CONTRIBUTING.md) 了解更多信息。
+查看 [贡献指南](https://github.com/Little100/ProjectE-plugin/blob/main/CONTRIBUTING.md) 了解更多信息。

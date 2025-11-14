@@ -8,7 +8,7 @@ actions:
     link: /guide/
     type: primary
   - text: 查看 GitHub
-    link: https://github.com/yourusername/ProjectE-plugin
+    link: https://github.com/Little100/ProjectE-plugin
     type: secondary
 features:
   - title: 🔮 等价交换系统
@@ -76,13 +76,13 @@ ProjectE 的核心是 EMC（Energy-Matter Covalence）系统。玩家可以将�
 如果你在使用过程中遇到问题，可以：
 
 - 查看[完整文档](/guide/)
-- 提交 [Issue](https://github.com/yourusername/ProjectE-plugin/issues)
+- 提交 [Issue](https://github.com/Little100/ProjectE-plugin/issues)
 - 加入我们的社区讨论
 
 ## 📝 更新日志
 
-查看[更新日志](https://github.com/yourusername/ProjectE-plugin/blob/main/changelog.md)了解最新的更新内容。
+查看[更新日志](https://github.com/Little100/ProjectE-plugin/blob/main/changelog.md)了解最新的更新内容。
 
 ## ⚖️ 许可证
 
-本项目采用 MIT 许可证。详见 [LICENSE](https://github.com/yourusername/ProjectE-plugin/blob/main/LICENSE) 文件。
+本项目采用 MIT 许可证。详见 [LICENSE](https://github.com/Little100/ProjectE-plugin/blob/main/LICENSE) 文件。
