@@ -24,6 +24,9 @@ public class EmcManager {
     private final String recipeConflictStrategy;
     private final String divisionStrategy;
     private final Set<String> currentlyCalculating = new HashSet<>();
+    // 内存缓存,避免频繁查询数据库和遍历配方
+    // issue 11 但不保证有效
+    private final Map<String, Long> emcCache = new HashMap<>();
 
     public EmcManager(ProjectE plugin) {
         this.plugin = plugin;
@@ -51,6 +54,8 @@ public class EmcManager {
         }
         if (forceRecalculate) {
             databaseManager.clearEmcValues();
+            // 清空缓存
+            emcCache.clear();
         }
         plugin.getLogger().info("Start calculating EMC values...");
         versionAdapter.loadInitialEmcValues();
@@ -110,6 +115,8 @@ public class EmcManager {
 
         if (existingEmc <= 0) {
             databaseManager.setEmc(resultKey, newEmc);
+            // 更新缓存
+            emcCache.put(resultKey, newEmc);
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("item", resultKey);
             placeholders.put("emc", String.valueOf(newEmc));
@@ -119,6 +126,8 @@ public class EmcManager {
             boolean updated = false;
             if ("lowest".equals(recipeConflictStrategy) && newEmc < existingEmc) {
                 databaseManager.setEmc(resultKey, newEmc);
+                // 更新缓存
+                emcCache.put(resultKey, newEmc);
                 Map<String, String> placeholders = new HashMap<>();
                 placeholders.put("item", resultKey);
                 placeholders.put("emc", String.valueOf(newEmc));
@@ -126,6 +135,8 @@ public class EmcManager {
                 updated = true;
             } else if ("highest".equals(recipeConflictStrategy) && newEmc > existingEmc) {
                 databaseManager.setEmc(resultKey, newEmc);
+                // 更新缓存
+                emcCache.put(resultKey, newEmc);
                 Map<String, String> placeholders = new HashMap<>();
                 placeholders.put("item", resultKey);
                 placeholders.put("emc", String.valueOf(newEmc));
@@ -166,58 +177,30 @@ public class EmcManager {
     }
 
     public long getEmc(String itemKey) {
+        // 1. 先检查内存缓存
+        if (emcCache.containsKey(itemKey)) {
+            return emcCache.get(itemKey);
+        }
+        
+        // 2. 检查数据库
         long emc = databaseManager.getEmc(itemKey);
         if (emc > 0) {
+            // 缓存到内存
+            emcCache.put(itemKey, emc);
             return emc;
         }
 
+        // 3. 如果正在计算中,返回0避免循环依赖
         if (currentlyCalculating.contains(itemKey)) {
             return 0;
         }
 
-        currentlyCalculating.add(itemKey);
-
-        long lowestEmc = -1;
-
-        Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
-        while (recipeIterator.hasNext()) {
-            try {
-                Recipe recipe = recipeIterator.next();
-                ItemStack result = recipe.getResult();
-
-                NamespacedKey key = null;
-                if (recipe instanceof ShapedRecipe) {
-                    key = ((ShapedRecipe) recipe).getKey();
-                } else if (recipe instanceof ShapelessRecipe) {
-                    key = ((ShapelessRecipe) recipe).getKey();
-                } else if (recipe instanceof CookingRecipe) {
-                    key = ((CookingRecipe<?>) recipe).getKey();
-                }
-
-                if (key != null && key.getNamespace().equalsIgnoreCase("projecte")) {
-                    continue;
-                }
-
-                if (getItemKey(result).equals(itemKey)) {
-                    long calculatedEmc = versionAdapter.calculateRecipeEmc(recipe, divisionStrategy);
-                    if (calculatedEmc > 0) {
-                        if (lowestEmc == -1 || calculatedEmc < lowestEmc) {
-                            lowestEmc = calculatedEmc;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // 捕获并忽略损坏的配方
-            }
-        }
-
-        currentlyCalculating.remove(itemKey);
-
-        if (lowestEmc > 0) {
-            databaseManager.setEmc(itemKey, lowestEmc);
-            return lowestEmc;
-        }
-
+        // 4. 尝试通过配方计算(仅在启动时或重新计算时调用,不在GUI交互时调用)
+        // 为了避免在Folia主线程中阻塞,我们不在这里进行配方遍历
+        // 配方计算应该在服务器启动时完成
+        
+        // 缓存结果(即使是0)以避免重复查询
+        emcCache.put(itemKey, 0L);
         return 0;
     }
 
@@ -454,12 +437,16 @@ public class EmcManager {
 
     public void registerEmc(String itemKey, long emcValue) {
         databaseManager.setEmc(itemKey, emcValue);
+        // 更新缓存
+        emcCache.put(itemKey, emcValue);
     }
 
     public void setEmcValue(ItemStack item, long emc) {
         if (item == null) return;
         String key = getItemKey(item);
         databaseManager.setEmc(key, emc);
+        // 更新缓存
+        emcCache.put(key, emc);
     }
 
     /**
@@ -468,6 +455,9 @@ public class EmcManager {
      */
     public void recalculateDefaultEmcValues() {
         plugin.getLogger().info("Start calculating default items EMC values...");
+        
+        // 清空缓存
+        emcCache.clear();
         
         // 重新加载基础EMC值
         versionAdapter.loadInitialEmcValues();
@@ -508,6 +498,9 @@ public class EmcManager {
      */
     public int recalculatePdcEmcValues() {
         plugin.getLogger().info("Start calculating PDC items EMC values...");
+        
+        // 清空缓存以确保使用最新计算的值
+        emcCache.clear();
         
         boolean debug = plugin.getConfig().getBoolean("debug");
         int pdcRecipesFound = 0;
@@ -603,6 +596,8 @@ public class EmcManager {
                             
                             if (shouldUpdate) {
                                 databaseManager.setEmc(itemKey, recipeEmc);
+                                // 更新缓存
+                                emcCache.put(itemKey, recipeEmc);
                                 changed = true;
                                 calculatedItems.add(itemKey);
                                 if (debug) {
