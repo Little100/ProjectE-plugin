@@ -98,7 +98,7 @@ public class PhilosopherStoneListener implements Listener {
                 && event.getClickedBlock() != null
                 && event.getClickedBlock().getType() == Material.PETRIFIED_OAK_SLAB) {
             if (plugin.getConfig().getBoolean("gui.enabled", true)) {
-                if (!player.hasPermission("philosophersstone.interact.gui")) {
+                if (!player.hasPermission("projecte.interact.transmutationtable")) {
                     player.sendMessage(ChatColor.RED + "You do not have permission to use the Transmutation Table.");
                     return;
                 }
